@@ -1,5 +1,5 @@
 ---
-import profile from '../data/profile.js';
+import profile, { email } from '../data/profile.js';
 import { githubProfileUrl, githubUsername } from '../data/github.js';
 import { socials } from '../data/links.js';
 
@@ -139,6 +139,58 @@ const personSchema = {
       });
     })();
   </script>
+
+  <!-- Email modal
+       Plain HTML + the script at the bottom of this file, mirroring the cert-lightbox pattern
+       (role=dialog, Escape to close, backdrop click, focus trap, focus return, scroll lock).
+       Deliberately NOT a React island: it must work even if the React runtime has not hydrated,
+       and it has nothing to do with the chatbot. The recipient is read from the form's data
+       attribute so the address lives in exactly one place (src/data/profile.js). -->
+  <div class="email-modal" id="email-modal" role="dialog" aria-modal="true"
+       aria-labelledby="email-modal-title" hidden>
+    <div class="email-modal-panel">
+      <header class="email-modal-head">
+        <h2 class="email-modal-title" id="email-modal-title">Send a message</h2>
+        <button class="email-modal-close" type="button" data-email-close aria-label="Close message form">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Novalidate: this is a mail composer, not a network form, so the browser's own
+           validation bubbles would not explain what is wrong. Script validation is used instead. -->
+      <form class="email-form" id="email-form" data-email-to={email} novalidate>
+        <div class="email-field">
+          <label class="email-label" for="email-name">Your name</label>
+          <input class="email-input" id="email-name" name="name" type="text" autocomplete="name" />
+        </div>
+        <div class="email-field">
+          <label class="email-label" for="email-address">Your email</label>
+          <input class="email-input" id="email-address" name="email" type="email" autocomplete="email" />
+        </div>
+        <div class="email-field">
+          <label class="email-label" for="email-subject">Subject</label>
+          <input class="email-input" id="email-subject" name="subject" type="text" />
+        </div>
+        <div class="email-field">
+          <label class="email-label" for="email-message">Message</label>
+          <textarea class="email-input email-textarea" id="email-message" name="message" rows="5" required></textarea>
+        </div>
+
+        <p class="email-error" id="email-error" role="alert" hidden></p>
+
+        <div class="email-actions">
+          <button class="btn btn-secondary email-cancel" type="button" data-email-close>Cancel</button>
+          <button class="btn btn-primary email-submit" type="submit">Send</button>
+        </div>
+        <p class="email-note">
+          Send opens your own email app with the message written out, so you can review it before
+          it goes. Nothing is stored on this site.
+        </p>
+      </form>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="/Portfolio/scripts/main.js" is:inline></script>
