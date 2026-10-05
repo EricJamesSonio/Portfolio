@@ -18,6 +18,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 12 | Accessibility, performance, SEO | DONE | Heading-order fix, canonical/OG/Twitter/JSON-LD, favicon, robots, sitemap |
 | 13 | Cleanup and release readiness | DONE | Dead CSS/aliases removed, README rewritten, final build clean |
 | 14 | Neon-blue retheme, larger type, stack carousels, education history | DONE | Accent orange -> neon blue (--accent-text added for AA), full type-scale bump, 5 scrolling tech carousels with brand icons, 5 education entries |
+| 15 | Brand-coloured icons, standalone tech band, alternating carousels, About reformat | DONE | Official brand hexes per tech (contrast-corrected per theme), tech stack moved out of the bento into a full-bleed section, rows alternate direction, scrollbars removed, About lead + drop cap + Quick Facts |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
@@ -36,8 +37,13 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 - Phase 14: the owner asked for 4 carousels (Frontend, Backend, Tools, Deployment); the
   existing **Database** group was kept as a 5th so real content was not deleted.
   Say the word and it is dropped.
-- Phase 14: no Simple Icons mark exists for Karma, MSTest or Aiven. Substitutes are documented
+- Phase 14/15: no Simple Icons mark exists for Karma, MSTest or Aiven. Substitutes are documented
   in `src/data/stackIcons.js` (Selenium, .NET, and a neutral cloud glyph).
+- Phase 15: the About **Quick Facts** grid fills the card height using facts already on the page
+  (role, degree, school, location, focus). If the owner wants real prose instead, replace it
+  with 1-2 more paragraphs and delete `aboutFacts` from `src/data/about.js`.
+- Phase 15: the tech-stack band has no divider caption above it (the bento and projects bands
+  have one). Add a `<Divider>` in `src/pages/index.astro` if a caption is wanted.
 
 ## Missing images
 - `Resume.pdf` (no resume file in `public/`) -> GET RESUME disabled with a TODO marker

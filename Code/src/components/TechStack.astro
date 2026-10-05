@@ -1,5 +1,4 @@
 ---
-import Card from './Card.astro';
 import stack from '../data/stack.js';
 import { getIcon } from '../data/stackIcons.js';
 
@@ -8,9 +7,14 @@ import { getIcon } from '../data/stackIcons.js';
 // wide the viewport is, so long rows never race and short rows never show a gap.
 const REPEATS = 4;
 
-const rows = stack.map((group) => ({
+// Rows alternate direction: 1 left->right, 2 right->left, 3 left->right, ... (owner request).
+const rows = stack.map((group, i) => ({
   label: group.label,
-  cards: group.techs.map((tech) => ({ name: tech.name, icon: getIcon(tech.icon) })),
+  dir: i % 2 === 0 ? 'right' : 'left',
+  cards: group.techs.map((tech) => {
+    const icon = getIcon(tech.icon);
+    return { name: tech.name, icon, symbolId: null };
+  }),
 }));
 
 // Icons live in ONE hidden sprite and each card just does <use href="#id">. Without this, four
@@ -19,14 +23,16 @@ const symbols = [];
 const symbolIdByMarkup = new Map();
 for (const row of rows) {
   for (const card of row.cards) {
-    if (!card.icon || symbolIdByMarkup.has(card.icon)) continue;  // dedupe: karma/mstest share slugs
-    const id = `stack-icon-${symbols.length + 1}`;
-    symbolIdByMarkup.set(card.icon, id);
-    symbols.push({ id, body: card.icon });
+    if (!card.icon) continue;
+    // Dedupe by markup: ASP.NET and MSTest both resolve to the .NET mark, so only one symbol is
+    // emitted - but BOTH cards still get a symbolId.
+    if (!symbolIdByMarkup.has(card.icon.body)) {
+      const id = `stack-icon-${symbols.length + 1}`;
+      symbolIdByMarkup.set(card.icon.body, id);
+      symbols.push({ id, body: card.icon.body });
+    }
+    card.symbolId = symbolIdByMarkup.get(card.icon.body);
   }
-}
-for (const row of rows) {
-  for (const card of row.cards) card.symbolId = symbolIdByMarkup.get(card.icon) ?? null;
 }
 
 // Duration scales with the card count so rows move at a similar speed (~2.2s per card),
@@ -34,7 +40,12 @@ for (const row of rows) {
 const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10), 40) * 10) / 10}s`;
 ---
 
-<Card title="TECH STACK" id="tech-card" labelled>
+<!-- Own section: deliberately NOT a .card. The rows bleed to the viewport edge so the
+     carousels read as continuous tickers instead of content trapped in a box.
+     `id="tech"` is preserved so old #tech links still land here. -->
+<section class="stack-section" id="tech" aria-labelledby="stack-heading">
+  <h2 class="stack-heading" id="stack-heading">TECH STACK</h2>
+
   <!-- Icon sprite: rendered once, referenced by every card below. -->
   <svg class="stack-icon-sprite" aria-hidden="true" focusable="false" width="0" height="0">
     {symbols.map((s) => (
@@ -44,7 +55,7 @@ const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10),
 
   <div class="stack-carousels">
     {rows.map((row) => (
-      <div class="stack-carousel">
+      <div class="stack-carousel" data-dir={row.dir}>
         <div class="stack-label">
           <span class="micro-label">{row.label}</span>
           <span class="stack-hairline" aria-hidden="true"></span>
@@ -59,8 +70,16 @@ const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10),
                 {row.cards.map((card) => (
                   <li class="stack-card">
                     {card.symbolId && (
+                      /* Official brand colour, per theme. --brand-light / --brand-dark come from
+                         stackIcons.js, already corrected to clear 3:1 on the card background. */
                       <span class="stack-card-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                        <svg
+                          class="stack-icon"
+                          viewBox="0 0 24 24"
+                          width="30"
+                          height="30"
+                          style={`--brand-light:${card.icon.light};--brand-dark:${card.icon.dark}`}
+                        >
                           <use href={`#${card.symbolId}`} />
                         </svg>
                       </span>
@@ -76,5 +95,5 @@ const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10),
     ))}
   </div>
 
-  <p class="stack-hint">Rows scroll automatically and pause on hover or focus.</p>
-</Card>
+  <p class="stack-hint">Hover or focus to pause a row.</p>
+</section>
