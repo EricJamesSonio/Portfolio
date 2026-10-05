@@ -2,23 +2,20 @@
 import stack from '../data/stack.js';
 import { getIcon } from '../data/stackIcons.js';
 
-// Each row is a CSS marquee: an equal number of IDENTICAL runs inside one `width: max-content`
-// track, translated by exactly one run width. That makes the loop seamless regardless of how
-// wide the viewport is, so long rows never race and short rows never show a gap.
-const REPEATS = 4;
-
-// Rows alternate direction: 1 left->right, 2 right->left, 3 left->right, ... (owner request).
-const rows = stack.map((group, i) => ({
+// Static grid, not a carousel. Each tech renders exactly ONCE - the previous marquee needed
+// four identical runs to loop seamlessly, which meant every card appeared four times.
+const rows = stack.map((group) => ({
   label: group.label,
-  dir: i % 2 === 0 ? 'right' : 'left',
+  // Column count per group so a 4-item row never stretches four cards across the full width
+  // (auto-fit would do exactly that and it looks sparse). Capped at 8; Tools wraps to 2 rows.
+  cols: Math.min(group.techs.length, 8),
   cards: group.techs.map((tech) => {
     const icon = getIcon(tech.icon);
     return { name: tech.name, icon, symbolId: null };
   }),
 }));
 
-// Icons live in ONE hidden sprite and each card just does <use href="#id">. Without this, four
-// repeats would inline ~40 KB of SVG path data four times over.
+// Icons live in ONE hidden sprite and each card just does <use href="#id">.
 const symbols = [];
 const symbolIdByMarkup = new Map();
 for (const row of rows) {
@@ -34,15 +31,10 @@ for (const row of rows) {
     card.symbolId = symbolIdByMarkup.get(card.icon.body);
   }
 }
-
-// Duration scales with the card count so rows move at a similar speed (~2.2s per card),
-// clamped to 10-40s and rounded so the inline style never shows float noise.
-const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10), 40) * 10) / 10}s`;
 ---
 
-<!-- Own section: deliberately NOT a .card. The rows bleed to the viewport edge so the
-     carousels read as continuous tickers instead of content trapped in a box.
-     `id="tech"` is preserved so old #tech links still land here. -->
+<!-- Own section: deliberately NOT a .card, so the grid reads as a full-width band rather than
+     content trapped in a box. `id="tech"` is preserved so old #tech links still land here. -->
 <section class="stack-section" id="tech" aria-labelledby="stack-heading">
   <h2 class="stack-heading" id="stack-heading">TECH STACK</h2>
 
@@ -53,47 +45,38 @@ const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10),
     ))}
   </svg>
 
-  <div class="stack-carousels">
+  <div class="stack-groups">
     {rows.map((row) => (
-      <div class="stack-carousel" data-dir={row.dir}>
+      <div class="stack-group">
         <div class="stack-label">
           <span class="micro-label">{row.label}</span>
+          <span class="stack-count">{row.cards.length}</span>
           <span class="stack-hairline" aria-hidden="true"></span>
         </div>
 
-        <div class="stack-viewport">
-          <div class="stack-track" style={`--stack-duration: ${durationFor(row.cards.length)}`}>
-            {Array.from({ length: REPEATS }, (_, runIndex) => (
-              /* Run 1 is the real, readable list. Runs 2..REPEATS are aria-hidden filler that
-                 only exist to make the translate loop seamless. */
-              <ul class="stack-run" aria-hidden={runIndex > 0 ? 'true' : undefined}>
-                {row.cards.map((card) => (
-                  <li class="stack-card">
-                    {card.symbolId && (
-                      /* Official brand colour, per theme. --brand-light / --brand-dark come from
-                         stackIcons.js, already corrected to clear 3:1 on the card background. */
-                      <span class="stack-card-icon" aria-hidden="true">
-                        <svg
-                          class="stack-icon"
-                          viewBox="0 0 24 24"
-                          width="30"
-                          height="30"
-                          style={`--brand-light:${card.icon.light};--brand-dark:${card.icon.dark}`}
-                        >
-                          <use href={`#${card.symbolId}`} />
-                        </svg>
-                      </span>
-                    )}
-                    <span class="stack-card-name">{card.name}</span>
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
-        </div>
+        <ul class="stack-grid" style={`--stack-cols: ${row.cols}`}>
+          {row.cards.map((card) => (
+            <li class="stack-card">
+              {card.symbolId && (
+                /* Official brand colour, per theme. --brand-light / --brand-dark come from
+                   stackIcons.js, already corrected to clear 3:1 on the card background. */
+                <span class="stack-card-icon" aria-hidden="true">
+                  <svg
+                    class="stack-icon"
+                    viewBox="0 0 24 24"
+                    width="30"
+                    height="30"
+                    style={`--brand-light:${card.icon.light};--brand-dark:${card.icon.dark}`}
+                  >
+                    <use href={`#${card.symbolId}`} />
+                  </svg>
+                </span>
+              )}
+              <span class="stack-card-name">{card.name}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     ))}
   </div>
-
-  <p class="stack-hint">Hover or focus to pause a row.</p>
 </section>

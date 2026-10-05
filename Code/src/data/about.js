@@ -13,7 +13,7 @@ import { name, degree, degreeShort, school, role, location } from './profile.js'
  * and the Education timeline.
  */
 export const about = [
-  `I'm ${name}, a 4th-year ${degreeShort} at ${school}, and a full-stack developer who specializes in building maintainable and scalable backends. I focus on designing robust APIs and backend systems that keep working well and hold up over time.`,
+  `I'm ${name}, a 4th-year ${degreeShort} at ${school}, and a full-stack developer focused on maintainable, scalable backends — robust APIs, agentic programming, and automation that hold up over time.`,
   "I've worked on multiple full-stack projects, expert systems and automation solutions, and I thrive in collaborative environments: brainstorming ideas, building new solutions, and learning from every experience. Outside coding I'm the lead guitarist in our church, and music fuels the same creativity and discipline I bring to programming.",
   "Feel free to explore the projects below, or get in touch if you'd like to collaborate and build something worth shipping together.",
 ];
@@ -33,7 +33,7 @@ export const aboutFacts = [
   { label: 'Degree', value: degree },
   { label: 'School', value: school },
   { label: 'Location', value: location },
-  { label: 'Focus', value: 'Robust APIs & maintainable backends' },
+  { label: 'Focus', value: 'Agentic programming & automation' },
 ];
 
 export default about;
