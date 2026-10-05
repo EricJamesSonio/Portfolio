@@ -39,10 +39,12 @@
 .gh-panel-wrap {
   display: flex;
   justify-content: center;
-  padding: 16px;
+  padding: 20px;
   background: var(--bg-panel);
   border: 1px solid var(--border-inner);
-  overflow-x: auto;      /* the graph scrolls here, not on the page */
+  /* The graph scrolls HERE, never on the page. The cells are now 18px on desktop, so this is
+     load-bearing rather than decorative - without it the 53-week grid would widen the page. */
+  overflow-x: auto;
   max-width: 100%;
 }
 
