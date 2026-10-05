@@ -112,6 +112,10 @@
     color 0.3s var(--ease), border-color 0.3s var(--ease);
   white-space: nowrap;
 }
+/* Narrow phones: reduce the side padding so two stacked buttons still fit at 320px */
+@media (max-width: 420px) {
+  .btn { padding: 14px 20px; letter-spacing: 0.12em; }
+}
 .btn-primary { background: var(--btn-bg); color: var(--btn-text); }
 .btn-primary:hover { background: var(--btn-bg-hover); transform: scale(1.05); }
 .btn-secondary {

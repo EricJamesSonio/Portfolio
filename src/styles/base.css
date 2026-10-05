@@ -161,6 +161,8 @@
 html {
   scroll-behavior: smooth;
   background: var(--bg-page);
+  /* dvh keeps the page height correct when mobile browser bars show/hide */
+  min-height: 100dvh;
 }
 
 body {

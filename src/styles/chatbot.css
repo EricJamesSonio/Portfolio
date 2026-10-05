@@ -63,6 +63,9 @@
   width: 90%;
   max-width: 384px;
   height: 60vh;
+  /* svh/dvh: never taller than the visible viewport, so the on-screen keyboard
+     cannot push the input row off the bottom of a phone screen. */
+  height: 60svh;
   max-height: 500px;
   display: flex;
   flex-direction: column;
@@ -71,6 +74,9 @@
   box-shadow: var(--shadow-deep);
   z-index: 50;
   overflow: hidden;
+}
+@supports (height: 60dvh) {
+  .chat-panel { height: 60dvh; }
 }
 @media (min-width: 768px) {
   .chat-panel { right: 24px; width: 384px; }

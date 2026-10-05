@@ -109,6 +109,45 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 11: Responsive pass
+
+- Plan:
+  - Grepped every stylesheet for overflow sources: `100vw`, fixed widths >= 500px, negative margins,
+    `min-width` on the root, and every `white-space: nowrap`.
+  - Fixed the real risks found (see below), then re-verified the built CSS.
+- Fixes applied:
+  1. **`.card-head` now wraps.** A long UPPERCASE card title next to a `white-space: nowrap` link
+     (the GitHub card) could exceed the viewport on a phone. Added `flex-wrap: wrap`.
+  2. **`overflow-wrap: anywhere`** on cards, card bodies, tiles, the featured text column and the
+     bento columns, so a long unbroken string can never widen the page.
+  3. **`.gh-profile-link` drops its `nowrap` below 480px**, so it wraps under the title instead of
+     pushing the card header wider than the screen.
+  4. **Hero buttons**: below 420px the padding drops from `16px 40px` to `14px 20px` and the tracking
+     from `0.2em` to `0.12em`, so `GET RESUME TODO` and `EMAIL ME` fit at 320px.
+  5. **Overflow guard**: `.shell, .shell > * { max-width: 100% }`, plus `overflow-x: auto` on the
+     inner scrollers (timeline, stack groups, featured list, GitHub panel, cert list) so wide content
+     scrolls inside its own box rather than on the page.
+  6. **`svh`/`dvh`**: `html` uses `min-height: 100dvh`, the hero uses `95svh`, and the chat panel uses
+     `60svh` with a `60dvh` `@supports` upgrade, so the on-screen keyboard cannot push the chat input
+     off the bottom of a phone screen.
+  7. **Hover-only effects gated behind `(hover: hover) and (pointer: fine)`** — both the portrait
+     video and the project-card video zoom — so touch devices do not get a stuck hover state.
+     `overflow-x: hidden` on `body` alone is unreliable for fixed elements, hence the explicit guard.
+- Gate results: **build ok** (1 page, 36.7s). Verified in the built CSS:
+  - **No `100vw`**, **no negative margins**, **no `min-width` on the root** — the three classic causes
+    of horizontal page scroll.
+  - The only `max-width` values >= 500px are `max-width` (not fixed widths) on legacy
+    `.section` / `.section-intro` / `.hero-text` rules.
+  - `overflow-wrap: anywhere` and the 420px button rule are present.
+  - `svh` **and** `dvh` both appear; two `(hover: hover) and (pointer: fine)` blocks are present.
+  - Tap targets: `.tile` `min-height: 44px`, theme switch `min-height: 44px` (its visual pill is
+    56x28, the hit area is padded), chat FAB 48x48.
+- Widths reviewed: 320, 375, 414, 768, 900, 1024, 1280, 1536. The bento splits at 1024, the featured
+  rows at 901, the contact columns at 768, and the GitHub/recognition bands at 1024 — matching the
+  reference's breakpoints.
+- Issues: none. No browser/screenshot tool is available in this environment, so widths were verified by
+  CSS inspection against the responsive rules rather than by rendering; this is called out in the report.
+
 ## Phase 10: Content and data consolidation
 
 - Plan:

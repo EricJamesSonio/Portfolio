@@ -62,6 +62,12 @@
   gap: 12px;
   flex-shrink: 0;
   margin-bottom: 16px;
+  flex-wrap: wrap;   /* long titles + a nowrap link must wrap, not overflow */
+}
+
+/* Long words/URLs must never push the layout wider than the viewport */
+.card, .card-body, .card-head, .tile, .featured-text, .bento-col {
+  overflow-wrap: anywhere;
 }
 
 .card-title { margin: 0; }

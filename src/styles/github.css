@@ -24,6 +24,12 @@
 }
 .gh-profile-link:hover { color: var(--accent-link-hover); text-decoration: underline; }
 
+/* On narrow screens the profile link drops below the title instead of
+   forcing the card header wider than the viewport. */
+@media (max-width: 480px) {
+  .gh-profile-link { white-space: normal; }
+}
+
 .gh-noscript {
   font-size: 0.8125rem;
   color: var(--text-muted);
