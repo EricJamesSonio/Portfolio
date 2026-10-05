@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://ericjamessonio.github.io/Portfolio/sitemap.xml
