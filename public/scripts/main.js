@@ -81,7 +81,58 @@ filterBtns.forEach(btn => {
 });
 
 
-// ===== SMOOTH SCROLLING =====
+// ===== CERTIFICATE LIGHTBOX =====
+// Plain script (no React needed). Only active when a certificate with an image exists.
+(function () {
+  const lightbox = document.getElementById('cert-lightbox');
+  if (!lightbox) return;
+
+  const img = lightbox.querySelector('.lightbox-img');
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+  const triggers = document.querySelectorAll('[data-cert-src]');
+  if (!triggers.length) return;
+
+  let lastFocused = null;
+
+  function open(trigger) {
+    lastFocused = trigger;
+    img.src = trigger.dataset.certSrc;
+    img.alt = trigger.dataset.certName || 'Certificate';
+    lightbox.hidden = false;
+    closeBtn.focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    lightbox.hidden = true;
+    img.src = '';
+    document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
+  }
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => open(trigger));
+  });
+
+  closeBtn.addEventListener('click', close);
+
+  // Backdrop click closes (but not clicks on the image itself)
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox) close();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (lightbox.hidden) return;
+    if (e.key === 'Escape') {
+      close();
+    } else if (e.key === 'Tab') {
+      // Trap focus inside the dialog while it is open.
+      e.preventDefault();
+      closeBtn.focus();
+    }
+  });
+})();
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     const href = this.getAttribute('href');

@@ -29,7 +29,7 @@ const Tag = href ? 'a' : 'div';
 
 <Tag
   class="tile"
-  href={href}
+  href={href || undefined}
   aria-label={ariaLabel ?? (sub ? `${label} - ${sub}` : label)}
   target={isExternal ? '_blank' : undefined}
   rel={isExternal ? 'noreferrer' : undefined}

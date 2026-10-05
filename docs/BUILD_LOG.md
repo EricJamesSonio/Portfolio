@@ -109,6 +109,53 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 7: Certifications and Contact
+
+- Plan:
+  - `src/data/certs.js` — an **empty** `certs` array. The existing site had no certifications and no
+    certificate images were supplied; `content-seed.md` lists certificates belonging to a different
+    person, so nothing was invented. A build-time existence check marks each entry `hasImage`, and
+    entries without an image render without an expand icon.
+  - `src/data/links.js` — LinkedIn, GitHub, Facebook ("Find me on") and Email, Phone, Messenger
+    ("Get in touch"), all read from the existing `Contact.astro`. Phone is a `tel:` link. Facebook and
+    Messenger have no URL on the existing site, so they are empty and render as non-interactive tiles.
+  - `Certifications.astro` — tile rows; entries with an image become buttons that open a lightbox;
+    entries without one render as plain rows. A `<noscript>`-free, script-driven lightbox with
+    `role="dialog"`, `aria-modal`, Escape-to-close, backdrop close, focus return and a focus trap.
+  - `Contact.astro` — rewritten as two link-tile columns ("Find me on" / "Get in touch"), stacked on
+    phones and side by side from `md`, plus the location line. The old EmailJS form and its script are
+    removed (the reference design has no form; the tiles replace it).
+  - `Recognition.astro` + `src/styles/recognition.css` — `RECOGNITION | SOCIALS` divider and the
+    two-column band.
+  - `Footer.astro` — `© Eric James Sonio | Personal Portfolio 2026` from `profile.js`, top border,
+    centred small mono text.
+  - `main.js` — certificate lightbox behaviour appended.
+- Files created: `src/data/certs.js`, `src/data/links.js`, `src/components/Certifications.astro`,
+  `src/components/Recognition.astro`, `src/styles/recognition.css`
+- Files edited: `Contact.astro`, `Footer.astro`, `src/components/LinkTile.astro` (bug fix),
+  `src/styles/footer.css`, `src/pages/index.astro`, `src/layouts/Layout.astro`, `public/scripts/main.js`
+- **Bug found and fixed during the gate:** the two URL-less tiles rendered as
+  `<div class="tile" href="" ...>`. Astro emitted an empty `href` on the `<div>` because the prop was
+  an empty string rather than `undefined`. Fixed with `href={href || undefined}`. Re-verified: **0**
+  `href=""` occurrences in the built HTML.
+- Gate results: **build ok** (1 page). Verified in `dist/index.html`: `RECOGNITION | SOCIALS` divider,
+  `CERTIFICATIONS` and `CONTACT` cards, the certifications empty state, "Find me on" / "Get in touch"
+  columns, a `tel:` link, a `mailto:` link, the LinkedIn URL, the footer line, **0 empty hrefs**,
+  **2 `<div class="tile">`** (Facebook, Messenger) and **4 `<a class="tile">`** (LinkedIn, GitHub,
+  Email, Phone), **0 empty anchors**, no `undefined` anywhere, and the old EmailJS form is gone.
+- Decisions:
+  - **Certifications empty state:** rather than inventing certificates from `content-seed.md`, the card
+    states plainly that none are listed yet and names the file to edit. Filling `certs` in
+    `src/data/certs.js` and adding the images makes the rows and the lightbox appear automatically.
+  - **Facebook / Messenger** render as non-interactive tiles because the existing site has no URLs.
+    Adding a URL in `src/data/links.js` turns each into a link with no markup change.
+  - **EmailJS form removed.** The reference contact section is a set of link tiles, not a form. The
+    EmailJS public key and service/template IDs are therefore no longer present anywhere in the repo.
+    If you want the form back, it can be re-added as a third card; say so in review.
+  - **Phone privacy:** kept as a `tel:` link in `src/data/links.js` (code only). It is deliberately
+    absent from `docs/`, the build log and the review report per AGENTS.md rule 9.
+- Issues: none.
+
 ## Phase 6: GitHub contributions
 
 - Plan:

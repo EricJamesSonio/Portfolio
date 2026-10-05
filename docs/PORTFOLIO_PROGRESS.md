@@ -10,7 +10,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 4 | Bento (Experience, Education, About, Tech Stack) | DONE | 4 data files, Timeline primitive, 35/65 grid, 26 chips, shields.io removed |
 | 5 | Projects (Featured + video grid) | DONE | 3 featured rows (laptop+phone mockups), 5 rows hidden, 4 dup cards removed |
 | 6 | GitHub contributions | DONE | React island (React 18 for Astro 4), orange palettes, inner scroll |
-| 7 | Certifications and Contact | TODO | |
+| 7 | Certifications and Contact | DONE | Empty cert state + lightbox, contact tiles, footer; fixed empty href bug |
 | 8 | Theme polish (ripple + audit) | TODO | |
 | 9 | AI chatbot | TODO | |
 | 10 | Content and data consolidation | TODO | |
