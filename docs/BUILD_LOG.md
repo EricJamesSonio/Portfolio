@@ -109,6 +109,44 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 10: Content and data consolidation
+
+- Plan:
+  - Audited the whole tree for duplicated literals with a repo-wide search for the name, email,
+    location, school, degree and GitHub URLs.
+  - Found and removed **three real duplications**:
+    1. `location` was defined in both `profile.js` and `links.js`.
+    2. `email` was hardcoded in `profile.js` and again in `links.js`.
+    3. The degree and school strings appeared in `experience.js`, `education.js` **and** `about.js`.
+  - Added `degree`, `degreeShort` and `school` to `profile.js` as the single source of truth, and made
+    `experience.js`, `education.js` and `about.js` import them.
+  - `links.js` now imports and re-exports `email` and `location` from `profile.js`, so the contact
+    tiles, the hero and the chatbot prompt all read the same values.
+  - `name` was only available on the default export, so it was promoted to a named export as well.
+  - Proofread the project copy and fixed a typo carried over from the original site
+    ("slitter" -> "slither-style", plus the run-on "that has ..., etc." sentence).
+- Files edited: `src/data/profile.js`, `experience.js`, `education.js`, `about.js`, `links.js`,
+  `projects.js`
+- Gate results: **build ok** (1 page, 37.9s). Verified:
+  - `Eric James Sonio` now has exactly **1** definition (in `profile.js`); every other hit is a comment
+    or documentation.
+  - `Pandi, Bulacan`: **1** definition; renders 2× in the page (hero + contact), as expected.
+  - `ericjamessonio7@gmail.com`: **1** definition; renders 2× (hero `mailto:` + contact tile).
+  - `College of Mary Immaculate`: 1 value definition, referenced from the two timelines and About.
+  - `BS Computer Science — 4th Year`: renders exactly **2×** (Experience + Education timelines).
+  - About paragraph reads cleanly: "I'm Eric James Sonio, a 4th-year Computer Science student at
+    College of Mary Immaculate, ..." with no leftover template artifacts.
+  - The Sweetify description typo is fixed; featured rows still render 3; the chatbot island is present;
+    no `undefined` anywhere.
+- Notes:
+  - Two apparent problems were **false alarms** worth recording: `${` occurrences in the built HTML come
+    from Astro's own island-hydration runtime, not from my copy; and the degree appeared to be missing
+    only because PowerShell read the file as ANSI and mangled the em-dash. Re-read with `-Encoding UTF8`
+    it is present exactly twice. **Lesson: read built HTML as UTF-8 when checking em-dashes or curly quotes.**
+  - The chatbot prompt was re-tested after the refactor and still resolves the name, school and email
+    correctly, and still excludes the phone number.
+- Issues: none.
+
 ## Phase 9: AI chatbot
 
 - Plan:

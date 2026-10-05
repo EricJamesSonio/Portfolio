@@ -1,3 +1,5 @@
+import { email, location } from './profile.js';
+
 /**
  * Socials and contact links.
  *
@@ -5,10 +7,14 @@
  * Per AGENTS.md rule 9 and the Default decisions table, the phone number stays in this file (code
  * only) and is never copied into docs, logs or the review report.
  *
+ * `email` and `location` are re-exported from `profile.js` so there is exactly one definition
+ * of each; the chatbot prompt and the hero read the same values from there.
+ *
  * TODO (owner):
  *   - `facebook` and `messenger` were not present on the existing site. Fill in the URLs, or leave
  *     them empty: a tile with no `href` renders as a non-interactive `div`, never a dead link.
  */
+export { email, location };
 export const socials = [
   {
     label: 'LinkedIn',
@@ -34,7 +40,7 @@ export const contacts = [
   {
     label: 'Email',
     sub: 'Send a message',
-    url: 'mailto:ericjamessonio7@gmail.com',
+    url: `mailto:${email}`,
     icon: 'M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2.1 1.4L12 12l7.9-5.6zM4 19h16V7.4l-8 5.6-8-5.6z',
   },
   {
@@ -51,6 +57,5 @@ export const contacts = [
   },
 ];
 
-export const location = 'Pandi, Bulacan';
 
 export default { socials, contacts, location };

@@ -17,6 +17,16 @@ export const resume = null;
 /** Public email from the existing Contact component (mailto: link used by the hero). */
 export const email = 'ericjamessonio7@gmail.com';
 
+/**
+ * Degree currently being taken. Shared by the Experience and Education timelines and by
+ * the About copy, so the wording can never drift between the three.
+ */
+export const degree = 'BS Computer Science — 4th Year';
+export const school = 'College of Mary Immaculate';
+
+/** Natural-language form of the degree, used in prose (the About copy and the chatbot). */
+export const degreeShort = 'Computer Science student';
+
 /** Year shown in the top divider caption, e.g. "ERIC JAMES SONIO || PORTFOLIO 2026". */
 export const portfolioYear = 2026;
 
@@ -30,12 +40,18 @@ export const portrait = '/Portfolio/assets/images/eric.jpg';
  */
 export const portraitHoverVideo = null;
 
+/** Owner's full name, also used by the About copy, the chatbot greeting and the footer. */
+export const name = 'Eric James Sonio';
+
 export default {
-  name: 'Eric James Sonio',
+  name,
   role,
   location,
   resume,
   email,
+  degree,
+  degreeShort,
+  school,
   portfolioYear,
   portrait,
   portraitHoverVideo,

@@ -9,12 +9,14 @@
  * the existing site does not state it, so `codingSince` is null and the header omits the year
  * until you fill it in. Set it to a number to switch the header on.
  */
+import { degree, school } from './profile.js';
+
 export const codingSince = null;
 
 export const experience = [
   {
-    title: 'BS Computer Science — 4th Year',
-    sub: 'College of Mary Immaculate',
+    title: degree,
+    sub: school,
     year: 'Current',
     active: true,
   },

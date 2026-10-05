@@ -5,10 +5,12 @@
  * student). Earlier stages were not listed on the existing site, so they are TODO placeholders
  * for the owner to fill in. Nothing is invented here.
  */
+import { degree, school } from './profile.js';
+
 export const education = [
   {
-    title: 'BS Computer Science — 4th Year',
-    sub: 'College of Mary Immaculate',
+    title: degree,
+    sub: school,
     year: 'Current',
     active: true,
   },
