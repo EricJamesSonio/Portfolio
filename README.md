@@ -1,4 +1,4 @@
-# Eric James Sonio - Portfolio (Astro)
+﻿# Eric James Sonio - Portfolio (Astro)
 
 A single-page developer portfolio in the **mono + orange editorial** style: monospace type
 throughout, one orange accent, flat bordered cards, letter-spaced divider captions, a bento
@@ -13,10 +13,11 @@ Built with **Astro 4 + plain CSS**. React is used only for two small islands
 ## Quick start
 
 ```bash
+cd Code            # package.json lives here
 npm install
-npm run dev      # http://localhost:4321
-npm run build    # outputs to dist/
-npm run preview  # serve the built site
+npm run dev      # http://localhost:4321/Portfolio/
+npm run build    # -> Code/dist
+npm run preview
 ```
 
 > The site is served under the `/Portfolio` base path (`base` in `astro.config.mjs`).
@@ -27,22 +28,27 @@ npm run preview  # serve the built site
 ## Project structure
 
 ```
-public/
-  assets/images/     screenshots, portrait, certificate images
-  assets/videos/     project demo videos (.mp4)
-  favicon.svg, robots.txt, sitemap.xml
-  scripts/main.js    video lazy loading, filters, lightbox, smooth scroll
-api/
-  chat.js            serverless function for the AI assistant (Vercel style)
-src/
-  components/        .astro sections + react/ islands
-  data/              ALL content lives here (see below)
-  layouts/Layout.astro
-  pages/index.astro
-  styles/            one CSS file per section + base.css + ui.css
-.env.example         chatbot env var NAMES only
-docs/                progress, build log, review report
+Code/                    <- run npm commands from HERE
+  api/chat.js            serverless function for the AI assistant (Vercel style)
+  public/assets/images/  screenshots, portrait, certificate images
+  public/assets/videos/  project demo videos (.mp4)
+  public/favicon.svg, robots.txt, sitemap.xml
+  public/scripts/main.js video lazy loading, filters, lightbox, smooth scroll
+  src/
+    components/          .astro sections + react/ islands
+    data/                ALL content lives here (see below)
+    layouts/Layout.astro
+    pages/index.astro
+    styles/              one CSS file per section + base.css + ui.css
+  astro.config.mjs
+  package.json
+  .env.example           chatbot env var NAMES only
+docs/                    progress, build log, review report
+skills/                  agent skill definitions
+.github/workflows/       GitHub Actions
 ```
+
+> All paths below are relative to `Code/`.
 
 ---
 
@@ -154,10 +160,47 @@ If you move to a custom domain, update `base` and `site` in `astro.config.mjs`, 
 
 ## Unused-but-kept files
 
-`src/components/Navbar.astro` and `src/styles/navbar.css` are **not rendered** - the reference
+`Code/src/components/Navbar.astro` and `Code/src/styles/navbar.css` are **not rendered** - the reference
 design is a single scroll with no navbar - but they are kept in the repo so the navbar can be
 restored. Delete them if you do not want them back.
 
-`public/assets/videos/` still contains four videos whose cards were replaced by featured project
+`Code/public/assets/videos/` still contains four videos whose cards were replaced by featured project
 rows (`edutool.mp4`, `edutool2.mp4`, `votingsystem.mp4`, `apptel.mp4`, ~59 MB total). They are
 harmless but unused, and can be deleted.
+---
+
+## Folder structure
+
+The repo root holds documentation and CI config only. Everything needed to **build or run** the
+site lives in **`Code/`**.
+
+```
+Porttfolio/
++- Code/                    <- the application (run npm commands HERE)
+�  +- api/chat.js           serverless function for the AI assistant (Vercel style)
+�  +- public/               static files copied verbatim to dist/ (images, videos, favicon)
+�  +- src/                  components, data, layouts, pages, styles
+�  +- astro.config.mjs
+�  +- package.json
+�  +- .env.example
++- docs/                    progress, build log, review report
++- skills/                  agent skill definitions
++- .github/workflows/       GitHub Actions (builds Code/ -> publishes Code/dist)
++- .gitignore
++- AGENTS.md
++- README.md
+```
+
+### Running it
+
+```bash
+cd Code
+npm install       # first time only
+npm run dev       # http://localhost:4321/Portfolio/
+npm run build     # -> Code/dist
+npm run preview
+```
+
+> **Always `cd Code` first.** `npm install`, `npm run dev`, `npm run build` and `npm run preview`
+> must be run from inside `Code/`, because that is where `package.json` lives.
+> Opening a terminal at the repo root and running `npm install` will fail.

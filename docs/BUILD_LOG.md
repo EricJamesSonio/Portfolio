@@ -672,3 +672,39 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   via `.gitignore`-adjacent handling (Astro regenerates it; it is committed below for completeness).
 - Gate: `npm run build` passes; no section changes yet so the 375 px / both-themes checks are N/A for P0.
 
+
+---
+
+## Post-review change: folder reorganization
+
+At the owner's request, everything needed to **build or run** the site was moved into a **`Code/`**
+folder so the repo root holds only documentation and CI config.
+
+- **Moved into `Code/`:** `api/`, `public/`, `src/`, `astro.config.mjs`, `package.json`,
+  `package-lock.json`, `.env.example`, and `.nojekyll`. All done with `git mv` so file history is
+  preserved (git records them as renames).
+- **Moved out of the root:** `node_modules` was relocated to `Code/node_modules`; the stale root
+  `.astro/` and `dist/` were deleted (both are regenerable and gitignored).
+- **Stayed at the repo root:** `docs/`, `skills/`, `.github/`, `.gitignore`, `AGENTS.md`, `README.md`.
+  `.github/` **must** stay at the root for GitHub Actions to find it.
+- **Deploy workflow updated** (`.github/workflows/deploy.yml`): `working-directory: Code` on the
+  install and build steps, and the artifact path changed from `./dist` to `Code/dist`.
+- **`.nojekyll` moved into `Code/public/`.** This is a genuine bug fix: the file sat at the repo root
+  and was therefore **never copied into `dist/`**, so GitHub Pages was never told to skip Jekyll.
+  Now that it lives in `public/`, Astro copies it into the build output (verified present in
+  `Code/dist/.nojekyll`).
+- **Image path resolution made CWD-independent.** `src/data/projects.js` and `certs.js` resolved
+  `public/assets/images/` through `process.cwd()`, which only worked when the build ran from the
+  project root. They now resolve from `import.meta.url` (`../../public/assets/images/`), so they
+  are correct regardless of the directory the build is launched from - which matters now that the
+  working directory is `Code/`.
+- **Docs updated:** `README.md` gained a "Folder structure" section with an explicit `cd Code`
+  instruction (running `npm install` at the repo root will now fail), and both the README and the
+  review report had their file paths re-prefixed with `Code/`.
+- Verification: `npm run build` re-run from `Code/` -> **build ok**, output in `Code/dist`.
+  All content preserved: 5 divider captions with correct text, 3 featured rows, 11 video cards,
+  4 link tiles + 2 non-interactive tiles, 5 images with alt text, both React islands, no
+  `undefined` leakage, and all 5 images / 15 videos present. Media inventory unchanged.
+- Note: the first post-move build took ~300 s because Vite had to rebuild its dependency cache at
+  the new `node_modules` path. Subsequent builds are back to the normal ~40 s.
+- `base: '/Portfolio'` is unchanged, so the deployed site URL and every asset path are unaffected.

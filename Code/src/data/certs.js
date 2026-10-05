@@ -14,8 +14,8 @@
  */
 export const certs = [];
 
-/** Absolute path to the image folder (see the note in projects.js for why not a relative URL). */
-const IMG_DIR = new URL('public/assets/images/', `file:///${process.cwd().replace(/\\/g, '/')}/`);
+/** Absolute path to the image folder (resolved from this file, see the note in projects.js). */
+const IMG_DIR = new URL('../../public/assets/images/', import.meta.url);
 const fs = await import('node:fs/promises');
 
 export async function getCerts() {

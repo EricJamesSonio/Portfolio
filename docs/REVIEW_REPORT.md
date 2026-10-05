@@ -1,4 +1,4 @@
-# Review Report
+﻿# Review Report
 
 ## Summary
 
@@ -71,7 +71,7 @@ Several were invisible until the built HTML was inspected:
    `<Divider>TEXT</Divider>` as slot content. Every caption rendered blank. Fixed to `<slot />`.
 2. **Broken build (infinite hang)** - a dynamic `await import()` in the chatbot prompt builder
    could not be resolved by the Vite client build. Replaced with a static import.
-3. **Fragile image path** - featured-project images resolved relative to `src/data/`, pointing at
+3. **Fragile image path** - featured-project images resolved relative to `Code/src/data/`, pointing at
    a nonexistent `src/assets/images/`. Worked under Vite but returned zero projects under plain
    Node. Now resolved through `process.cwd()`.
 4. **Invalid href=""** - URL-less link tiles rendered as `<div class="tile" href="">`.
@@ -91,7 +91,7 @@ Several were invisible until the built HTML was inspected:
    (body 3.49:1, muted 2.77:1, faint 2.12:1). I kept the same neutral-grey family and hierarchy but
    darkened the values to meet 4.5:1, and made link orange a deep `#5f210d` instead of
    `orange-600 at 70%`. It still reads as the single orange accent. If you prefer exact parity with
-   the reference over readability, all values are in `src/styles/base.css`.
+   the reference over readability, all values are in `Code/src/styles/base.css`.
 3. **The EmailJS contact form was removed.** The reference contact section is link tiles, not a
    form. The EmailJS key/service/template IDs are no longer anywhere in the repo. Say the word and
    I will add the form back as a third card.
@@ -114,17 +114,17 @@ adding the content updates the UI by itself:
 
 | # | TODO | Where | Effect once supplied |
 |---|---|---|---|
-| 1 | **`public/Resume.pdf`** | `resume` in `src/data/profile.js` | GET RESUME becomes a real download link |
+| 1 | **`public/Resume.pdf`** | `resume` in `Code/src/data/profile.js` | GET RESUME becomes a real download link |
 | 2 | **Screenshots for 5 featured projects** (TechHub, NavSumaro, InterviewSpark, StartSmart, My Portfolio) | `public/assets/images/<slug>-mockup.png` | 5 currently-hidden featured rows appear |
 | 3 | **Mobile screenshots** for Voting System and Apptel | `<slug>-mobile.png` | placeholder phones become real ones |
-| 4 | **Per-project tech chips** | `tech: []` in `src/data/projects.js` | chips render under each description |
-| 5 | **Live URLs** for projects | `link: ''` in `src/data/projects.js` | a "View Project" button appears |
-| 6 | **Certifications + images** | `src/data/certs.js` | empty state becomes rows + lightbox |
-| 7 | **Facebook URL** | `src/data/links.js` | the Facebook tile becomes a link |
-| 8 | **Messenger URL** | `src/data/links.js` | the Messenger tile becomes a link |
-| 9 | **"Coding since" year** | `codingSince` in `src/data/experience.js` | the CODING SINCE header appears |
-| 10 | **Earlier education stages** | `src/data/education.js` | more timeline rows |
-| 11 | **Portrait hover video** | `portraitHoverVideo` in `src/data/profile.js` | portrait plays a loop on hover/tap |
+| 4 | **Per-project tech chips** | `tech: []` in `Code/src/data/projects.js` | chips render under each description |
+| 5 | **Live URLs** for projects | `link: ''` in `Code/src/data/projects.js` | a "View Project" button appears |
+| 6 | **Certifications + images** | `Code/src/data/certs.js` | empty state becomes rows + lightbox |
+| 7 | **Facebook URL** | `Code/src/data/links.js` | the Facebook tile becomes a link |
+| 8 | **Messenger URL** | `Code/src/data/links.js` | the Messenger tile becomes a link |
+| 9 | **"Coding since" year** | `codingSince` in `Code/src/data/experience.js` | the CODING SINCE header appears |
+| 10 | **Earlier education stages** | `Code/src/data/education.js` | more timeline rows |
+| 11 | **Portrait hover video** | `portraitHoverVideo` in `Code/src/data/profile.js` | portrait plays a loop on hover/tap |
 | 12 | **Video poster frames** | - | videos show a still before loading |
 
 Optional: your hero role reads `Fullstack Developer - Backend Specialist` (your existing wording).
@@ -140,10 +140,10 @@ The reference uses a tighter 3-word role - change `role` in `profile.js` if you 
 
 | File | Size | Why |
 |---|---|---|
-| `public/assets/videos/apptel.mp4` | 34.5 MB | card replaced by a featured row |
-| `public/assets/videos/edutool2.mp4` | 19.9 MB | card replaced by a featured row |
-| `public/assets/videos/votingsystem.mp4` | 3.4 MB | card replaced by a featured row |
-| `public/assets/videos/edutool.mp4` | 1.3 MB | card replaced by a featured row |
+| `Code/public/assets/videos/apptel.mp4` | 34.5 MB | card replaced by a featured row |
+| `Code/public/assets/videos/edutool2.mp4` | 19.9 MB | card replaced by a featured row |
+| `Code/public/assets/videos/votingsystem.mp4` | 3.4 MB | card replaced by a featured row |
+| `Code/public/assets/videos/edutool.mp4` | 1.3 MB | card replaced by a featured row |
 
 **~59 MB of unreferenced video.** Safe to delete; nothing references them.
 
@@ -173,22 +173,25 @@ gitignored. Verified: no `gsk_*` key appears anywhere in the source or the built
 
 ### Hosting the chatbot - IMPORTANT
 
-`api/chat.js` is written for **Vercel** and needs no configuration there.
+`Code/api/chat.js` is written for **Vercel** and needs no configuration there.
 
 **This repo deploys to GitHub Pages, which cannot execute serverless functions.** Until the site is
 hosted on Vercel or Netlify, the chat button appears and works, but replies with a friendly
 "assistant unavailable" message instead of erroring. This is the one piece that needs your action.
 
-- **Vercel** - keep `api/chat.js` as is; add `GROQ_API_KEY` (and optionally `GROQ_MODEL`) to the
+- **Vercel** - keep `Code/api/chat.js` as is; add `GROQ_API_KEY` (and optionally `GROQ_MODEL`) to the
   project environment variables. Use `vercel dev` locally.
-- **Netlify** - copy `api/chat.js` to `netlify/functions/chat.js`; set the same variables.
+- **Netlify** - copy `Code/api/chat.js` to `netlify/functions/chat.js`; set the same variables.
 
 ### Commands
 
+Run these from inside `Code/` (that is where `package.json` lives):
+
 ```bash
+cd Code
 npm install
 npm run dev      # http://localhost:4321/Portfolio/
-npm run build    # -> dist/
+npm run build    # -> Code/dist
 npm run preview
 ```
 
@@ -253,10 +256,10 @@ Use these ready-made prompts (from `skills/astro-portfolio-upgrade/references/ag
 
 - **"Resume the portfolio upgrade loop."** - pick up from the progress file at the first unfinished phase.
 - **"Run only Phase N."** - re-run a single phase.
-- **"Add certifications to the portfolio."** - fill in `src/data/certs.js` with a list, then build.
+- **"Add certifications to the portfolio."** - fill in `Code/src/data/certs.js` with a list, then build.
 - **"Add a featured project: <name>."** - add one entry to the `featured` array plus its images.
 - **"Fix: <specific problem>."** - a targeted single-phase fix.
 - **"Review the portfolio build and list issues."** - a fresh audit against the quality checklist.
 
-Every edit you make should go in `src/data/`. Components read from there, and the chatbot prompt is
+Every edit you make should go in `Code/src/data/`. Components read from there, and the chatbot prompt is
 generated from the same files, so one change updates the page and the assistant together.

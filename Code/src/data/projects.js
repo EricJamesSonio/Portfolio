@@ -24,12 +24,12 @@
 /**
  * Absolute path to the user's image folder.
  *
- * This module lives in `src/data/`, but the images live in `public/assets/images/`, so a
- * relative `../assets/images/` would resolve to `src/assets/images/` (which does not exist)
- * when the module is loaded directly by Node. Resolve through `process.cwd()` instead, which
- * is the project root under both `astro build` and `node`.
+ * Resolved relative to THIS file, not `process.cwd()`, so it stays correct no matter
+ * which directory the build is launched from. This module sits at
+ * `Code/src/data/projects.js` and the images live at `Code/public/assets/images/`,
+ * so two levels up is the `Code/` root.
  */
-const IMG_DIR = new URL('public/assets/images/', `file:///${process.cwd().replace(/\\/g, '/')}/`);
+const IMG_DIR = new URL('../../public/assets/images/', import.meta.url);
 const VIDEO_DIR = '/Portfolio/assets/videos/';
 
 /** Featured rows. `tech` and `link` are intentionally empty until the owner supplies them. */
