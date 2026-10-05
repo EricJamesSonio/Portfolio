@@ -30,8 +30,8 @@ export const socials = [
   },
   {
     label: 'Facebook',
-    sub: '',
-    url: '',
+    sub: 'ericjamessoni0',
+    url: 'https://www.facebook.com/ericjamessoni0',
     icon: 'M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12',
   },
 ];
@@ -39,7 +39,9 @@ export const socials = [
 export const contacts = [
   {
     label: 'Email',
-    sub: 'Send a message',
+    // The actual address, not "Send a message": the visitor cannot see a mailto: href, so a
+    // tile that only says "Email" tells them nothing. `tile-sub` truncates, so it stays tidy.
+    sub: email,
     url: `mailto:${email}`,
     icon: 'M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2.1 1.4L12 12l7.9-5.6zM4 19h16V7.4l-8 5.6-8-5.6z',
   },
@@ -51,8 +53,8 @@ export const contacts = [
   },
   {
     label: 'Messenger',
-    sub: '',
-    url: '',
+    sub: 'ericjamessoni0',
+    url: 'https://m.me/ericjamessoni0',
     icon: 'M12 2C6.3 2 2 6.2 2 11.8c0 3.2 1.5 6 3.8 7.8V23l3.3-1.8c.9.3 1.9.4 2.9.4 5.7 0 10-4.2 10-9.8S17.7 2 12 2m1 13.6-2.5-2.7-4.9 2.7L11 9.9l2.6 2.7 4.8-2.7z',
   },
 ];

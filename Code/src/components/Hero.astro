@@ -46,16 +46,20 @@ const hasHoverVideo = !!portraitHoverVideo;  // no hover video in the repo -> st
         <a class="btn btn-secondary" href={`mailto:${email}`}>Email Me</a>
       </div>
 
-      <!-- Theme switch: pill with a sliding sun/moon knob -->
+      <!-- Theme switch: pill with a sliding sun/moon knob. The button is a transparent 44px
+           tap target and the visible pill (.theme-track) sits inside it, so the touch target
+           never distorts the switch's proportions. -->
       <div class="hero-theme">
         <button id="theme-toggle" class="theme-switch" type="button" aria-label="Toggle colour theme" aria-pressed="false">
-          <span class="theme-knob" aria-hidden="true">
-            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+          <span class="theme-track" aria-hidden="true">
+            <span class="theme-knob">
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
               <path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10m0 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1m0-16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1m8 11h-1a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2M6 13H5a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2m11.66-6.66a1 1 0 0 1 0 1.41l-.7.71a1 1 0 1 1-1.42-1.42l.71-.7a1 1 0 0 1 1.41 0m-14.14 1.41a1 1 0 0 1 0-1.41l.7-.7a1 1 0 1 1 1.42 1.41l-.71.71a1 1 0 0 1-1.41 0M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0" />
             </svg>
-            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
               <path d="M12.3 2a9 9 0 0 0 9.7 13.4A9 9 0 1 1 12.3 2" />
             </svg>
+            </span>
           </span>
         </button>
         <span class="theme-label" id="theme-label">Light</span>

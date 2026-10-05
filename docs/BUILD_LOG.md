@@ -1158,3 +1158,126 @@ Rendered-HTML audit (`dist/index.html`):
 
 No media, data content or URLs were changed. No phone number, address or private email written to
 any file. Not pushed or deployed; the commit is local on `portfolio-upgrade` only.
+
+---
+
+## Phase 19 - Owner fixes: email, socials, graph size, resume, theme switch, chat head
+
+Six owner-requested fixes. Two were genuine bugs rather than restyling.
+
+### 1. The email address was invisible
+
+The Email contact tile said `sub: 'Send a message'`. The address existed only inside the
+`mailto:` href, which a visitor cannot see - so the tile told them nothing about how to reach him.
+
+`src/data/links.js` now sets `sub: email` (the value already imported from `profile.js`, still a
+single source of truth). The tile keeps its icon and `mailto:` href, so it is now both readable and
+clickable. `.tile-sub` truncates with an ellipsis, so a long address stays tidy.
+
+### 2. Facebook and Messenger were dead tiles
+
+Both had `url: ''`. `LinkTile.astro` deliberately renders an empty-href tile as a non-interactive
+`<div>` rather than an `<a>` without href, so both were unclickable. The owner supplied the
+Facebook profile:
+
+- Facebook -> `https://www.facebook.com/ericjamessoni0`, `sub: 'ericjamessoni0'`
+- Messenger -> `https://m.me/ericjamessoni0`, `sub: 'ericjamessoni0'` (standard Messenger deep
+  link; resolves to the same profile)
+
+Both now render as real `<a target="_blank" rel="noreferrer">` links automatically, because
+`isExternal` is derived from the href. The icon paths were already correct and were left alone.
+
+### 3. GitHub contributions graph was too small
+
+`GithubGraph.jsx` hardcoded `blockSize={isDark ? 11 : 14}` - 11px in dark mode, which is the tiny
+grid in the owner's screenshot. Cell size is now responsive state:
+
+- >= 768px -> 18px
+- >= 480px -> 14px
+- below  -> 11px
+
+Driven by two `matchMedia` listeners (768 and 480) rather than a resize handler, so it only fires
+when a threshold is actually crossed; both are removed on unmount. `blockMargin` 4 -> 5 and
+`fontSize` 13 -> 15 so the labels scale with the cells. `showYearSelect` was KEPT - the owner
+confirmed it matches the reference. `blockRadius={0}` and the neon-blue per-theme palettes are
+unchanged.
+
+`.gh-panel-wrap` keeps `overflow-x: auto`, which is now load-bearing rather than decorative: at
+18px the 53-week grid is wider than a phone, and that rule keeps the overflow INSIDE the panel so
+the page never scrolls sideways (AGENTS.md rule 10). Wrapper padding 16 -> 20px for the bigger cells.
+
+### 4. Resume is now live
+
+`public/resume.docx` was already in the repo (16,376 bytes, magic bytes `50 4B 03 04` = valid
+OOXML), but `profile.js` still had `resume = null`, so GET RESUME rendered as a disabled
+`TODO` span. Set to `/Portfolio/resume.docx`, which activates the anchor and the `download`
+attribute. Astro copies the file into `dist/` (verified: `dist/resume.docx`, 16,376 bytes).
+
+Note: a `.docx` downloads rather than opening in the browser. A `.pdf` would open inline and is
+friendlier to recruiters, but converting it needs Word/LibreOffice - outside the allowed dependency
+list (rule 4) - so the supplied file is linked as-is. Flagged to the owner.
+
+### 5. Theme switch looked broken (real bug)
+
+The owner's screenshot showed a tall grey lozenge with the knob floating high inside it. Cause was
+a CSS contradiction in `hero.css`:
+
+```css
+.theme-switch { height: 28px; min-height: 44px; }   /* min-height wins -> 44px tall */
+.theme-knob   { margin-top: -8px; }                   /* hack to prop it back up */
+```
+
+The switch declared both a 28px height and a 44px min-height, so it rendered **44px tall** with a
+20px knob, and a negative margin pulled the knob upward to compensate. `translateX(28px)` was also
+hardcoded, so the slide could not track a change to the track width.
+
+Rebuilt with the hit area and the pill as separate boxes:
+
+- `.theme-switch` - transparent button, `min-height: 44px`, imposes NO height on the pill.
+- `.theme-track` - the visible pill: 64x32, `padding: 4px`, owns `--switch-track` / `--switch-knob`
+  / `--switch-pad` as custom properties.
+- `.theme-knob` - 26x26, neon `--accent` fill with near-black glyph (same treatment as the chatbot
+  FAB). The `margin-top: -8px` hack is **deleted**.
+- Travel is computed: `translateX(calc(var(--switch-track) - var(--switch-knob) - var(--switch-pad) * 2))`
+  = 30px, so the knob lands flush against the far padding and cannot drift from the geometry.
+- Hover now tints the track border with the accent.
+
+`Hero.astro` gained the `.theme-track` wrapper and both icons went 12px -> 14px.
+
+### 6. Chat head redesigned
+
+The header avatar was a round neon circle containing the letter "E" - the only rounded element on a
+site that is otherwise flat and square-cornered (cards, tiles, dividers, chips).
+
+`.chat-avatar` is now a 40px square with `border-radius: 0`, a 1px accent border and a panel
+background, holding a `>_` terminal prompt mark (`.chat-prompt`). The prompt reads as a command line,
+which suits a monospace portfolio and signals "assistant" without relying on an initial. Glyph
+colour is `--accent-text`, so it stays AA-readable on the panel in both themes - the old neon fill
+is decorative-only, so this is a contrast improvement too. `.chat-mini-avatar` (22px) got the same
+treatment in each bot bubble and in the "Typing..." row.
+
+All three marks are `aria-hidden`; the real accessible name is still the `.chat-name` text beside
+them. `profile.name.charAt(0)` no longer appears anywhere in the Chatbot bundle.
+
+### Verification
+
+`npm run build` from `Code/` -> **clean, 0 errors, 0 warnings**.
+
+Compiled-HTML audit (`dist/index.html`):
+- `class="btn btn-primary" href="/Portfolio/resume.docx"` with text `Get Resume`; `btn-todo`
+  appears **0 times** - the disabled TODO state is gone.
+- `facebook.com/ericjamessoni0`, `m.me/ericjamessoni0` and the email address all present.
+- `<div class="tile">` count is **0** - no non-interactive contact tiles remain.
+- Theme switch markup nests correctly: `button.theme-switch > span.theme-track > span.theme-knob > svg`.
+- Chatbot bundle contains `chat-prompt`; **0** occurrences of `charAt`.
+- GithubGraph bundle contains the 768 / 480 breakpoints, `blockSize`, `blockMargin` and
+  `showYearSelect`.
+
+Compiled-CSS audit: `.theme-switch` has no `height`, `.theme-track` is 64x32, the dark knob transform
+is the `calc(...)`, `.chat-avatar` / `.chat-mini-avatar` are square with `border-radius:0`, and
+`.gh-panel-wrap` keeps `overflow-x:auto`.
+
+`dist/resume.docx` present at 16,376 bytes.
+
+No phone number or private email was written to any file, doc or log here (rule 9); the chatbot
+prompt was re-checked and still contains no phone number. Not pushed or deployed.

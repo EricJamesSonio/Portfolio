@@ -92,17 +92,28 @@
   flex-shrink: 0;
 }
 .chat-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
+/* Header avatar: a square "terminal prompt" block rather than a round letter blob. The rest of
+   the site is flat and square-cornered (cards, tiles, dividers), so a circle was the odd one
+   out. `>_` reads as a command prompt, which suits a monospace portfolio and says "assistant"
+   without needing the initial. Fully decorative - the real name is `.chat-name` beside it. */
 .chat-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  border: 1px solid var(--accent);
   display: grid;
   place-items: center;
-  background: var(--accent);
-  color: #000000;          /* bright neon fill: near-black reads on it in both themes */
-  font-weight: 700;
-  font-size: 1rem;
+  background: var(--bg-panel);
+  color: var(--accent-text);   /* readable accent text on the panel in BOTH themes */
   flex-shrink: 0;
+}
+.chat-prompt {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  white-space: nowrap;
 }
 .chat-id-text { display: flex; flex-direction: column; min-width: 0; }
 .chat-name {
@@ -145,16 +156,18 @@
 .chat-msg { display: flex; gap: 6px; align-items: flex-end; max-width: 100%; }
 .chat-msg.user { justify-content: flex-end; }
 .chat-mini-avatar {
-  width: 20px; height: 20px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #000000;          /* bright neon fill: near-black reads on it in both themes */
-  font-size: 12px;
-  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 0;
+  border: 1px solid var(--accent);
+  background: var(--bg-panel);
+  color: var(--accent-text);   /* readable accent text on the panel in BOTH themes */
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
+/* The same prompt mark as the header, scaled down. */
+.chat-mini-avatar .chat-prompt { font-size: 11px; }
 
 /* whitespace-pre-wrap preserves the model's line breaks and bullets */
 .chat-bubble {

@@ -12,8 +12,14 @@ export const role = 'Fullstack Developer · AI-Engineer';
 /** Location from the existing Contact section. */
 export const location = 'Pandi, Bulacan';
 
-/** TODO: supply `public/Resume.pdf`. Until it exists the GET RESUME button renders disabled. */
-export const resume = null;
+/**
+ * Resume file, linked by the hero's GET RESUME button.
+ * The owner supplied `public/resume.docx` (16 KB, valid OOXML) on 2026-10-10, so this is no
+ * longer a TODO. A `.docx` downloads via the button's `download` attribute rather than opening
+ * in the browser; a `.pdf` would open inline, but converting it is outside the allowed
+ * dependency list (AGENTS.md rule 4), so the supplied file is linked as-is.
+ */
+export const resume = '/Portfolio/resume.docx';
 
 /** Public email from the existing Contact component (mailto: link used by the hero). */
 export const email = 'ericjamessonio7@gmail.com';

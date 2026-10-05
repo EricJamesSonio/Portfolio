@@ -137,43 +137,69 @@
   opacity: 0.8;
 }
 
-/* ---- Theme switch: pill + sliding knob ---- */
+/* ---- Theme switch: pill + sliding knob ----
+   The track and the hit area are now SEPARATE boxes. Previously `.theme-switch` declared both
+   `height: 28px` and `min-height: 44px`; min-height won, so the pill rendered 44px tall while
+   the knob was only 20px, and a `margin-top: -8px` hack on the knob propped it back up. That
+   is why the track read as a tall grey lozenge with the knob floating high inside it.
+   The 44px touch target now lives on the transparent `.theme-switch` wrapper, so `.theme-track`
+   can be a real 32px pill that centres its knob. */
 .hero-theme {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 12px;
 }
+/* Transparent, 44px tall: the tap target. It must not impose a height on the pill inside it. */
 .theme-switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 64px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.theme-track {
+  /* The geometry the knob slide is derived from - see --switch-travel below. */
+  --switch-track: 64px;
+  --switch-knob: 26px;
+  --switch-pad: 4px;
+
   position: relative;
-  width: 56px;
-  height: 28px;
+  display: flex;
+  align-items: center;
+  width: var(--switch-track);
+  height: 32px;
+  padding: var(--switch-pad);
   border-radius: 999px;
   background: var(--bg-panel-2);
   border: 1px solid var(--border-inner);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 1px;
-  /* pad the hit area to 44px on touch */
-  min-height: 44px;
-  min-width: 56px;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
-  transition: background-color 0.3s var(--ease);
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
+.theme-switch:hover .theme-track { border-color: var(--accent); }
+
 .theme-knob {
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: var(--switch-knob);
+  height: var(--switch-knob);
   border-radius: 999px;
-  background: var(--bg-card);
-  color: var(--accent);
+  background: var(--accent);
+  color: #000000;            /* bright neon fill: near-black reads on it in BOTH themes */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   transition: transform 0.3s var(--ease);
-  margin-top: -8px;          /* optically centre the knob in the pill */
 }
-[data-theme="dark"] .theme-knob { transform: translateX(28px); }
+/* Travel is computed from the track and knob, not hardcoded, so the knob always ends flush
+   against the far padding instead of landing 4px short. */
+[data-theme="dark"] .theme-knob {
+  transform: translateX(
+    calc(var(--switch-track) - var(--switch-knob) - var(--switch-pad) * 2)
+  );
+}
 
 .theme-icon { grid-area: 1 / 1; }
 .theme-icon-moon { display: none; }

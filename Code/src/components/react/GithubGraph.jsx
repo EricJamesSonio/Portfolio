@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
 
-/**
- * Contribution graph island.
- * - Neon-blue 5-step palettes per theme, square cells (blockRadius 0)
- * - Re-renders when the page theme changes (reads the `themechange` event)
- * - The panel scrolls horizontally INSIDE itself on phones so the page never overflows
- */
 export default function GithubGraph({ username, profileUrl, theme }) {
   const [isDark, setIsDark] = useState(false);
+  // Cell size in px. The graph used to be hardcoded to 11px in dark mode, which rendered the
+  // 53-week grid tiny and made it look sparse. These are the sizes that read well at each width;
+  // the wrapper still scrolls horizontally on phones (AGENTS.md rule 10: no PAGE-level overflow
+  // at 375px), so the larger desktop cells can never widen the page.
+  const [blockSize, setBlockSize] = useState(11);
 
   useEffect(() => {
     const apply = () => {
@@ -20,6 +19,24 @@ export default function GithubGraph({ username, profileUrl, theme }) {
     apply();
     window.addEventListener('themechange', apply);
     return () => window.removeEventListener('themechange', apply);
+  }, []);
+
+  // Re-size the cells when the viewport crosses a breakpoint. A `matchMedia` listener rather
+  // than a resize handler, so it only fires when the relevant threshold is actually crossed.
+  useEffect(() => {
+    const wide = window.matchMedia('(min-width: 768px)');
+    const mid = window.matchMedia('(min-width: 480px)');
+    const apply = () =>
+      setBlockSize(
+        window.innerWidth >= 768 ? 18 : window.innerWidth >= 480 ? 14 : 11
+      );
+    apply();
+    wide.addEventListener('change', apply);
+    mid.addEventListener('change', apply);
+    return () => {
+      wide.removeEventListener('change', apply);
+      mid.removeEventListener('change', apply);
+    };
   }, []);
 
   // Keep in sync if the OS preference changes while using dark mode.
@@ -39,9 +56,9 @@ export default function GithubGraph({ username, profileUrl, theme }) {
         username={username}
         colorScheme={isDark ? 'dark' : 'light'}
         theme={theme}
-        blockSize={isDark ? 11 : 14}
-        blockMargin={4}
-        fontSize={13}
+        blockSize={blockSize}
+        blockMargin={5}
+        fontSize={15}
         blockRadius={0}
         showYearSelect
         hideTotalCount={false}

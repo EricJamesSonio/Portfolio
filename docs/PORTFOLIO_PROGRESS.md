@@ -22,16 +22,21 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 16 | AI-Engineer rebrand, balanced About, formal paragraphs, tech grid | DONE | role -> Fullstack Developer . AI-Engineer (propagates to hero/facts/chatbot/meta), Focus -> agentic programming & automation, About card stretches + facts anchored to bottom, first-line paragraph indents, carousel replaced by a 31-card static grid |
 | 17 | Featured de-scroll, adaptive tech grid, divider, smaller cards | DONE | `.featured-list` nested scroll removed (3 rows render in full, page scrolls instead), tech columns sized from the LONGEST LABEL per group instead of the item count (no mid-word breaks), icon+label centred in every card, "MORE PROJECTS" is now a `<Divider>`, featured rows compacted (media 45%->38%, padding 20->14px, name 1.375->1.25rem, copy left-aligned) |
 | 18 | Education newest-first, Tech Stack divider, video cursor | DONE | Education reordered newest-first so "Current" (BS Computer Science) is the TOP entry instead of last; Tech Stack promoted from a bare left-aligned h2 to a real `<Divider>TECH STACK</Divider>` (closes the Phase 15 TODO); `cursor: pointer` on the project card link + video kills the text I-beam that made demo cards look typeable |
+| 19 | Email shown, live Facebook/Messenger, bigger graph, resume, theme switch + chat head | DONE | Email tile now prints the real address; Facebook + Messenger URLs supplied by the owner (both were dead non-clickable tiles); GitHub cells 11/14 -> 11/14/18 responsive with the year select kept; `resume.docx` wired up so GET RESUME is live; theme switch rebuilt (the 44px `min-height` was overriding its own 28px height and the knob was propped up by a `-8px` hack); chat head is now a square `>_` prompt block |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
 ## Open TODO content
-- `Resume.pdf` missing -> `GET RESUME` renders disabled with a TODO marker
+- `Resume.pdf` missing -> **RESOLVED in Phase 19**: the owner supplied `Code/public/resume.docx`
+  (16,376 bytes, valid OOXML). GET RESUME is live and links `/Portfolio/resume.docx`. A `.docx`
+  downloads via the button's `download` attribute; a `.pdf` would open inline, but converting it
+  needs Word/LibreOffice, which are outside the allowed dependency list (rule 4).
 - Portrait hover video(s) missing -> portrait is a still image
 - `vote-mobile` / `apptel-mobile` phone screenshots missing (Phase 5 placeholders)
 - Featured projects: tech chips and live URLs not supplied (Phase 5)
 - Certifications: none exist for this owner and no certificate images (Phase 7)
-- Facebook + Messenger contact URLs not present on the existing site (Phase 7)
+- Facebook + Messenger contact URLs not present on the existing site (Phase 7) — **RESOLVED in
+  Phase 19**: the owner supplied the Facebook profile; Messenger uses the matching `m.me` handle.
 - Coding-since year not stated on the existing site (Phase 4 timeline header)
 - Role tagline: using the existing wording; a shorter 3-word tagline is optional
 - Phase 14: "ominorute" was read as **OpenRouter** (sits with Cline / OpenCode / Copilot).

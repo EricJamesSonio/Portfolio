@@ -100,7 +100,8 @@ export default function Chatbot() {
         <div className="chat-panel" role="dialog" aria-label={`${profile.name} assistant`}>
           <header className="chat-header">
             <div className="chat-identity">
-              <span className="chat-avatar" aria-hidden="true">{profile.name.charAt(0)}</span>
+              {/* Decorative prompt mark; the accessible name is the `.chat-name` text beside it. */}
+              <span className="chat-avatar" aria-hidden="true"><span className="chat-prompt">&gt;_</span></span>
               <div className="chat-id-text">
                 <span className="chat-name">{profile.name}&apos;s AI assistant</span>
                 <span className="chat-status">
@@ -120,14 +121,14 @@ export default function Chatbot() {
             {messages.map((m, i) => (
               <div key={i} className={`chat-msg ${m.role}`}>
                 {m.role === 'bot' && (
-                  <span className="chat-mini-avatar" aria-hidden="true">{profile.name.charAt(0)}</span>
+                  <span className="chat-mini-avatar" aria-hidden="true"><span className="chat-prompt">&gt;_</span></span>
                 )}
                 <div className="chat-bubble">{m.text}</div>
               </div>
             ))}
             {loading && (
               <div className="chat-msg bot">
-                <span className="chat-mini-avatar" aria-hidden="true">{profile.name.charAt(0)}</span>
+                <span className="chat-mini-avatar" aria-hidden="true"><span className="chat-prompt">&gt;_</span></span>
                 <div className="chat-bubble">Typing...</div>
               </div>
             )}
