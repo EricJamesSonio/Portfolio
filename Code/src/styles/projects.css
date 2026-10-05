@@ -293,7 +293,15 @@
 }
 .project-card:hover { border-color: var(--accent); }
 
-.project-card a { text-decoration: none; color: inherit; display: block; }
+.project-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  /* The whole card is a real link, so a pointer is the honest affordance - and it also overrides
+     the text I-beam that Chrome and Firefox paint over a control-less <video>, which made each
+     demo card look like a text field the user could click into and type in. */
+  cursor: pointer;
+}
 
 /* The videos autoplay muted, so the hover zoom is a desktop-only nicety.
    On touch there is nothing to hover, so it is simply not applied. */
@@ -308,6 +316,9 @@
   object-fit: cover;
   display: block;
   background: var(--bg-panel);
+  /* The video is the actual hit target inside the card link, and it is the element that
+     inherits the I-beam cursor, so it is set explicitly here too. */
+  cursor: pointer;
 }
 
 .project-card h3 {
