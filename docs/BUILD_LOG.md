@@ -1076,3 +1076,85 @@ allowed dependency list (AGENTS.md rule 4). The build's own `[types]` step ran c
 
 - Privacy: no phone number, address or private email written to any file, doc or log here.
 - Not pushed or deployed. Commit is local on `portfolio-upgrade` only.
+---
+
+## Phase 18 - Education newest-first, Tech Stack divider, video cursor
+
+Three owner-requested fixes, all verified in the compiled output.
+
+### 1. Education: "Current" moved to the top
+
+`src/data/education.js` rendered oldest-first, so `BS Computer Science - 4th Year` (the one entry
+carrying `active: true` and the neon-blue dot + `Current` badge) sat at the BOTTOM of the card, below
+four hollow-ring school entries. The owner asked for the current one at the top.
+
+Reversed the array to newest-first: BS Computer Science -> Senior High 11-12 -> Senior High 9-10 ->
+Junior High 7-8 -> Elementary 1-6.
+
+No component or CSS change was needed, and none was made:
+- `Timeline.astro` maps the array verbatim, so DOM order is array order.
+- The rail connector is `.timeline-item:not(:last-child) .timeline-rail::after` (`bento.css`), which
+  is DOM-order driven, so it re-flows with the reversal automatically.
+- The filled-vs-hollow dot and the `Current` badge already follow the `active` flag per item, not
+  position, so the visual hierarchy is unchanged - only the reading order is.
+
+Content is untouched: same five entries, same school names, same grade ranges, and the current entry
+still reuses `degree` / `school` from `profile.js`. The docblock was updated to state the
+newest-first order and to record why no CSS was touched.
+
+### 2. Tech Stack promoted to a real signature divider
+
+The tech band was the ONLY band on the page without a `<Divider>`. It rendered a bare left-aligned
+`<h2 class="stack-heading">TECH STACK</h2>`, while Projects, the video grid, GitHub and Recognition
+all used the neon-blue fading-hairline + wide-tracked caption primitive. This was an open TODO
+recorded in Phase 15.
+
+`TechStack.astro` now imports `Divider` and renders:
+
+```astro
+<h2 id="stack-heading" class="visually-hidden">Tech Stack</h2>
+<Divider>TECH STACK</Divider>
+```
+
+The h2 is kept - visually hidden - rather than deleted, because the `<section>` is
+`aria-labelledby="stack-heading"`; dropping the element would have broken the accessible name and
+left a `role="separator"` div as the band's only visible label. This is the same pattern
+`Projects.astro` already uses for its own band title. `.visually-hidden` is defined in
+`projects.css` and is global, so no new utility was introduced.
+
+`tech-stack.css`: deleted the now-dead `.stack-heading` block (no dead CSS), and gave
+`.stack-section` `gap: var(--band-gap)` + `width: 100%` so the band sits on the same vertical rhythm
+as `.projects` / `.gh-section` / `.recognition` instead of its bespoke `padding-block: 8px`.
+
+### 3. Typing cursor over the video cards
+
+Clicking a demo card showed the text I-beam cursor, which made the video grid look like a set of
+text fields the user could click into and type in.
+
+Cause: `Projects.astro` renders `<video class="project-video">` with no `controls` attribute. Chrome
+and Firefox treat a control-less `<video>` as an inline replaced element and paint the text cursor
+over it, and `.project-card a` set no cursor of its own.
+
+Fix: `cursor: pointer` on `.project-card a` (the whole card is a real link, so a pointer is the
+honest affordance anyway) and on `.project-video` (the actual hit target that inherits the I-beam).
+
+### Verification
+
+`npm run build` from `Code/` -> **clean, 0 errors, 0 warnings**.
+
+Compiled-CSS audit (`dist/_astro/index.DyfHr89Z.css`):
+- `.project-card a{...;cursor:pointer}` present.
+- `.project-video{...;background:var(--bg-panel);cursor:pointer}` present.
+- `.stack-section{display:flex;flex-direction:column;gap:var(--band-gap);width:100%;...}` present.
+- `stack-heading` appears **0 times** in the compiled CSS - the dead rule is genuinely gone.
+
+Rendered-HTML audit (`dist/index.html`):
+- The Education `<ol>` now opens with `<li class="timeline-item active">` -> `BS Computer Science`
+  + `Current` badge, followed by Grades 11-12, 9-10, 7-8, 1-6.
+- Divider captions present in page order: `ERIC JAMES SONIO || PORTFOLIO 2026`, `SOLVING THROUGH
+  CODE`, **`TECH STACK`** (new), `ITERATE. BUILD. DEPLOY.`, `MORE PROJECTS`, `CONSISTENCY`,
+  `RECOGNITION | SOCIALS` - 7 total.
+- `id="tech"` anchor and `aria-labelledby="stack-heading"` both intact.
+
+No media, data content or URLs were changed. No phone number, address or private email written to
+any file. Not pushed or deployed; the commit is local on `portfolio-upgrade` only.

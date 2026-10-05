@@ -21,6 +21,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 15 | Brand-coloured icons, standalone tech band, alternating carousels, About reformat | DONE | Official brand hexes per tech (contrast-corrected per theme), tech stack moved out of the bento into a full-bleed section, rows alternate direction, scrollbars removed, About lead + drop cap + Quick Facts |
 | 16 | AI-Engineer rebrand, balanced About, formal paragraphs, tech grid | DONE | role -> Fullstack Developer . AI-Engineer (propagates to hero/facts/chatbot/meta), Focus -> agentic programming & automation, About card stretches + facts anchored to bottom, first-line paragraph indents, carousel replaced by a 31-card static grid |
 | 17 | Featured de-scroll, adaptive tech grid, divider, smaller cards | DONE | `.featured-list` nested scroll removed (3 rows render in full, page scrolls instead), tech columns sized from the LONGEST LABEL per group instead of the item count (no mid-word breaks), icon+label centred in every card, "MORE PROJECTS" is now a `<Divider>`, featured rows compacted (media 45%->38%, padding 20->14px, name 1.375->1.25rem, copy left-aligned) |
+| 18 | Education newest-first, Tech Stack divider, video cursor | DONE | Education reordered newest-first so "Current" (BS Computer Science) is the TOP entry instead of last; Tech Stack promoted from a bare left-aligned h2 to a real `<Divider>TECH STACK</Divider>` (closes the Phase 15 TODO); `cursor: pointer` on the project card link + video kills the text I-beam that made demo cards look typeable |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
@@ -45,8 +46,9 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 - Phase 15: the About **Quick Facts** grid fills the card height using facts already on the page
   (role, degree, school, location, focus). If the owner wants real prose instead, replace it
   with 1-2 more paragraphs and delete `aboutFacts` from `src/data/about.js`.
-- Phase 15: the tech-stack band has no divider caption above it (the bento and projects bands
-  have one). Add a `<Divider>` in `src/pages/index.astro` if a caption is wanted.
+- Phase 15: the tech-stack band had no divider caption above it while every other band did. **RESOLVED
+  in Phase 18** — `TechStack.astro` now renders `<Divider>TECH STACK</Divider>`, and the visible
+  "TECH STACK" h2 was replaced by a `visually-hidden` h2 so `aria-labelledby` stays valid.
 - Phase 17: the tech grid sizes each group's cards from its longest label, so a NEW technology
   with a longer name than the current longest will widen every card in that group. That is the
   intended behaviour ("the longest text wins"), but it is worth remembering when adding

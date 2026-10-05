@@ -14,23 +14,16 @@
 .stack-section {
   display: flex;
   flex-direction: column;
+  /* Same rhythm as .projects / .gh-section / .recognition, so the band sits on the page grid. */
+  gap: var(--band-gap);
+  width: 100%;
   min-width: 0;
-  padding-block: 8px;
   scroll-margin-top: 1rem;
 }
 
-.stack-heading {
-  /* Matches the card-title scale so the band reads as part of the same system. */
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  color: var(--text-heading);
-  margin-bottom: 22px;
-}
-@media (min-width: 768px) {
-  .stack-heading { font-size: 1.375rem; }
-}
+/* The visible band title is now the <Divider> caption rendered by TechStack.astro, which supplies
+   the neon-blue hairlines, the tracking and the centering. The old `.stack-heading` rules are
+   deliberately gone rather than left behind as dead CSS (AGENTS.md rule: no dead CSS). */
 
 /* The icon sprite: one hidden SVG holding every symbol, referenced by <use href="#id">.
    Zero size keeps it out of layout; it is also aria-hidden in the markup. */
