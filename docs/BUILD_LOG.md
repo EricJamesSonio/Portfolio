@@ -1446,3 +1446,96 @@ Compiled-output audit:
 
 No phone number, address or private email was written to any file, doc or log here (rule 9). Not
 pushed or deployed.
+
+---
+
+# Phase 22 — Chat head rebuilt from the supplied artwork + email modal
+
+Owner request (2026-10-10): replace the chat head with the look of `public/assets/images/chathead.png`,
+and make "Email Me" open a form to type into and send.
+
+## 1. The image was inspected, not assumed
+
+`chathead.png` is 226x147, 22,384 bytes, `Format32bppArgb`. Two findings drove the decision:
+
+- **Zero transparent pixels** — a full alpha sweep found `transparent: 0, semi: 0, opaque: 33,222`.
+  The field is a solid `#f7f7f7`.
+- It contains **two separate elements** — a rounded speech bubble reading "Hey there! Wanna chat?"
+  and a white square chat button with a dark filled-bubble icon.
+
+So it is a light-mode, flattened composite. Embedding it directly would have produced a white box on
+the dark theme, and its button could not animate, take a focus ring, or flip with the theme. The
+owner chose the CSS rebuild, so the file is **left in place untouched** (AGENTS.md rule 6) and is now
+unused — reported in `docs/PORTFOLIO_PROGRESS.md`.
+
+## 2. Chat head rebuilt in CSS (`chatbot.css`)
+
+- `.chat-banner` is now the speech bubble: `border-radius: 10px`, an accent border, and a `::after`
+  tail (a 10px rotated square carrying two accent edges) pointing down toward the button.
+- `.chat-fab` is the white square from the artwork: `background: var(--bg-card)`,
+  `color: var(--text-heading)`, `border: 1px solid var(--accent)`.
+- Both replaced the old `--chat-btn-bg` / `--chat-btn-text` pair, which rendered the button as a
+  **dark grey** block in the light theme and did not match the supplied artwork. Because they now
+  use `--bg-card` and `--text-heading`, both read correctly in light AND dark with no extra rules.
+
+Nothing else changed: the 48px tap target, `bottom: max(24px, env(safe-area-inset-bottom))`, the
+reduced-motion-gated `chat-bounce`, the real `aria-label="Open chat"` accessible name and the
+"Wanna chat" copy all remain.
+
+## 3. Email modal
+
+Markup in `Layout.astro` (so it exists on every page and is available before the React runtime
+hydrates), styles in `chatbot.css`, behaviour in `public/scripts/main.js`.
+
+It deliberately follows the **cert-lightbox pattern already in that file** rather than inventing a
+new one: `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, Escape to close, backdrop click
+(but not clicks inside the panel), a real focus trap, focus returned to the trigger on close, and
+`document.body.style.overflow` scroll lock.
+
+- Fields: name, email, subject, message — every one labelled, `autocomplete` set.
+- The recipient comes from `data-email-to` on the form, so the address still has exactly one
+  definition (`src/data/profile.js`).
+- Validation is in script with a `role="alert"` message plus a red border on the offending field
+  (not colour-only). Message is required; the email field is **optional** and only validated when
+  filled, so a visitor without one is not blocked.
+- `novalidate` is set so the browser's own bubbles do not appear over the custom message.
+
+**"Email Me" stays an `<a href="mailto:...">`** with a `data-email-open` attribute rather than
+becoming a `<button>`. The script intercepts the click and opens the modal, but if the script ever
+fails to load the visitor still reaches the inbox through the real link.
+
+## 4. Why it composes `mailto:` rather than sending silently
+
+There is no email backend on this host. The repo deploys to GitHub Pages, which cannot run
+serverless functions — the same constraint documented in `api/chat.js:9-13` for the chatbot — and
+the EmailJS public key, service ID and template ID were removed in Phase 7 and are not in the repo.
+
+Rather than invent credentials or show a fake "Message sent!" state, Send builds a `mailto:` with
+the subject and a signature block (`From:` / `Reply to:`) and opens the visitor's own mail app,
+where they can review before sending. The markup, validation and UX are independent of the delivery
+method: upgrading to EmailJS later means replacing the submit handler only.
+
+### Verification
+
+`npx astro build` from `Code/` -> **clean, 1 page in 40.01s, 0 errors, 0 warnings**.
+
+Compiled-HTML audit (`dist/index.html`):
+- `id="email-modal"` present; `aria-modal="true"` count **1**; `data-email-open` on the hero button
+  **1**; `data-email-to` carrying the real address **1**; **`undefined` leakage: 0**.
+- Email Me still renders as `<a class="btn btn-secondary" href="mailto:…" data-email-open>`, so the
+  no-JS fallback is intact.
+- All four fields, the `role="alert"` error paragraph and both `data-email-close` controls present.
+
+Compiled-CSS audit: `.chat-fab{...background:var(--bg-card)...border:1px solid var(--accent)}`,
+`.chat-banner{...border-radius:10px}`, `.chat-banner:after{...rotate(45deg)}`,
+`.email-modal{...z-index:200}` and 21 `.email-*` rules emitted. The `@media (max-width: 420px)`
+email block and the reduced-motion `chat-bounce` rules are both still present.
+
+Script audit: `node --check dist/scripts/main.js` -> **exit 0**. The `EMAIL MODAL` block ships with
+the Escape handler, Tab focus trap, `lastFocused.focus()` return, scroll lock and backdrop check.
+Logic tested in Node: the composed `mailto:` decodes to a correct subject + multi-line body
+(newlines correctly `%0A`-encoded), and the address regex accepts `ana@example.com` while rejecting
+`bad-email`, `a@b` and `x y@z.co` — and allows an empty optional field.
+
+No phone number, address or private email was written to any file, doc or log here (rule 9). Not
+pushed or deployed.

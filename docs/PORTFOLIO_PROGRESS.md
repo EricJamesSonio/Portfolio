@@ -25,6 +25,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 19 | Email shown, live Facebook/Messenger, bigger graph, resume, theme switch + chat head | DONE | Email tile now prints the real address; Facebook + Messenger URLs supplied by the owner (both were dead non-clickable tiles); GitHub cells 11/14 -> 11/14/18 responsive with the year select kept; `resume.docx` wired up so GET RESUME is live; theme switch rebuilt (the 44px `min-height` was overriding its own 28px height and the knob was propped up by a `-8px` hack); chat head is now a square `>_` prompt block |
 | 20 | About: drop cap removed, emphasis, client work, full-width Focus | DONE | Drop cap on the lead deleted at the owner's request (the big "I"); `.about-hl` highlights marked phrases (AI engineering, automation, agentic programming, maintainable scalable backends) via `**...**` markers parsed into escaped text nodes — never `set:html`; About copy now mentions client systems work; FOCUS fact spans the full grid row (`grid-column: 1 / -1`) as 3 chips, closing the empty-space gap; `aboutPlain` export strips the markers so the chatbot prompt stays clean |
 | 21 | GitHub graph eager load + responsive cells | DONE | `client:visible` -> `client:idle` so the graph mounts on idle right after first paint instead of popping in when scrolled to; mobile cell sizes raised (11px -> 13/14/16/18 by breakpoint) with tighter gutters, so the year is readable on a phone; fixed a latent centred-overflow bug that made the START of the year unreachable in the scroller; swipe hint + screen-reader note |
+| 22 | Chat head rebuilt from artwork + email modal | DONE | `chathead.png` inspected (226x147, fully opaque `#f7f7f7`, no alpha) and the bubble + square button RECREATED in CSS with theme tokens instead of embedding the raster (a white box would break the dark theme and the button could not animate); banner gained a CSS tail and both elements use `--bg-card`/`--text-heading` so they read in light AND dark; new accessible email modal (role=dialog, aria-modal, Escape, backdrop, focus trap, focus return, scroll lock) wired to the hero "Email Me" — sends via `mailto:` compose |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
@@ -53,6 +54,21 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 - Phase 15: the About **Quick Facts** grid fills the card height using facts already on the page
   (role, degree, school, location, focus). If the owner wants real prose instead, replace it
   with 1-2 more paragraphs and delete `aboutFacts` from `src/data/about.js`.
+- Phase 22: **UNUSED MEDIA** — `Code/public/assets/images/chathead.png` (226x147, 22,384 bytes) is no
+  longer referenced anywhere. The owner supplied it as the reference for the chat head, but it is a
+  fully opaque light-mode image (0 transparent pixels of 33,222, `#f7f7f7` field) containing two
+  separate elements. The owner chose a CSS rebuild over embedding it, so the file is left untouched
+  per AGENTS.md rule 6 and can be deleted manually if unwanted.
+- Phase 22: **email sending is `mailto:`, not a real API.** The form composes the message and hands
+  it to the visitor's own mail app. There is no email backend: the repo deploys to GitHub Pages,
+  which cannot run serverless functions, and the EmailJS key/service/template IDs were removed in
+  Phase 7 and are not in the repo. To upgrade to silent sending, replace the submit handler in
+  `Code/public/scripts/main.js` with an EmailJS `emailjs.send(...)` call and keep the three IDs in a
+  server-side function (never in client code, AGENTS.md rule 7). The markup and validation do not
+  change.
+- Phase 22: the Contact section's Email **tile** still opens `mailto:` directly; only the hero
+  "Email Me" button opens the modal. Say the word to wire the tile to the modal too (add
+  `data-email-open` to that tile in `Code/src/data/links.js`).
 - Phase 20: the client-work sentence in paragraph 2 and the three FOCUS chips were written from
   the owner's own instructions in the Phase 20 request ("focuses in agent programming and
   integrating automations in the systems and maintainable and scalable systems"). They are a
