@@ -1,81 +1,163 @@
-# Eric James Sonio — Portfolio (Astro)
+# Eric James Sonio - Portfolio (Astro)
 
-## Project Structure
+A single-page developer portfolio in the **mono + orange editorial** style: monospace type
+throughout, one orange accent, flat bordered cards, letter-spaced divider captions, a bento
+layout, featured projects with device mockups, a GitHub contribution graph, contact tiles,
+light/dark theming with a circular ripple, and an AI assistant.
 
-```
-portfolio-astro/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          ← GitHub Actions (auto-deploys on push to main)
-├── public/
-│   ├── assets/
-│   │   ├── images/
-│   │   │   └── eric.jpg        ← copy your photo here
-│   │   └── videos/
-│   │       └── *.mp4           ← copy all your videos here
-│   └── scripts/
-│       └── main.js
-├── src/
-│   ├── components/
-│   │   ├── Navbar.astro
-│   │   ├── Hero.astro
-│   │   ├── About.astro
-│   │   ├── TechStack.astro
-│   │   ├── Projects.astro
-│   │   ├── Contact.astro
-│   │   └── Footer.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   ├── pages/
-│   │   └── index.astro
-│   └── styles/
-│       ├── base.css
-│       ├── navbar.css
-│       ├── hero.css
-│       ├── about.css
-│       ├── tech.css
-│       ├── projects.css        ← includes video lazy loading states
-│       ├── contact.css
-│       ├── footer.css
-│       └── responsive.css
-├── astro.config.mjs
-└── package.json
-```
+Built with **Astro 4 + plain CSS**. React is used only for two small islands
+(the GitHub graph and the chatbot). No Tailwind, no UI kits.
 
-## Setup Steps
+---
 
-### 1. Copy your assets
-```
-public/assets/images/eric.jpg
-public/Porttfolio/assets/videos/starbucks.mp4
-public/Porttfolio/assets/videos/chatly.mp4
-... (all your videos)
-```
+## Quick start
 
-### 2. Install dependencies
 ```bash
 npm install
+npm run dev      # http://localhost:4321
+npm run build    # outputs to dist/
+npm run preview  # serve the built site
 ```
 
-### 3. Run locally
-```bash
-npm run dev
-# → http://localhost:4321
+> The site is served under the `/Portfolio` base path (`base` in `astro.config.mjs`).
+> Open `http://localhost:4321/Portfolio/` in dev.
+
+---
+
+## Project structure
+
+```
+public/
+  assets/images/     screenshots, portrait, certificate images
+  assets/videos/     project demo videos (.mp4)
+  favicon.svg, robots.txt, sitemap.xml
+  scripts/main.js    video lazy loading, filters, lightbox, smooth scroll
+api/
+  chat.js            serverless function for the AI assistant (Vercel style)
+src/
+  components/        .astro sections + react/ islands
+  data/              ALL content lives here (see below)
+  layouts/Layout.astro
+  pages/index.astro
+  styles/            one CSS file per section + base.css + ui.css
+.env.example         chatbot env var NAMES only
+docs/                progress, build log, review report
 ```
 
-### 4. Deploy to GitHub Pages
+---
 
-In your GitHub repo settings:
-- Go to **Settings → Pages**
-- Set source to **GitHub Actions**
+## Editing content
 
-Then push to `main` — the workflow in `.github/workflows/deploy.yml` handles the rest automatically.
+**Everything on the page comes from `src/data/`.** You should not need to touch any component
+to change copy, links, projects or certificates.
 
-> If your repo is at `github.com/username/repo-name` (not a custom domain),
-> update `astro.config.mjs` and set `base: '/repo-name'`
+| File | Contents |
+|---|---|
+| `src/data/profile.js` | name, role, location, email, degree, school, resume path, portrait, year |
+| `src/data/about.js` | the three About paragraphs |
+| `src/data/experience.js` | experience timeline + `codingSince` |
+| `src/data/education.js` | education timeline |
+| `src/data/stack.js` | tech stack groups |
+| `src/data/projects.js` | featured projects (with images) + the video grid list |
+| `src/data/certs.js` | certifications and awards |
+| `src/data/links.js` | socials and contact links |
+| `src/data/github.js` | GitHub username and calendar palettes |
+| `src/data/chatbot.js` | builds the assistant's system prompt from all of the above |
 
-## What changed from the plain HTML version
-- Zero behavior changes — same CSS, same JS, same design
-- HTML split into reusable `.astro` components
-- Videos use `data-src` lazy loading (already in the HTML via Projects.astro)
-- Astro handles asset fingerprinting and build optimization automatically
+The chatbot's knowledge is generated from the same files, so a change to a project updates the
+card **and** the assistant at once.
+
+### Adding a featured project
+
+1. Drop `<slug>-desktop.png` (and optionally `<slug>-mobile.png`) into `public/assets/images/`.
+2. Add one entry to the `featured` array in `src/data/projects.js`.
+3. Run `npm run build`. The row appears with a CSS laptop + phone mockup.
+   A project with **no** image is hidden automatically, and a project with no mobile image gets
+   an intentional placeholder phone.
+
+### Adding a certificate
+
+1. Drop the image into `public/assets/images/`.
+2. Add `{ name, issuer, image }` to `certs` in `src/data/certs.js`.
+   The lightbox appears automatically once the image exists on disk.
+---
+
+## AI chatbot
+
+The assistant is a React island plus a **serverless function**. The API key is read from a
+server environment variable and is never shipped to the browser.
+
+### 1. Environment variables
+
+Copy `.env.example` to `.env` and fill it in:
+
+| Variable | Required | Default | Notes |
+|---|---|---|---|
+| `GROQ_API_KEY` | yes | - | create one at https://console.groq.com/keys |
+| `GROQ_MODEL` | no | `llama-3.3-70b-versatile` | any model your key can access |
+
+> Never prefix these with `PUBLIC_` or `VITE_` - that would expose the key to the browser.
+> `.env` is gitignored; `.env.example` (names only) is committed.
+
+### 2. Hosting the function
+
+`api/chat.js` is written for **Vercel** and works with zero configuration there.
+
+**This repo currently deploys to GitHub Pages, which cannot run serverless functions.** Until the
+site is hosted somewhere that can (Vercel or Netlify), the chat button still appears but replies
+with a friendly "assistant unavailable" message.
+
+To enable it:
+
+- **Vercel** - keep `api/chat.js` as is, add `GROQ_API_KEY` (and optionally `GROQ_MODEL`) in the
+  project environment variables. For local testing run `vercel dev`.
+- **Netlify** - copy `api/chat.js` to `netlify/functions/chat.js` and set the same variables in
+  Netlify's environment settings.
+
+The function validates its input, keeps only the last 10 messages, caps message length and
+response tokens, and returns generic errors.
+
+---
+
+## Theming
+
+Light/dark follows the operating system preference on first visit and is then remembered in
+`localStorage`. The theme is applied **before first paint** (inline script in `<head>`), so there is
+no flash. Toggling uses the View Transitions API for a circular ripple, and falls back to an
+instant switch in browsers without it or when the user prefers reduced motion.
+
+All colours are CSS variables defined in `src/styles/base.css` under `:root` and
+`[data-theme="dark"]`.
+
+---
+
+## Deployment
+
+`.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to `main`.
+
+If you move to a custom domain, update `base` and `site` in `astro.config.mjs`, plus the URLs in
+`public/robots.txt` and `public/sitemap.xml`.
+
+---
+
+## Performance notes
+
+- Videos use `preload="none"`, lazy-load when scrolled near the viewport, play when mostly in view
+  and pause when off screen. **No poster images exist yet**, so a frame is only shown once the
+  video has loaded.
+- The GitHub island is hydrated with `client:visible` and the chatbot with `client:idle`, so the
+  React runtime is never needed for first paint.
+- Several demo videos are very large (up to ~35 MB). Compressing them would be the single biggest
+  speed win. Originals are never modified by the build.
+
+---
+
+## Unused-but-kept files
+
+`src/components/Navbar.astro` and `src/styles/navbar.css` are **not rendered** - the reference
+design is a single scroll with no navbar - but they are kept in the repo so the navbar can be
+restored. Delete them if you do not want them back.
+
+`public/assets/videos/` still contains four videos whose cards were replaced by featured project
+rows (`edutool.mp4`, `edutool2.mp4`, `votingsystem.mp4`, `apptel.mp4`, ~59 MB total). They are
+harmless but unused, and can be deleted.

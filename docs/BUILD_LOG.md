@@ -109,6 +109,44 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 13: Cleanup and release readiness
+
+- Plan:
+  - Removed clearly-unused CSS created by the migration, kept `Navbar.astro` / `navbar.css`.
+  - Removed the legacy alias variables that no live stylesheet references.
+  - Rewrote the README for the new architecture.
+  - Final build + verification.
+- Removed as dead code (all written for the old navy/gold design):
+  - `src/styles/about.css`, `src/styles/tech.css`, `src/styles/contact.css`,
+    `src/styles/responsive.css` — their markup no longer exists (About/TechStack are now cards,
+    the contact form was replaced by link tiles, and every breakpoint now lives in its own file).
+  - The trailing legacy block in `base.css` (`.section`, `.section h2`, `.section h2::after`,
+    `.section-intro`, `.section p`) which no component uses.
+  - The `--ink` / `--ink-card` / `--gold` / `--gold-dim` / `--text-primary` alias variables.
+    Verified first that all 56 of their usages were confined to the four dead files.
+- Kept deliberately (per the Default decisions table): `src/components/Navbar.astro` and
+  `src/styles/navbar.css`. They are **not rendered**, are not imported, and the README explains how
+  to restore or delete them.
+- Fixed during the pass: removing the alias block also removed `--ease` / `--ease-out` /
+  `--ease-spring`, which *are* used by the live stylesheets. Restored them into the main `:root`
+  block.
+- README rewritten: quick start, project structure, **a table of every `src/data/` file**, how to
+  add a featured project and a certificate, the chatbot env vars and the Vercel/Netlify hosting
+  instructions (including the GitHub Pages limitation), theming notes, deployment, performance
+  notes, and the unused-but-kept files.
+- Gate results:
+  - **Build ok** (1 page, 37.9s).
+  - Featured rows 3, video cards 11, chatbot island present — unchanged by the cleanup.
+  - **`astro check` was skipped**: it requires `@astrojs/check` + `typescript`, and
+    `@astrojs/check` is not in the allowed dependency list. It also prompts interactively to
+    install, which is not possible in this environment. Logged as a known limitation.
+  - **Privacy scan: the phone number appears in neither `docs/` nor `dist/`.** It exists only in
+    `src/data/links.js` as a `tel:` link, as required.
+  - **Secret scan: no `gsk_*` key anywhere in `dist/`.**
+  - **User media intact: 5 images and 15 videos** in both `public/` and `dist/`.
+  - **No `.env` file exists**; only `.env.example` (names only) is tracked by git.
+- Issues: `astro check` not run (see above). No other problems.
+
 ## Phase 12: Accessibility, performance, SEO
 
 - Plan:

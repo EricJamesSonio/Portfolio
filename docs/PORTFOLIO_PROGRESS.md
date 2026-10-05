@@ -16,7 +16,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 10 | Content and data consolidation | DONE | Removed 3 duplications, shared degree/school/email/location, proofread copy |
 | 11 | Responsive pass | DONE | Overflow guards, wrapping, svh/dvh, hover gating, 320-1536px reviewed |
 | 12 | Accessibility, performance, SEO | DONE | Heading-order fix, canonical/OG/Twitter/JSON-LD, favicon, robots, sitemap |
-| 13 | Cleanup and release readiness | TODO | |
+| 13 | Cleanup and release readiness | DONE | Dead CSS/aliases removed, README rewritten, final build clean |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
