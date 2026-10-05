@@ -15,7 +15,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 9 | AI chatbot | DONE | Island + api/chat.js, prompt from data files, no secrets; needs non-GH-Pages host |
 | 10 | Content and data consolidation | DONE | Removed 3 duplications, shared degree/school/email/location, proofread copy |
 | 11 | Responsive pass | DONE | Overflow guards, wrapping, svh/dvh, hover gating, 320-1536px reviewed |
-| 12 | Accessibility, performance, SEO | TODO | |
+| 12 | Accessibility, performance, SEO | DONE | Heading-order fix, canonical/OG/Twitter/JSON-LD, favicon, robots, sitemap |
 | 13 | Cleanup and release readiness | TODO | |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED

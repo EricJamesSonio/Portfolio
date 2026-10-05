@@ -4,8 +4,10 @@ export interface Props {
   items: { title: string; sub?: string; year?: string; active?: boolean }[];
   /** Accessible name for the list. */
   label: string;
+  /** Heading level for each item title, so the page heading order stays valid. */
+  heading?: 'h3' | 'h4';
 }
-const { items, label } = Astro.props;
+const { items, label, heading: Heading = 'h3' } = Astro.props;
 ---
 
 <!-- Vertical rail with a filled orange dot for the active item and hollow rings for the rest. -->
@@ -17,7 +19,7 @@ const { items, label } = Astro.props;
       </span>
       <div class="timeline-row">
         <div class="timeline-text">
-          <h4 class="tl-title">{it.title}</h4>
+          <Heading class="tl-title">{it.title}</Heading>
           {it.sub && <p class="tl-sub">{it.sub}</p>}
         </div>
         {it.active ? (

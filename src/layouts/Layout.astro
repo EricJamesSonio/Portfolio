@@ -1,19 +1,69 @@
 ---
+import profile from '../data/profile.js';
+import { githubProfileUrl, githubUsername } from '../data/github.js';
+import { socials } from '../data/links.js';
+
 export interface Props {
   title?: string;
+  description?: string;
 }
-const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
+const {
+  title = `${profile.name} — Portfolio`,
+  description = `${profile.name} — ${profile.role}. Computer Science student at ${profile.school}. Building maintainable, scalable backends.`,
+} = Astro.props;
+
+// Site URL. The repo deploys to GitHub Pages under `/Portfolio`; set SITE_URL in astro.config if it moves.
+const SITE = Astro.site ?? 'https://ericjamessonio.github.io';
+const canonical = new URL(Astro.url.pathname.replace(/^\/Portfolio/, '/'), SITE).href;
+const ogImage = `${SITE}/Portfolio/assets/images/eric.jpg`;
+
+// JSON-LD: public facts only. The phone number is deliberately excluded.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role,
+  url: canonical,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: profile.location,
+  },
+  sameAs: socials.filter((s) => s.url).map((s) => s.url),
+  knowsAbout: ['Full-stack development', 'Backend engineering', 'REST APIs', 'MySQL', 'PostgreSQL', 'Node.js', 'React'],
+};
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Eric James Sonio — Fullstack Developer & Backend Specialist. CS student at College of Mary Immaculate.">
+  <meta name="description" content={description}>
+  <meta name="author" content={profile.name}>
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <title>{title}</title>
+
+  <!-- Canonical + Open Graph + Twitter -->
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" type="image/svg+xml" href="/Portfolio/favicon.svg" />
+  <link rel="apple-touch-icon" href="/Portfolio/favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={profile.name} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:creator" content={`@${githubUsername}`} />
+
+  <!-- Structured data -->
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
 
   <!-- Apply the saved / OS theme BEFORE first paint so there is no flash. -->
   <script is:inline>
@@ -29,10 +79,6 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
       }
     })();
   </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
   <slot />

@@ -4,6 +4,10 @@ import react from '@astrojs/react';
 export default defineConfig({
   base: '/Portfolio',
 
+  // Canonical origin used for <link rel="canonical">, Open Graph and the sitemap.
+  // Update this if the site moves to a custom domain.
+  site: 'https://ericjamessonio.github.io',
+
   // React is used ONLY for small islands (GitHub graph in Phase 6, chatbot in
   // Phase 9). Everything else stays .astro with plain CSS.
   integrations: [react()],

@@ -109,6 +109,56 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 12: Accessibility, performance, SEO
+
+- Plan:
+  - **A11y:** audited landmarks, heading order, alt text, labels, focus rings, dialog semantics,
+    `aria-live`, contrast and reduced motion. Fixed a real heading-order bug.
+  - **SEO:** canonical URL, Open Graph, Twitter card, favicon, `robots.txt`, `sitemap.xml`,
+    JSON-LD `Person`, author meta, `lang`, `theme-color`.
+  - **Performance:** verified lazy loading, explicit aspect ratios, video `preload="none"` and
+    lazily hydrated islands. Inventoried oversized assets (no user media was modified).
+- Fixes and additions:
+  - **Heading-order bug fixed.** The timeline items rendered as `<h4>` directly under `<h2>` card
+    titles, skipping a level. `Timeline.astro` now takes a `heading` prop (default `h3`), so the
+    order is h1 -> h2 -> h3 throughout with no skipped levels.
+  - **Removed the Google Fonts `<link>`.** After the Phase 1 rewrite nothing uses Playfair Display,
+    DM Sans or DM Mono — the whole site is on the system monospace stack. This drops two preconnects
+    and a third-party stylesheet from the critical path.
+  - **Added `Layout.astro` frontmatter** so SEO values come from the data files rather than literals:
+    title, description, canonical, OG/Twitter tags, and the JSON-LD `Person` schema.
+  - **`site` set in `astro.config.mjs`** so Astro can build absolute canonical/OG URLs.
+  - **`public/favicon.svg`** — a black square with an orange monospace "E" (on-theme, tiny, no
+    binary asset added).
+  - **`public/robots.txt`** and **`public/sitemap.xml`** (hand-written; `@astrojs/sitemap` is not an
+    allowed dependency, and the site is a single page).
+- Gate results: **build ok** (1 page, 29.8s). Verified:
+  - `<html lang="en">`, canonical link, `og:type/title/description/url/image/locale`,
+    `twitter:card/title/description/image/creator`, author meta, favicon and apple-touch-icon all present.
+  - `robots.txt`, `sitemap.xml` and `favicon.svg` are copied into `dist/`.
+  - **JSON-LD parses as valid JSON** with the correct name and 2 `sameAs` entries, and **does not
+    contain the phone number**.
+  - **Heading order is now valid**: `h1` (name) -> `h2` (each card) -> `h3` (each project/item).
+    No skipped levels anywhere.
+  - **All 5 `<img>` elements have meaningful alt text** ("Portrait of Eric James Sonio",
+    "<Project> desktop screenshot", "<Project> mobile screenshot").
+  - `fonts.googleapis` no longer appears in the output.
+- Performance state:
+  - Hero portrait: `loading="eager"` + explicit `width`/`height`.
+  - Featured screenshots: `loading="lazy"` + `decoding="async"`, inside CSS `aspect-ratio` boxes, so
+    there is no layout shift.
+  - Videos: `preload="none"`, no `autoplay`, `data-src` lazy loading, play when >=35% in view, pause
+    when off screen. **No poster images exist** (listed as a TODO).
+  - Islands: GitHub graph is `client:visible`, chatbot is `client:idle`; the React runtime is never
+    needed for first paint.
+  - Oversized assets (>500 KB) are listed in `docs/BUILD_LOG.md` and the review report. **No user media
+    was recompressed, resized or deleted** (rule 6).
+- A11y state: landmarks present (`<main>`-equivalent shell, `<header>`/`<footer>`), `:focus-visible`
+  2px accent ring, lightbox `role="dialog" aria-modal` with Escape/backdrop close, focus return and a
+  focus trap, chat `aria-live="polite"` with a real `<button>` send control, decorative SVGs
+  `aria-hidden`, all tap targets >= 44px, and a global `prefers-reduced-motion` block.
+- Issues: none. Contrast was already corrected in Phase 8.
+
 ## Phase 11: Responsive pass
 
 - Plan:
