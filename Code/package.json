@@ -1,0 +1,18 @@
+{
+  "name": "ericjamessonio-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/react": "^3.6.3",
+    "astro": "^4.0.0",
+    "groq-sdk": "^1.6.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-github-calendar": "^5.0.9"
+  }
+}
