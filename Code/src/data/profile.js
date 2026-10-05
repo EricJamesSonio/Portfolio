@@ -19,7 +19,7 @@ export const location = 'Pandi, Bulacan';
  * in the browser; a `.pdf` would open inline, but converting it is outside the allowed
  * dependency list (AGENTS.md rule 4), so the supplied file is linked as-is.
  */
-export const resume = '/Portfolio/resume.docx';
+export const resume = '/Portfolio/resume.pdf';
 
 /** Public email from the existing Contact component (mailto: link used by the hero). */
 export const email = 'ericjamessonio7@gmail.com';
