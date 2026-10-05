@@ -769,3 +769,71 @@ tracked, because gitignore only affects untracked files and it was already in th
   confirming no featured project or certificate is hidden.
 - `git ls-files Code/dist` and `Code/.astro` now return 0 entries; both match `.gitignore`.
 - No user media deleted. No secrets added; `.env.example` holds NAMES only.
+
+## Phase 14: Neon-blue retheme, larger type, tech-stack carousels, education history
+
+- Goal (owner request): swap orange for neon blue, enlarge all fonts, replace the tech-stack
+  paragraph/chips with left-to-right card carousels, and fill in the full education history.
+
+- Accent (all in `Code/src/styles/base.css`, the single source of truth):
+  - Light: `--accent #0090e6`, `--accent-strong #0077c4`, `--accent-text #005fb3`,
+    chips `#eff8ff`/`#dbeefe`/`#b3ddff`, tiles `rgba(0,95,179,.10)`.
+  - Dark: `--accent #00d4ff`, `--accent-strong #6ee7ff`, `--accent-text #7de9ff`,
+    chips + tiles as accent rgba.
+  - **New token `--accent-text`.** Pure neon fails on white (~2.4:1), so `--accent` is now
+    decorative-only and every readable accent string (`.hero-role`, `.coding-year`,
+    `.caption`, `.featured-name`, `.project-card h3`, `.cert-todo code`) uses `--accent-text`
+    at 6.4:1 light / 13.6:1 dark. `--accent-link` mirrors it.
+  - `::selection` moved to `--accent-text` so the inverted text keeps AA.
+  - Neon-on-neon fix: `.filter-btn.active`, `.chat-avatar`, `.chat-mini-avatar` and
+    `.chat-send` sit on a bright accent fill, so their label is now `#000` in BOTH themes
+    (6.1:1 / 11:1). The old white-text-with-dark-override pairing only reached 2.7:1 in light.
+  - Also: GitHub calendar palettes (`data/github.js`), favicon `E`, Divider/Timeline/Chip
+    comments, AGENTS.md and PORTFOLIO_PROGRESS.md wording.
+
+- Type scale (legibility pass): caption 8->11px (13px desktop), micro-label 9->11px,
+  card-title 16->20px, timeline 12->15px, body-copy 14->17px, chip 12->14px, tile/aside/footer
+  11->13px, buttons 12->14px, hero name 36->44px, plus projects/recognition/github/chatbot.
+  Nothing decorative is under 8px now, and nothing readable is under 12px.
+  Divider captions wrap to two lines below 560px (`white-space: normal`, 0.18em tracking)
+  so the 35-character top caption cannot overflow at 320px.
+
+- Tech stack (`TechStack.astro` + `tech-stack.css` + `data/stack.js` + `data/stackIcons.js`):
+  - The chip list became one masked, auto-scrolling carousel per group. Each row renders 4
+    identical runs inside a `width: max-content` track and translates by exactly one run width
+    (`-25% -> 0`), which moves cards LEFT -> RIGHT as requested.
+  - **Why 4 runs and not 2:** with only 2, a short row (4 cards, about 648px) is narrower than a
+    wide viewport, so the wrap exposed an empty gap mid-loop. One-run translate over 4 runs is
+    seamless at any viewport width.
+  - Icons live in ONE hidden `<symbol>` sprite referenced by `<use href="#id">`, deduped by
+    markup (ASP.NET and MSTest share the .NET mark -> 30 symbols for 31 techs). Without the
+    sprite, 4 repeats would inline ~40 KB of path data four times over; with it the page is
+    actually 21 KB SMALLER than the first 2-run version (167,624 vs 188,001 bytes).
+  - Icons are inline Simple Icons paths committed to `data/stackIcons.js` (CC0), rendered
+    `fill="currentColor"` so they inherit the neon accent. **No runtime CDN call and no new
+    dependency.** The `<svg fill>` wrapper was stripped so brand hex codes do not fight the theme.
+  - Added to Tools & Testing: OpenRouter, Cline, OpenCode, GitHub Copilot, Vercel.
+  - Accessibility: pauses on hover AND keyboard focus (WCAG 2.2.2) with an on-page hint,
+    only run 1 of each row is exposed to assistive tech (15 of 20 runs are `aria-hidden`),
+    `overflow: hidden` on the viewport so the page never scrolls sideways, and
+    `prefers-reduced-motion` disables the animation and makes the row horizontally scrollable.
+  - `stack.js` `techs` changed from `string[]` to `{ name, icon }[]`; `chatbot.js` prompt
+    builder was updated to `.map((t) => t.name)` so it still feeds the assistant.
+
+- Education (`data/education.js`): 1 placeholder -> 5 owner-supplied entries (Matias V.
+  Salvador Memorial Elementary 1-6, Holy Angels Academy 7-8, Virginia Ramirez National High
+  School 9-10, College of Mary Immaculate 11-12, and CMI BS Computer Science Years 1-4 marked
+  Current). The active entry keeps reusing `degree`/`school` from `profile.js` so the hero,
+  About copy and chatbot prompt cannot drift. Timeline `max-height` 280 -> 380px.
+
+- Duration is set inline per row (~2.2s per card, clamped 10-40s) so rows move at a similar
+  speed regardless of length.
+- Verification: `npm run build` clean, 0 errors/warnings (1 page, ~36s). Output audit:
+  124 `.stack-card` (31 techs x 4 runs), 20 `.stack-run`, 30 sprite `<symbol>`, 124 `<use>`
+  refs, 15 `aria-hidden` runs, 5 viewports, 5 inline durations (13.2/13.2/10/24.2/10s),
+  8 timeline items (3 experience + 5 education), all 5 education titles and grade labels
+  present. CSS audit: all neon tokens present, **zero** orange hex values (`#f97316 #ea580c
+  #fb923c #ffedd5 #fed7aa #fff7ed #5f210d` and the three orange rgba families all return 0
+  matches), `@keyframes stack-scroll` + `mask-image` + `animation-play-state: paused` emitted.
+- Privacy: no phone number, address or private email written to any file, doc or log here.
+- Not pushed or deployed. Commit is local on `portfolio-upgrade` only.

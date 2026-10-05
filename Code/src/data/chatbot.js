@@ -43,7 +43,8 @@ export async function buildSystemPrompt() {
     ),
   ];
 
-  const stackLines = stack.map((g) => `${g.label}: ${g.techs.join(', ')}`);
+  // `techs` entries are `{ name, icon }` objects; only the label belongs in the prompt.
+  const stackLines = stack.map((g) => `${g.label}: ${g.techs.map((t) => t.name).join(', ')}`);
 
   const socialLines = socials
     .filter((s) => s.url)

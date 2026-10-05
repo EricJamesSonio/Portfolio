@@ -1,23 +1,80 @@
 ---
 import Card from './Card.astro';
-import Chip from './Chip.astro';
 import stack from '../data/stack.js';
+import { getIcon } from '../data/stackIcons.js';
+
+// Each row is a CSS marquee: an equal number of IDENTICAL runs inside one `width: max-content`
+// track, translated by exactly one run width. That makes the loop seamless regardless of how
+// wide the viewport is, so long rows never race and short rows never show a gap.
+const REPEATS = 4;
+
+const rows = stack.map((group) => ({
+  label: group.label,
+  cards: group.techs.map((tech) => ({ name: tech.name, icon: getIcon(tech.icon) })),
+}));
+
+// Icons live in ONE hidden sprite and each card just does <use href="#id">. Without this, four
+// repeats would inline ~40 KB of SVG path data four times over.
+const symbols = [];
+const symbolIdByMarkup = new Map();
+for (const row of rows) {
+  for (const card of row.cards) {
+    if (!card.icon || symbolIdByMarkup.has(card.icon)) continue;  // dedupe: karma/mstest share slugs
+    const id = `stack-icon-${symbols.length + 1}`;
+    symbolIdByMarkup.set(card.icon, id);
+    symbols.push({ id, body: card.icon });
+  }
+}
+for (const row of rows) {
+  for (const card of row.cards) card.symbolId = symbolIdByMarkup.get(card.icon) ?? null;
+}
+
+// Duration scales with the card count so rows move at a similar speed (~2.2s per card),
+// clamped to 10-40s and rounded so the inline style never shows float noise.
+const durationFor = (count) => `${Math.round(Math.min(Math.max(count * 2.2, 10), 40) * 10) / 10}s`;
 ---
 
 <Card title="TECH STACK" id="tech-card" labelled>
-  <div class="stack-groups custom-scroll">
-    {stack.map((group) => (
-      <div class="stack-group">
+  <!-- Icon sprite: rendered once, referenced by every card below. -->
+  <svg class="stack-icon-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+    {symbols.map((s) => (
+      <symbol id={s.id} viewBox="0 0 24 24" set:html={s.body} />
+    ))}
+  </svg>
+
+  <div class="stack-carousels">
+    {rows.map((row) => (
+      <div class="stack-carousel">
         <div class="stack-label">
-          <span class="micro-label">{group.label}</span>
+          <span class="micro-label">{row.label}</span>
           <span class="stack-hairline" aria-hidden="true"></span>
         </div>
-        <ul class="stack-chips">
-          {group.techs.map((tech) => (
-            <li><Chip>{tech}</Chip></li>
-          ))}
-        </ul>
+
+        <div class="stack-viewport">
+          <div class="stack-track" style={`--stack-duration: ${durationFor(row.cards.length)}`}>
+            {Array.from({ length: REPEATS }, (_, runIndex) => (
+              /* Run 1 is the real, readable list. Runs 2..REPEATS are aria-hidden filler that
+                 only exist to make the translate loop seamless. */
+              <ul class="stack-run" aria-hidden={runIndex > 0 ? 'true' : undefined}>
+                {row.cards.map((card) => (
+                  <li class="stack-card">
+                    {card.symbolId && (
+                      <span class="stack-card-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                          <use href={`#${card.symbolId}`} />
+                        </svg>
+                      </span>
+                    )}
+                    <span class="stack-card-name">{card.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
       </div>
     ))}
   </div>
+
+  <p class="stack-hint">Rows scroll automatically and pause on hover or focus.</p>
 </Card>

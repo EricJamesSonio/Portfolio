@@ -44,7 +44,7 @@
   color: var(--chat-btn-text);
   border: none;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   z-index: 50;
@@ -99,22 +99,21 @@
   display: grid;
   place-items: center;
   background: var(--accent);
-  color: #ffffff;
+  color: #000000;          /* bright neon fill: near-black reads on it in both themes */
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
-[data-theme="dark"] .chat-avatar { color: #000000; }
 .chat-id-text { display: flex; flex-direction: column; min-width: 0; }
 .chat-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-heading);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.chat-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+.chat-status { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-muted); }
 /* Green is the only allowed functional colour (per design-system) */
 .chat-dot {
   width: 7px; height: 7px;
@@ -149,19 +148,18 @@
   width: 20px; height: 20px;
   border-radius: 999px;
   background: var(--accent);
-  color: #ffffff;
-  font-size: 10px;
+  color: #000000;          /* bright neon fill: near-black reads on it in both themes */
+  font-size: 12px;
   font-weight: 700;
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
-[data-theme="dark"] .chat-mini-avatar { color: #000000; }
 
 /* whitespace-pre-wrap preserves the model's line breaks and bullets */
 .chat-bubble {
-  padding: 8px 12px;
-  font-size: 13px;
+  padding: 10px 14px;
+  font-size: 15px;
   line-height: 1.5;
   max-width: 82%;
   white-space: pre-wrap;
@@ -191,7 +189,7 @@
   border: 1px solid var(--border-inner);
   color: var(--text-heading);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 15px;
 }
 .chat-input::placeholder { color: var(--text-faint); }
 .chat-send {
@@ -199,10 +197,9 @@
   display: grid;
   place-items: center;
   background: var(--accent);
-  color: #ffffff;
+  color: #000000;          /* bright neon fill: near-black reads on it in both themes */
   border: none;
   cursor: pointer;
   flex-shrink: 0;
 }
-[data-theme="dark"] .chat-send { color: #000000; }
 .chat-send:disabled { opacity: 0.5; cursor: not-allowed; }

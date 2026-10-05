@@ -3,7 +3,7 @@ import { GitHubCalendar } from 'react-github-calendar';
 
 /**
  * Contribution graph island.
- * - Orange 5-step palettes per theme, square cells (blockRadius 0)
+ * - Neon-blue 5-step palettes per theme, square cells (blockRadius 0)
  * - Re-renders when the page theme changes (reads the `themechange` event)
  * - The panel scrolls horizontally INSIDE itself on phones so the page never overflows
  */
@@ -41,7 +41,7 @@ export default function GithubGraph({ username, profileUrl, theme }) {
         theme={theme}
         blockSize={isDark ? 11 : 14}
         blockMargin={4}
-        fontSize={12}
+        fontSize={13}
         blockRadius={0}
         showYearSelect
         hideTotalCount={false}

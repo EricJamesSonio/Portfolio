@@ -29,7 +29,7 @@
   width: 224px;              /* h-56 w-56 on phones */
   height: 224px;
   overflow: hidden;
-  border: 1px solid var(--accent);  /* thin orange border */
+  border: 1px solid var(--accent);  /* thin neon-blue border */
   border-radius: 6px;        /* rounded-md only on the portrait */
   background: var(--bg-panel);
 }
@@ -62,7 +62,7 @@
 }
 
 .hero-name {
-  font-size: 2.25rem;        /* text-4xl */
+  font-size: 2.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -70,10 +70,10 @@
 }
 
 .hero-role {
-  font-size: 12px;           /* text-[12px] */
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: var(--accent);
+  letter-spacing: 0.15em;
+  color: var(--accent-text);
   font-weight: 600;
 }
 
@@ -81,7 +81,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 .hero-location svg { color: var(--accent); flex-shrink: 0; }
@@ -101,7 +101,7 @@
   justify-content: center;
   gap: 8px;
   padding: 16px 40px;        /* px-10 py-4 */
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
@@ -132,7 +132,7 @@
   pointer-events: none;
 }
 .btn-todo {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.15em;
   opacity: 0.8;
 }
@@ -181,7 +181,7 @@
 [data-theme="dark"] .theme-icon-moon { display: block; }
 
 .theme-label {
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--text-muted);
@@ -200,20 +200,20 @@
   }
   .hero-portrait { width: 220px; height: 320px; }
   .hero-text { align-items: flex-start; text-align: left; }
-  .hero-name { font-size: 3rem; }      /* text-5xl */
-  .hero-role { font-size: 14px; letter-spacing: 0.3em; }
-  .hero-location { font-size: 14px; }
+  .hero-name { font-size: 3.5rem; }      /* text-5xl */
+  .hero-role { font-size: 16px; letter-spacing: 0.2em; }
+  .hero-location { font-size: 15px; }
   .hero-actions { flex-direction: row; width: auto; }
 }
 
 @media (min-width: 640px) {
-  .hero-role { font-size: 13px; letter-spacing: 0.3em; }
+  .hero-role { font-size: 15px; letter-spacing: 0.2em; }
 }
 
 @media (min-width: 1024px) {
   .hero-main { gap: 4rem; }
   .hero-portrait { width: 300px; height: 400px; }
-  .hero-name { font-size: 3.75rem; }   /* text-6xl */
-  .hero-role { font-size: 15px; }
-  .hero-location { font-size: 14px; }
+  .hero-name { font-size: 4.5rem; }   /* text-6xl */
+  .hero-role { font-size: 17px; }
+  .hero-location { font-size: 16px; }
 }

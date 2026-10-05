@@ -1,10 +1,12 @@
 # AGENTS.md
 
-Read this first. This repo is an **existing Astro portfolio** that is being upgraded, in phases, to match the reference design (mono + orange editorial). Update it **in place**; do not convert it to React or rebuild it from scratch.
+Read this first. This repo is an **existing Astro portfolio** that is being upgraded, in phases, to match the reference design (mono + **neon-blue** editorial). Update it **in place**; do not convert it to React or rebuild it from scratch.
+
+> **Accent override (2026-10-10).** The owner replaced the reference's orange accent with **neon blue**. `Code/src/styles/base.css` is the single source of truth: `--accent` is decorative-only and `--accent-text` / `--accent-link` carry readable text, so both stay WCAG AA+. The `react-portfolio-builder` skill still documents orange and is kept as layout reference only.
 
 ## Mission
 
-Make the **whole site** follow the reference defined in the `react-portfolio-builder` skill: monospace type, one orange accent, flat bordered cards, divider captions, bento layout (timelines, tech chips), Featured Projects with device mockups above the video grid, GitHub graph, certificates lightbox, contact tiles, light/dark with ripple, and a secure AI chatbot.
+Make the **whole site** follow the reference defined in the `react-portfolio-builder` skill: monospace type, one neon-blue accent, flat bordered cards, divider captions, bento layout (timelines), **tech-stack carousels**, Featured Projects with device mockups above the video grid, GitHub graph, certificates lightbox, contact tiles, light/dark with ripple, and a secure AI chatbot.
 
 ## Skills
 
@@ -30,15 +32,15 @@ src/
 ├─ layouts/Layout.astro  HTML shell, head, theme init script
 ├─ pages/index.astro     page composition
 ├─ styles/               one CSS file per section + base.css + responsive.css (+ new files)
-├─ data/                 (created in the upgrade) profile, experience, education, stack, projects, certs, links
-└─ components/react/     (created in the upgrade) islands: chatbot, GitHub graph, optional theme toggle
+├─ data/                 profile, experience, education, stack, stackIcons, projects, certs, links
+└─ components/react/     islands: chatbot, GitHub graph, optional theme toggle
 api/ or netlify/functions/   chatbot function (created in Phase 9, depends on host)
 docs/                    progress, build log, review report
 ```
 
 ## Target page flow
 
-Divider `NAME || PORTFOLIO YEAR` -> Hero -> Divider `SOLVING THROUGH CODE` -> Bento (Experience, Education | About, Tech Stack) -> Divider `ITERATE. BUILD. DEPLOY.` -> Projects (Featured, then video grid) -> Divider `CONSISTENCY` -> GitHub contributions -> Divider `RECOGNITION | SOCIALS` -> Certifications | Contact -> Footer -> floating chatbot.
+Divider `NAME || PORTFOLIO YEAR` -> Hero -> Divider `SOLVING THROUGH CODE` -> Bento (Experience, Education | About, Tech Stack carousels) -> Divider `ITERATE. BUILD. DEPLOY.` -> Projects (Featured, then video grid) -> Divider `CONSISTENCY` -> GitHub contributions -> Divider `RECOGNITION | SOCIALS` -> Certifications | Contact -> Footer -> floating chatbot.
 (The navbar is removed from the flow by default; files are kept.)
 
 ## Rules
