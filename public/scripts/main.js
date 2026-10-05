@@ -15,10 +15,11 @@ document.querySelectorAll('.fade-in, .slide-left, .slide-right').forEach(el => {
 
 
 // ===== VIDEO LAZY LOADING =====
+// Videos no longer autoplay on load (Phase 5): they start loading only when the
+// card scrolls near the viewport, then play when in view and pause when off screen.
 document.querySelectorAll('.project-video').forEach(video => {
   const source = video.querySelector('source[data-src]');
   if (!source) return;
-  video.load();
   video.classList.add('video-pending');
 });
 
@@ -48,6 +49,20 @@ const videoObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.project-video').forEach(video => {
   videoObserver.observe(video);
 });
+
+// Play when in view, pause when off screen (keeps at most one or two playing).
+const playObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const video = entry.target;
+    if (entry.isIntersecting) video.play().catch(() => {});
+    else video.pause();
+  });
+}, { threshold: 0.35 });
+
+document.querySelectorAll('.project-video').forEach(video => {
+  playObserver.observe(video);
+});
+
 
 
 // ===== PROJECT FILTERING =====

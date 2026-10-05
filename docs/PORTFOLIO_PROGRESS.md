@@ -8,7 +8,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 2 | UI primitives | DONE | Divider, Card, Chip, LinkTile + ui.css; demo block removed |
 | 3 | Hero | DONE | Navbar removed, portrait+text hero, theme pill, ripple; fixed empty-divider bug |
 | 4 | Bento (Experience, Education, About, Tech Stack) | DONE | 4 data files, Timeline primitive, 35/65 grid, 26 chips, shields.io removed |
-| 5 | Projects (Featured + video grid) | TODO | |
+| 5 | Projects (Featured + video grid) | DONE | 3 featured rows (laptop+phone mockups), 5 rows hidden, 4 dup cards removed |
 | 6 | GitHub contributions | TODO | |
 | 7 | Certifications and Contact | TODO | |
 | 8 | Theme polish (ripple + audit) | TODO | |
@@ -31,12 +31,18 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 - Role tagline: using the existing wording; a shorter 3-word tagline is optional
 
 ## Missing images
-- `Resume.pdf` (no resume file in `public/`)
-- Portrait hover video (no light/dark hover videos in `public/assets/videos/`)
-- `voting-mobile.png` (Voting System phone mockup -> placeholder phone)
-- `apptel-mobile.png` (Apptel phone mockup -> placeholder phone)
-- All 4 certificate images (`JSCertificate.png`, `ResponsiveCert.png`, `DL-2ndSem.jpg`, `DL-1stSem.jpg`)
-- Featured mockups for TechHub, NavSumaro, InterviewSpark, StartSmart, My Portfolio (rows hidden per spec)
+- `Resume.pdf` (no resume file in `public/`) -> GET RESUME disabled with a TODO marker
+- Portrait hover video (no light/dark hover videos) -> portrait is a still image
+- `techhub-mockup.png`, `navsumaro-mockup.png`, `interviewspark-mockup.png`, `startsmart-mockup.png`,
+  `portfolio-mockup.png` -> those 5 featured rows are HIDDEN (EduTool, Voting System, Apptel show)
+- `voting-mobile.png`, `apptel-mobile.png` -> placeholder phones (EduTool has a real mobile image)
+- All certificate images -> Certifications renders an honest empty state (Phase 7)
+- No video posters exist for the 11 video cards
+
+## Unused media (kept on disk, never deleted)
+- `videos/edutool.mp4` (EduToolV2, 1.3 MB), `videos/edutool2.mp4` (EduTool V3, 19.9 MB),
+  `videos/votingsystem.mp4` (Voting System, 3.4 MB), `videos/apptel.mp4` (Apptel, 34.5 MB)
+  -> no longer referenced after the featured block was added. ~59 MB total.
 
 ## Blocked/skipped reasons
 - (none yet)

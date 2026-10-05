@@ -109,6 +109,58 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 5: Projects (Featured + video grid)
+
+- Plan:
+  - `src/data/projects.js` — one data list for featured rows (name, slug, description, tech, link, code,
+    desktop, mobile, mockup) plus the video-grid list. Descriptions and repo URLs are copied **verbatim**
+    from the old video cards. A build-time `fs.access` check resolves each row to a render mode and
+    **drops rows with no image**, so the page can never request a missing file.
+  - `FeaturedProjects.astro` — media column (composite image, or a CSS-built laptop + overlapping phone
+    frame) and text column (name, description, chips, links). Phone placeholder is a striped navy panel
+    with `role="img"` and an aria-label.
+  - `Projects.astro` — rewritten: `ITERATE. BUILD. DEPLOY.` divider, the featured card, a quiet
+    `MORE PROJECTS` sub-heading, the existing filter buttons, then the video grid.
+  - `projects.css` — featured block + mockup geometry (laptop 88% with 16:10 screen and metal base,
+    phone 27% overlapping bottom-right, 30% under 480px), restyled flat video cards,
+    `max-height: 70svh` on phones and `800px` from `md` to avoid a nested-scroll trap.
+  - `main.js` — videos no longer autoplay on page load: they load near the viewport, play when
+    >=35% visible, pause when off screen.
+  - Removed the 4 duplicate video cards (EduToolV2, EduTool V3, Voting System, Apptel). **The .mp4
+    files are untouched on disk** and listed in the report.
+- Files created: `src/data/projects.js`, `src/components/FeaturedProjects.astro`
+- Files edited: `Projects.astro`, `src/styles/projects.css`, `public/scripts/main.js`
+- Gate results: **build ok** (1 page). Verified in `dist/index.html`:
+  `FEATURED PROJECTS` card present, `ITERATE. BUILD. DEPLOY.` divider present, **3 featured rows**
+  (EduTool, Voting System, Apptel) in the default order, TechHub/NavSumaro/InterviewSpark/StartSmart/
+  My Portfolio correctly **absent** (no images), **3 laptop mockups**, **2 placeholder phones**
+  (Voting + Apptel) and 1 real phone (EduTool), **11 video cards**, no `undefined` leakage.
+  Verified the 4 removed videos are no longer referenced anywhere in the HTML.
+  Verified every referenced image resolves on disk (5/5) and user media is intact
+  (**5 images, 15 videos**, unchanged).
+- Acceptance criteria (featured-projects-spec.md):
+  - [x] Three rows in order: EduTool, Voting System, Apptel
+  - [x] Block sits above the video grid inside `#projects`; the anchor still works
+  - [x] EduTool shows both images; Voting and Apptel show desktop + placeholder phone
+  - [x] No link buttons for empty URLs (all `link` values are empty, so no "View Project" renders;
+        only "View Code" renders, pointing at the real GitHub repos)
+  - [x] Uses only Phase 1 tokens, so it is native to both themes
+  - [x] One column at 900px and below, two columns above; no fixed widths that could overflow at 375px
+  - [x] Old video cards for the four projects removed from the grid
+  - [x] Build passes with no new warnings
+- Decisions:
+  - **Featured order:** the default order is used unchanged. The five reference projects have no
+    screenshots, so per the Default decisions table ("hide a featured project whose image is missing")
+    their rows are hidden and reported.
+  - **Tech chips and live URLs** are empty because the existing site never listed a per-project stack or
+    a deployed URL. They render nothing rather than invented content. The `Chip` list and the links row
+    both appear automatically once the fields are filled in.
+  - **Video grid columns:** 11 cards in a 3-column grid leaves a short last row (2 cards). Left as is;
+    adding a card would mean inventing a project.
+  - Videos got `preload="none"` and no `autoplay` attribute (the old markup autoplayed all 15 at once,
+    which was the main performance cost). No posters exist to add.
+- Issues: none.
+
 ## Phase 4: Bento (Experience, Education, About, Tech Stack)
 
 - Plan:
