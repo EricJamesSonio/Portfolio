@@ -20,7 +20,9 @@ const filters = [
   <FeaturedProjects />
 
   <div class="video-block">
-    <p class="video-subhead">MORE PROJECTS</p>
+    {/* Same signature divider as the other bands, so "more projects" reads as its own
+        section rather than a plain grey label. */}
+    <Divider>MORE PROJECTS</Divider>
 
     <div class="filters" role="group" aria-label="Filter projects by category">
       {filters.map((f) => (

@@ -8,7 +8,7 @@ const featured = await getFeatured();
 
 {featured.length > 0 && (
   <Card title="FEATURED PROJECTS" id="featured" labelled class="featured-card">
-    <div class="featured-list custom-scroll">
+    <div class="featured-list">
       {featured.map((p) => (
         <article class="featured-row">
           {/* Media column: composite image, or a CSS laptop + overlapping phone mockup */}

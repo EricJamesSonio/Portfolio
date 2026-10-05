@@ -968,3 +968,111 @@ tracked, because gitignore only affects untracked files and it was already in th
   rule all emitted. Facts verified rendering with correct values.
 - Privacy: no phone number, address or private email written to any file, doc or log here.
 - Not pushed or deployed. Commit is local on `portfolio-upgrade` only.
+
+---
+
+## Phase 17: Featured de-scroll, adaptive tech grid, divider, smaller cards
+
+Owner feedback, four items: (1) the Featured Projects card should not scroll, show everything;
+(2) the tech cards that "try to fit" should adapt - the longest text wins and everything follows
+it, always centred; (3) "MORE PROJECTS" should look like the other sections, not plain text;
+(4) the featured rows are too big.
+
+### 1. Featured Projects: nested scroll removed
+
+The inner scrollbar came from three places, all removed:
+
+- `.featured-list { max-height: 70svh; overflow-y: auto; padding-right: 4px }` and its
+  `max-height: 800px` variant at >=768px - deleted.
+- `.featured-list` was also a member of the shared `.timeline, .featured-list, .gh-panel-wrap,
+  .cert-list { overflow-x: auto }` rule, i.e. it drew a second rail. Dropped from that list.
+- The `custom-scroll` class on the wrapper in `FeaturedProjects.astro` - dropped.
+
+All three rows (EduTool, Voting System, Apptel) now render at full height and the page does the
+scrolling. `.card` is height:auto, so nothing clips and no JS was involved - `main.js` only
+touches `.filter-btn` / `.project-card`.
+
+### 2. Tech grid: columns sized from the text, not the item count
+
+The ugly wrapping came from Phase 16 deriving the column count from the NUMBER of items
+(`Math.min(techs.length, 8)`). Tools & Testing has 11 items, so it got 8 columns: after the
+30px icon, the 12px gap and the 32px padding, roughly 101px of text - about 10 monospace
+characters. Everything longer hit `overflow-wrap: anywhere` and split mid-word: *"Postma n"*,
+*"Jasmin e"*, *"OpenRo uter"*, *"OpenCo de"*, *"Copilo t"*.
+
+Now each group emits its longest label length in characters, and CSS turns that into the
+minimum track width:
+
+```js
+const longest = cards.reduce((n, c) => Math.max(n, c.name.length), 0);
+```
+```css
+--stack-col-raw: calc(var(--stack-icon) + var(--stack-gap) + var(--stack-label-ch, 10) * 1ch + var(--stack-pad-x) * 2);
+--stack-col-min: min(var(--stack-col-raw), 100%);
+grid-template-columns: repeat(auto-fit, minmax(var(--stack-col-min), 1fr));
+```
+
+`ch` is exact here because the whole site is monospace - one character is one `ch`. `auto-fit`
+then decides how many columns fit, so the grid genuinely adapts instead of being forced.
+`--stack-cols` and its `Math.min(..., 8)` are gone. Resolved per group: **11 / 7 / 10 / 14 / 10**
+characters (Frontend / Backend / Database / Tools & Testing / Deployment).
+
+Two details worth keeping:
+
+- **`ch` must be measured at the label's own font size.** `.stack-grid` now declares an explicit
+  `font-size` and `.stack-card-name` is sized `1em`, so the `1ch` in the maths and the rendered
+  text are always the same size. Previously the name was `1rem` below 1024px and `1.0625rem`
+  above while the grid inherited 16px - a 6% under-estimate that would still have wrapped the
+  longest name.
+- **A custom property must never clamp itself.** The first attempt was
+  `--stack-col-min: min(var(--stack-col-min), 46%)` in the phone breakpoint. That is a
+  self-reference, which is INVALID at computed-value time per CSS Variables spec, so
+  `grid-template-columns` would have been silently dropped and the whole grid collapsed to one
+  column on every phone. Split into `--stack-col-raw` (text-derived) + `--stack-col-min` (clamped).
+
+Phone fallback: below 640px the minimum is additionally clamped to 46% so the grid stays 2-up,
+and the label is allowed to wrap - at the space, never mid-word (`overflow-wrap: break-word`).
+Verified at 320px: only "React Query" and "GitHub Copilot" wrap, and both wrap cleanly.
+
+Centring: `.stack-card { justify-content: center }` + `.stack-card-name { text-align: center }`.
+The icon lost its `width`/`height` attributes and is now sized from `--stack-icon`, the same
+variable the grid maths uses, so the icon can never outgrow the space reserved for it.
+
+### 3. "MORE PROJECTS" is now a Divider
+
+`<p class="video-subhead">` -> `<Divider>MORE PROJECTS</Divider>` (the component was already
+imported). It picks up the same fading hairlines and wide-tracked caption as "ITERATE. BUILD.
+DEPLOY." and "SOLVING THROUGH CODE". The dead `.video-subhead` rule is deleted.
+
+### 4. Featured rows compacted
+
+`.featured-card` 24px -> 18px padding; `.featured-row` 20px -> 14px; media column 45% -> 38%;
+media padding 12/24 -> 10/18px and mobile cap 420px -> 380px; composite 320px -> 260px;
+`.featured-name` 1.375 -> 1.25rem; `.featured-desc` 1.0625rem/1.625 -> 1rem/1.55;
+`.proj-link` 1rem/10px -> 0.9375rem/8px; `.featured-text` gap 12px -> 10px;
+`.featured-list` gap 16px -> 12px. `.featured-desc` also loses `text-align: justify` - the
+Phase 16 log already flagged that justifying monospace opens rivers, and the About prose is
+left-ragged, so this makes the two consistent.
+
+### Verification
+
+`npm run build` clean, 0 errors/warnings. Output audit: **31** `.stack-card`, **31**
+`.stack-icon`, **5** `.stack-grid`, **5** `--stack-label-ch` (11/7/10/14/10), **0** `--stack-cols`,
+**0** `70svh`, **0** `video-subhead`, `MORE PROJECTS` present once inside `.divider-caption`.
+CSS audit: `repeat(auto-fit,minmax(var(--stack-col-min),1fr))` emitted once, `.stack-card` has
+`justify-content:center`, `.stack-card-name` has `white-space:nowrap`, `.featured-media` is
+`flex:0 0 38%`, and `.featured-list` is just `display:flex;gap:12px`. The three surviving
+`overflow-wrap:anywhere` rules are the unrelated card/bento/chat guards.
+
+Rendered in headless Chrome over the DevTools Protocol at **320, 360, 375, 414, 640, 768, 900,
+1024, 1280 and 1536px in BOTH themes**: `document.scrollWidth === innerWidth` at every width
+(no horizontal scrollbar, AGENTS.md rule 10), no card wider than its grid, and
+`.featured-list` never clipped (`scrollHeight === clientHeight`). Column counts adapt per group
+and per width - at 1536px: Frontend 6, Backend 6, Database 4, Tools 5, Deployment 4. Zero
+labels wrap from 414px up.
+
+`npx astro check` was NOT run: it needs `@astrojs/check` + `typescript`, which are outside the
+allowed dependency list (AGENTS.md rule 4). The build's own `[types]` step ran clean.
+
+- Privacy: no phone number, address or private email written to any file, doc or log here.
+- Not pushed or deployed. Commit is local on `portfolio-upgrade` only.

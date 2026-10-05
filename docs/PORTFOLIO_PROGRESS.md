@@ -20,6 +20,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 14 | Neon-blue retheme, larger type, stack carousels, education history | DONE | Accent orange -> neon blue (--accent-text added for AA), full type-scale bump, 5 scrolling tech carousels with brand icons, 5 education entries |
 | 15 | Brand-coloured icons, standalone tech band, alternating carousels, About reformat | DONE | Official brand hexes per tech (contrast-corrected per theme), tech stack moved out of the bento into a full-bleed section, rows alternate direction, scrollbars removed, About lead + drop cap + Quick Facts |
 | 16 | AI-Engineer rebrand, balanced About, formal paragraphs, tech grid | DONE | role -> Fullstack Developer . AI-Engineer (propagates to hero/facts/chatbot/meta), Focus -> agentic programming & automation, About card stretches + facts anchored to bottom, first-line paragraph indents, carousel replaced by a 31-card static grid |
+| 17 | Featured de-scroll, adaptive tech grid, divider, smaller cards | DONE | `.featured-list` nested scroll removed (3 rows render in full, page scrolls instead), tech columns sized from the LONGEST LABEL per group instead of the item count (no mid-word breaks), icon+label centred in every card, "MORE PROJECTS" is now a `<Divider>`, featured rows compacted (media 45%->38%, padding 20->14px, name 1.375->1.25rem, copy left-aligned) |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
@@ -37,7 +38,8 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
   it also fits Deployment.
 - Phase 14: the owner asked for 4 carousels (Frontend, Backend, Tools, Deployment); the
   existing **Database** group was kept as a 5th so real content was not deleted.
-  Say the word and it is dropped.
+  Say the word and it is dropped. (The carousels themselves are gone since Phase 16 - this
+  note now only concerns whether the Database GROUP survives.)
 - Phase 14/15: no Simple Icons mark exists for Karma, MSTest or Aiven. Substitutes are documented
   in `src/data/stackIcons.js` (Selenium, .NET, and a neutral cloud glyph).
 - Phase 15: the About **Quick Facts** grid fills the card height using facts already on the page
@@ -45,6 +47,10 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
   with 1-2 more paragraphs and delete `aboutFacts` from `src/data/about.js`.
 - Phase 15: the tech-stack band has no divider caption above it (the bento and projects bands
   have one). Add a `<Divider>` in `src/pages/index.astro` if a caption is wanted.
+- Phase 17: the tech grid sizes each group's cards from its longest label, so a NEW technology
+  with a longer name than the current longest will widen every card in that group. That is the
+  intended behaviour ("the longest text wins"), but it is worth remembering when adding
+  entries to `src/data/stack.js`.
 
 ## Missing images
 - `Resume.pdf` (no resume file in `public/`) -> GET RESUME disabled with a TODO marker
