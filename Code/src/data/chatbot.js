@@ -12,7 +12,7 @@
  * exposes an async builder.
  */
 import profile from './profile.js';
-import about from './about.js';
+import { aboutPlain } from './about.js';
 import { experience } from './experience.js';
 import { education } from './education.js';
 import stack from './stack.js';
@@ -73,7 +73,7 @@ Role: ${profile.role}
 Location: ${profile.location}
 
 About:
-${about.map((p) => `- ${p}`).join('\n')}
+${aboutPlain.map((p) => `- ${p}`).join('\n')}
 
 Experience:
 ${experience.map((e) => `- ${e.title}${e.sub ? ` (${e.sub})` : ''}${e.year ? ` [${e.year}]` : ''}`).join('\n')}

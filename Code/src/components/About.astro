@@ -1,22 +1,62 @@
 ---
 import Card from './Card.astro';
+import Chip from './Chip.astro';
 import about, { aboutFacts } from '../data/about.js';
+
+/**
+ * Splits a paragraph into plain and emphasised segments on the `**...**` markers.
+ *
+ * The copy in `data/about.js` carries markers rather than HTML, because the chatbot prompt
+ * consumes the very same strings as plain text. Rendering each segment as a real text node
+ * lets Astro escape it — no `set:html`, no HTML injection surface.
+ */
+const HL = /\*\*(.+?)\*\*/g;
+
+function segments(text) {
+  const out = [];
+  let last = 0;
+  for (const match of text.matchAll(HL)) {
+    if (match.index > last) out.push({ text: text.slice(last, match.index), hl: false });
+    out.push({ text: match[1], hl: true });
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) out.push({ text: text.slice(last), hl: false });
+  return out;
+}
+
+const paragraphs = about.map((paragraph, i) => ({
+  lead: i === 0,
+  segments: segments(paragraph),
+}));
 ---
 
 <Card title="ABOUT" id="about-card" labelled>
-  {/* The first paragraph is the lead: larger, heading-coloured and set with a drop cap, so the
-      block reads as written prose rather than three identical paragraphs of typed text. */}
+  {/* Formal paragraph formatting: the lead is flush and set larger, and every paragraph after
+      it is indented on its first line. The former drop cap was removed at the owner's request
+      (2026-10-10); emphasis inside the copy now comes from `.about-hl` spans. */}
   <div class="about-prose">
-    {about.map((paragraph, i) => (
-      <p class:list={['body-copy', { 'about-lead': i === 0 }]}>{paragraph}</p>
+    {paragraphs.map((paragraph) => (
+      <p class:list={['body-copy', { 'about-lead': paragraph.lead }]}>
+        {paragraph.segments.map((segment) =>
+          segment.hl ? <span class="about-hl">{segment.text}</span> : segment.text
+        )}
+      </p>
     ))}
   </div>
 
   <dl class="about-facts">
     {aboutFacts.map((fact) => (
-      <div class="about-fact">
+      <div class:list={['about-fact', { 'about-fact-wide': fact.wide }]}>
         <dt class="about-fact-label">{fact.label}</dt>
-        <dd class="about-fact-value">{fact.value}</dd>
+        {fact.chips ? (
+          <dd class="about-fact-chips">
+            {fact.chips.map((chip) => (
+              <Chip>{chip}</Chip>
+            ))}
+          </dd>
+        ) : (
+          <dd class="about-fact-value">{fact.value}</dd>
+        )}
       </div>
     ))}
   </dl>
