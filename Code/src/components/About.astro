@@ -1,11 +1,24 @@
 ---
 import Card from './Card.astro';
-import about from '../data/about.js';
+import about, { aboutFacts } from '../data/about.js';
 ---
 
 <Card title="ABOUT" id="about-card" labelled>
-  {about.map((paragraph) => (
-    <p class="body-copy">{paragraph}</p>
-  ))}
+  {/* The first paragraph is the lead: larger, heading-coloured and set with a drop cap, so the
+      block reads as written prose rather than three identical paragraphs of typed text. */}
+  <div class="about-prose">
+    {about.map((paragraph, i) => (
+      <p class:list={['body-copy', { 'about-lead': i === 0 }]}>{paragraph}</p>
+    ))}
+  </div>
+
+  <dl class="about-facts">
+    {aboutFacts.map((fact) => (
+      <div class="about-fact">
+        <dt class="about-fact-label">{fact.label}</dt>
+        <dd class="about-fact-value">{fact.value}</dd>
+      </div>
+    ))}
+  </dl>
 </Card>
 

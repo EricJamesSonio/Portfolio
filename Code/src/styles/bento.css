@@ -1,5 +1,5 @@
 /* ============================================================
-   BENTO — Experience / Education | About / Tech Stack
+   BENTO - Experience / Education | About
    One column below lg; 35% / 65% columns from lg.
    ============================================================ */
 .bento {
@@ -114,4 +114,65 @@
   color: var(--accent-text);
 }
 
-/* The tech stack rows live in `tech-stack.css` (scrolling carousels). */
+/* The tech stack rows live in `tech-stack.css` (their own full-bleed section). */
+
+/* ---------- About: editorial paragraph formatting ----------
+   Without a lead, three paragraphs of the same size read as a wall of typed text. The first
+   paragraph is set apart (larger, heading colour, drop cap) so there is a clear entry point. */
+.about-prose {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.about-lead {
+  font-size: 1.1875rem;
+  line-height: 1.55;
+  color: var(--text-heading);
+}
+
+/* Classic editorial drop cap. Purely presentational and safe in a monospace stack. */
+.about-lead::first-letter {
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.82;
+  font-weight: 700;
+  padding-right: 0.09em;
+  margin-top: 0.04em;
+  color: var(--accent-text);
+}
+
+/* ---------- About: quick facts ----------
+   Fills the column so About balances against Experience + Education without inventing copy.
+   The 1px grid gap + background trick draws the dividers without extra borders per cell. */
+.about-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  margin: 24px 0 0;
+  background: var(--border-inner);
+  border: 1px solid var(--border-inner);
+}
+
+.about-fact {
+  background: var(--bg-card);
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.about-fact-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+}
+
+.about-fact-value {
+  margin: 7px 0 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}

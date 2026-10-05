@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import Bento from '../components/Bento.astro';
+import TechStack from '../components/TechStack.astro';
 import Projects from '../components/Projects.astro';
 import GithubContributions from '../components/GithubContributions.astro';
 import Recognition from '../components/Recognition.astro';
@@ -9,13 +10,15 @@ import Footer from '../components/Footer.astro';
 import ChatbotIsland from '../components/ChatbotIsland.astro';
 ---
 
-<Layout title="Eric James Sonio — Portfolio">
+<Layout title="Eric James Sonio ï¿½ Portfolio">
   <div class="shell">
     <!-- Navbar removed from the page flow per the Default decisions table.
          `Navbar.astro` and `navbar.css` are kept in the repo, unused.
          Section ids are preserved so the old anchors (#about, #tech, #projects, #contact) still work. -->
     <Hero />
     <Bento />
+    <!-- Own full-bleed band, between the bento and the projects. -->
+    <TechStack />
     <Projects />
     <GithubContributions />
     <Recognition />

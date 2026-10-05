@@ -835,5 +835,78 @@ tracked, because gitignore only affects untracked files and it was already in th
   present. CSS audit: all neon tokens present, **zero** orange hex values (`#f97316 #ea580c
   #fb923c #ffedd5 #fed7aa #fff7ed #5f210d` and the three orange rgba families all return 0
   matches), `@keyframes stack-scroll` + `mask-image` + `animation-play-state: paused` emitted.
+## Phase 15: Brand-coloured icons, standalone tech-stack band, alternating carousels, About reformat
+
+- Goal (owner request): real brand colours instead of one neon blue; move the tech stack out of
+  the bento into its own section; bigger cards; alternate the carousel direction per row; kill
+  the scrollbars; make the About card longer and properly formatted.
+
+- **Bug fixed first:** every tech row was showing a horizontal scrollbar. Cause: `projects.css`
+  is imported AFTER `tech-stack.css` and re-declared `.stack-viewport { overflow-x: auto }`,
+  which beat that file's `overflow: hidden`. `.stack-viewport` is no longer in that list, and
+  tech-stack.css now hides scrollbars explicitly (`scrollbar-width: none`,
+  `-ms-overflow-style: none`, and a `::-webkit-scrollbar` reset) so it cannot regress.
+
+- **Brand colours** (`src/data/stackIcons.js`, regenerated):
+  - Each entry is now `{ brand, light, dark, body }` instead of a bare markup string. `brand`
+    is the official hex published by the technology owner.
+  - Only 7 of 30 official hexes clear 3:1 on BOTH card backgrounds. Express `#0a0a0a`, Vercel /
+    Render / OpenCode / Copilot `#000000` and Angular are black marks and vanish on the dark
+    card; JavaScript `#f7df1e`, Swagger `#85ea2d`, React `#61dafb`, Agora, Postman, Selenium,
+    MongoDB and Node vanish on the light card.
+  - So each colour is corrected per theme. Chromatic colours are shifted in **HSL - same hue,
+    same saturation, only lightness** - until they clear WCAG 1.4.11 (3:1). Achromatic
+    near-black brands are inverted per theme instead of being pushed to muddy grey, because a
+    black mark on a dark card is simply a white mark.
+  - Examples: React `#61dafb` -> light `#058fb4` / dark `#61dafb`; JavaScript `#f7df1e` ->
+    light `#958505`; FastAPI `#009688` unchanged on both; SQLite `#003b57` -> dark `#0072a9`;
+    CSS `#663399` -> dark `#8a4fc4`. All 30 pass an automated 3:1 check on both backgrounds.
+  - Colours ride in as two inline custom properties, so switching theme needs exactly two CSS
+    rules instead of a 30-rule block: `.stack-icon { fill: var(--brand-light) }` and
+    `[data-theme="dark"] .stack-icon { fill: var(--brand-dark) }`.
+  - The generator was rewritten in Node (`node gen_icons.mjs`). The original PowerShell version
+    silently produced wrong colours: PowerShell parses `@($h * 60, $s, $l)` as `$h * (60,$s,$l)`,
+    which threw inside the helper, and the try/catch swallowed every error while still writing a
+    truncated file. Failures are now loud and the script self-checks contrast before writing.
+
+- **Tech stack is now its own section** (`TechStack.astro`, rendered from `index.astro` between
+  the bento and Projects; removed from `Bento.astro`):
+  - No `.card` wrapper, no border, no panel - just an `h2` heading and the rows. It owns the
+    `#tech` anchor so existing links still land in the right place.
+  - Full bleed via `margin-inline: calc(var(--shell-px) * -1)`. Deliberately not `100vw`, which
+    includes the scrollbar and would reintroduce horizontal overflow. Scoped as
+    `.shell > .stack-section` because `projects.css` sets `.shell > * { max-width: 100% }` and is
+    imported later, so a bare `.stack-section` rule would lose and get clamped back inside.
+  - Cards enlarged: padding 10x16 -> 16x24, icon 22 -> 30px, label 1rem -> 1.125rem,
+    row gap 12 -> 16px, card gap 18 -> 26px.
+
+- **Alternating direction:** two keyframes selected by `data-dir` on the row - row 1 travels
+  left->right, row 2 right->left, and so on (3 right, 2 left for the five groups). Both
+  translate exactly one run width (`-25%`) across four identical runs, so the loop stays
+  seamless at any viewport width.
+
+- **About** (`About.astro`, `data/about.js`, `bento.css`):
+  - Paragraph formatting: the first paragraph is now a lead (19px, heading colour, tighter
+    leading) with a drop cap, giving the block an entry point instead of three identical
+    paragraphs of typed text. Prose gaps 12 -> 16px.
+  - Length: with Tech Stack gone the right column was ~370px short of the left column, so a
+    **Quick Facts** grid was added. IMPORTANT: every value is either read from `profile.js` or
+    restates a claim already made in the About copy - no biography was invented. A `TODO` in
+    `about.js` tells the owner to replace it with real paragraphs if they prefer.
+  - (For the record the About text was never justified - `.body-copy` sets no `text-align`. The
+    wide-spacing look in the screenshot was monospace rendering. It stays left-ragged.)
+
+- **Bug caught in review:** ASP.NET and MSTest resolve to the same Simple Icons body. The first
+  sprite-building loop `continue`d on a duplicate markup, so MSTest was emitted with no
+  `symbolId` and rendered iconless. Dedupe now only skips emitting a second `<symbol>`; every
+  card still receives an id. Verified 124 cards / 124 icons / 30 symbols.
+
+- Verification: `npm run build` clean, 0 errors/warnings. Output audit: 1 `.stack-section`,
+  `data-dir` 3 right + 2 left, 124 `.stack-card`, 124 `.stack-icon`, 124 `--brand-light`
+  values, 30 `<symbol>`, 1 `.about-lead`, 5 `.about-fact` with correct values, 0 `tech-card`
+  (confirmed no longer a `.card`). CSS audit: `.shell > .stack-section` bleed rule present,
+  both `data-dir` animation rules present, `fill: var(--brand-light)` / `[data-theme=dark]
+  fill: var(--brand-dark)` present, `scrollbar-width: none` x2 and the webkit scrollbar reset
+  x2 emitted, and `stack-viewport,` (the old override) returns 0 matches.
 - Privacy: no phone number, address or private email written to any file, doc or log here.
 - Not pushed or deployed. Commit is local on `portfolio-upgrade` only.

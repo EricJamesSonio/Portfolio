@@ -18,8 +18,12 @@
  */
 .shell, .shell > * { max-width: 100%; }
 
-/* Wide content (GitHub graph, timelines, chip rows) scrolls inside its own box */
-.timeline, .featured-list, .gh-panel-wrap, .cert-list, .stack-viewport {
+/* Wide content (GitHub graph, timelines, chip rows) scrolls inside its own box.
+   NOTE: `.stack-viewport` used to be listed here. Because projects.css is imported AFTER
+   tech-stack.css, `overflow-x: auto` won over that file's `overflow: hidden` and every tech
+   row showed a horizontal scrollbar. The rows are a marquee, not a scroll area, so they must
+   NOT be in this list - tech-stack.css hides their scrollbars explicitly. */
+.timeline, .featured-list, .gh-panel-wrap, .cert-list {
   overflow-x: auto;
 }
 
