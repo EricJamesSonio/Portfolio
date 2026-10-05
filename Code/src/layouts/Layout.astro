@@ -1,0 +1,176 @@
+---
+import profile from '../data/profile.js';
+import { githubProfileUrl, githubUsername } from '../data/github.js';
+import { socials } from '../data/links.js';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = `${profile.name} — Portfolio`,
+  description = `${profile.name} — ${profile.role}. Computer Science student at ${profile.school}. Building maintainable, scalable backends.`,
+} = Astro.props;
+
+// Site URL. The repo deploys to GitHub Pages under `/Portfolio`; set SITE_URL in astro.config if it moves.
+const SITE = Astro.site ?? 'https://ericjamessonio.github.io';
+const canonical = new URL(Astro.url.pathname.replace(/^\/Portfolio/, '/'), SITE).href;
+const ogImage = `${SITE}/Portfolio/assets/images/eric.jpg`;
+
+// JSON-LD: public facts only. The phone number is deliberately excluded.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role,
+  url: canonical,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: profile.location,
+  },
+  sameAs: socials.filter((s) => s.url).map((s) => s.url),
+  knowsAbout: ['Full-stack development', 'Backend engineering', 'REST APIs', 'MySQL', 'PostgreSQL', 'Node.js', 'React'],
+};
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content={description}>
+  <meta name="author" content={profile.name}>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <title>{title}</title>
+
+  <!-- Canonical + Open Graph + Twitter -->
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" type="image/svg+xml" href="/Portfolio/favicon.svg" />
+  <link rel="apple-touch-icon" href="/Portfolio/favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={profile.name} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:creator" content={`@${githubUsername}`} />
+
+  <!-- Structured data -->
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <!-- Apply the saved / OS theme BEFORE first paint so there is no flash. -->
+  <script is:inline>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var dark = saved
+          ? saved === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <slot />
+
+  <!-- Theme controller. Phase 8 adds the View-Transitions ripple; the instant
+       path here is the fallback used when the API is unavailable or motion is reduced. -->
+  <script is:inline>
+    (function () {
+      function applyLabel(theme) {
+        var label = document.getElementById('theme-label');
+        var btn = document.getElementById('theme-toggle');
+        if (label) label.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        if (btn) btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+      }
+
+      function commit(theme) {
+        window.__theme.set(theme);
+        applyLabel(theme);
+      }
+
+      function toggleTheme(event) {
+        var btn = event && event.currentTarget ? event.currentTarget : null;
+        var next = window.__theme.get() === 'dark' ? 'light' : 'dark';
+
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!document.startViewTransition || reduce) { commit(next); return; }
+
+        // Set the ripple origin and radius BEFORE starting the transition,
+        // otherwise the first frame can race the CSS variable read.
+        var root = document.documentElement.style;
+        var x = window.innerWidth / 2, y = window.innerHeight / 2;
+        if (btn) {
+          var r = btn.getBoundingClientRect();
+          x = r.left + r.width / 2;
+          y = r.top + r.height / 2;
+        }
+        root.setProperty('--ripple-x', x + 'px');
+        root.setProperty('--ripple-y', y + 'px');
+        root.setProperty(
+          '--ripple-radius',
+          Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)) + 'px'
+        );
+
+        document.startViewTransition(function () { commit(next); });
+      }
+
+      window.__themeToggle = toggleTheme;
+
+      document.addEventListener('DOMContentLoaded', function () {
+        applyLabel(window.__theme.get());
+        var btn = document.getElementById('theme-toggle');
+        if (btn) btn.addEventListener('click', toggleTheme);
+      });
+
+      // Keep the label in sync if the theme is changed from anywhere else.
+      window.addEventListener('themechange', function (e) {
+        applyLabel(e.detail && e.detail.theme ? e.detail.theme : window.__theme.get());
+      });
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="/Portfolio/scripts/main.js" is:inline></script>
+
+  <!-- Shared theme toggle API. Phase 8 upgrades this to a View-Transitions ripple. -->
+  <script is:inline>
+    window.__theme = {
+      get: function () {
+        return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      },
+      set: function (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('theme', theme); } catch (e) {}
+        window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: theme } }));
+      },
+      toggle: function () {
+        this.set(this.get() === 'dark' ? 'light' : 'dark');
+      }
+    };
+  </script>
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/base.css';
+  @import '../styles/ui.css';
+  @import '../styles/hero.css';
+  @import '../styles/bento.css';
+  @import '../styles/tech-stack.css';
+  @import '../styles/projects.css';
+  @import '../styles/github.css';
+  @import '../styles/recognition.css';
+  @import '../styles/footer.css';
+  @import '../styles/chatbot.css';
+</style>

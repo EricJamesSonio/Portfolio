@@ -1,0 +1,32 @@
+---
+import Card from './Card.astro';
+import LinkTile from './LinkTile.astro';
+import { socials, contacts, location } from '../data/links.js';
+---
+
+<Card title="CONTACT" id="contact" labelled>
+  <div class="contact-cols">
+    <div class="contact-col">
+      <p class="micro-label contact-col-label">Find me on</p>
+      <ul class="contact-list">
+        {socials.map((s) => (
+          <li>
+            <LinkTile label={s.label} sub={s.sub} href={s.url} icon={s.icon} />
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="contact-col">
+      <p class="micro-label contact-col-label">Get in touch</p>
+      <ul class="contact-list">
+        {contacts.map((c) => (
+          <li>
+            <LinkTile label={c.label} sub={c.sub} href={c.url} icon={c.icon} />
+          </li>
+        ))}
+      </ul>
+      <p class="contact-location">{location}</p>
+    </div>
+  </div>
+</Card>

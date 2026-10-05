@@ -1,0 +1,62 @@
+/* ============================================================
+   GITHUB CONTRIBUTIONS — panel scrolls horizontally INSIDE
+   itself on phones so the 53-week graph never breaks the page.
+   ============================================================ */
+.gh-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--band-gap);
+  width: 100%;
+  min-width: 0;
+  scroll-margin-top: 1rem;
+}
+
+.gh-card { width: 100%; }
+
+.gh-profile-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-link);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 0;      /* comfortable tap target */
+  flex-shrink: 0;
+}
+.gh-profile-link:hover { color: var(--accent-link-hover); text-decoration: underline; }
+
+/* On narrow screens the profile link drops below the title instead of
+   forcing the card header wider than the viewport. */
+@media (max-width: 480px) {
+  .gh-profile-link { white-space: normal; }
+}
+
+.gh-noscript {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.gh-panel-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-inner);
+  /* The graph scrolls HERE, never on the page. The cells are now 18px on desktop, so this is
+     load-bearing rather than decorative - without it the 53-week grid would widen the page. */
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.gh-panel {
+  max-width: 100%;
+}
+
+/* react-github-calendar renders inline styles; align its text to the site */
+.gh-panel a { text-decoration: none; }
+.gh-panel svg { max-width: 100%; }
+
+/* On very small screens the year select and legend can wrap awkwardly */
+@media (max-width: 480px) {
+  .gh-panel-wrap { padding: 8px; }
+}

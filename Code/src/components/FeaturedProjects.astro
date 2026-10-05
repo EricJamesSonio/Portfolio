@@ -1,0 +1,96 @@
+---
+import Card from './Card.astro';
+import Chip from './Chip.astro';
+import { getFeatured } from '../data/projects.js';
+
+const featured = await getFeatured();
+---
+
+{featured.length > 0 && (
+  <Card title="FEATURED PROJECTS" id="featured" labelled class="featured-card">
+    <div class="featured-list">
+      {featured.map((p) => (
+        <article class="featured-row">
+          {/* Media column: composite image, or a CSS laptop + overlapping phone mockup */}
+          <div class="featured-media">
+            {p.mode === 'composite' ? (
+              <img
+                class="featured-composite"
+                src={p.image}
+                alt={`${p.name} screenshot`}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <div class="mockup">
+                <div class="mockup-laptop">
+                  <div class="mockup-laptop-screen">
+                    <img
+                      src={p.desktopImage}
+                      alt={`${p.name} desktop screenshot`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="mockup-laptop-base" aria-hidden="true"></div>
+                </div>
+
+                {p.mobileImage ? (
+                  <div class="mockup-phone">
+                    <div class="mockup-phone-screen">
+                      <img
+                        src={p.mobileImage}
+                        alt={`${p.name} mobile screenshot`}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* Placeholder phone: intentional, labelled for screen readers */
+                  <div
+                    class="mockup-phone mockup-phone-placeholder"
+                    role="img"
+                    aria-label={`${p.name} mobile preview coming soon`}
+                  >
+                    <span class="mockup-placeholder-text">Mobile preview / coming soon</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Text column */}
+          <div class="featured-text">
+            <h3 class="featured-name">{p.name}</h3>
+            {p.description && <p class="body-copy featured-desc">{p.description}</p>}
+
+            {p.tech.length > 0 && (
+              <ul class="featured-chips">
+                {p.tech.map((t) => (
+                  <li><Chip>{t}</Chip></li>
+                ))}
+              </ul>
+            )}
+
+            {(p.link || p.code) && (
+              <div class="featured-links">
+                {p.link && (
+                  <a class="proj-link" href={p.link} target="_blank" rel="noreferrer">
+                    View Project <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+                {p.link && p.code && <span class="proj-sep" aria-hidden="true">|</span>}
+                {p.code && (
+                  <a class="proj-link" href={p.code} target="_blank" rel="noreferrer">
+                    View Code <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </Card>
+)}

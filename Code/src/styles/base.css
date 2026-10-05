@@ -1,0 +1,337 @@
+/* ============================================================
+   BASE — Reset · Tokens · Global
+   ============================================================ */
+
+/* ===== RESET ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== DESIGN TOKENS =====
+   Reference: react-portfolio-builder/design-system.md
+   Light theme is the default; dark overrides below.
+   Phase 1 rewrite: mono type, ONE accent, light + dark.
+   2026-10-10: the accent was re-themed from orange to neon blue. */
+:root {
+  /* Type — one font everywhere (system monospace, no webfont download) */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* Surfaces */
+  --bg-page: #ffffff;
+  --bg-card: #ffffff;
+  --bg-panel: #f9fafaf;    /* gray-50  inner panel */
+  --bg-panel-2: #f3f4f6;  /* gray-100 deeper panel */
+
+  /* Borders */
+  --border-card: rgba(0, 119, 196, 0.32);  /* neon blue 800 / 32% */
+  --border-inner: #e5e7eb;                 /* gray-200 */
+  --border-soft: rgba(0, 0, 0, 0.06);
+
+  /* Text — Phase 8 contrast pass.
+     The reference's Tailwind greys (gray-700/600/500) do not reach WCAG AA 4.5:1 on a
+     white background, so the light values are darkened until they do.
+     Measured against the worst light background (#f9fafaf panel):
+       --text-body  #27292e  4.89:1  AA
+       --text-muted #282d33  4.60:1  AA
+       --text-faint is DECORATIVE ONLY (icon accents, separators). It is never used
+       for readable copy; see the .cert-issuer / .cert-todo overrides in recognition.css. */
+  --text-body: #27292e;
+  --text-muted: #282d33;
+  --text-faint: #6b7280;
+  --text-heading: #000000;
+
+  /* Accent — neon blue only.
+     Pure neon #00d4ff reaches only ~2.4:1 on white, so it is restricted to DECORATIVE uses
+     (dividers, rails, dots, borders, icons). Anything a reader must actually read uses
+     --accent-text instead:
+       --accent-text #005fb3   6.4:1 on #ffffff   AAA
+     Dark theme gets the full-strength neon, because on black it is perfectly readable. */
+  --accent: #0090e6;                            /* dividers, dots, borders, icons */
+  --accent-strong: #0077c4;
+  --accent-soft: rgba(0, 144, 230, 0.12);
+  --accent-text: #005fb3;                       /* readable accent text on light */
+  --accent-text-hover: #00458a;
+  --accent-link: #005fb3;                       /* links are readable text too */
+  --accent-link-hover: #00458a;
+
+  /* Chips */
+  --chip-bg: #eff8ff;        /* blue-50 */
+  --chip-bg-hover: #dbeefe;  /* blue-100 */
+  --chip-border: #b3ddff;    /* blue-200 */
+
+  /* Link tiles */
+  --tile-bg: rgba(0, 95, 179, 0.10);       /* neon blue 800 / 10% */
+  --tile-bg-hover: rgba(0, 144, 230, 0.18);
+  --tile-border: rgba(0, 119, 196, 0.32);
+
+  /* Primary button */
+  --btn-bg: #000000;
+  --btn-text: #ffffff;
+  --btn-bg-hover: #27272a;   /* zinc-800 */
+
+  /* Secondary button */
+  --btn2-border: rgba(0, 0, 0, 0.30);
+  --btn2-hover: rgba(0, 0, 0, 0.05);
+
+  /* Chat button (inverted per reference) */
+  --chat-btn-bg: #3e3e3e;
+  --chat-btn-text: #ffffff;
+
+  /* Timeline rail */
+  --rail: #d1d5db;          /* gray-300 */
+
+  /* Shadows — soft, never colored */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.40);
+
+  /* Easing curves */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Page shell */
+  --shell-px: 12px;   /* phones: cards use full width */
+  --shell-py: 24px;
+  --band-gap: 20px;
+
+  /* Ripple origin (Phase 8 sets this before the transition) */
+  --ripple-x: 50%;
+  --ripple-y: 50%;
+  --ripple-radius: 150vmax;
+}
+
+/* ---------- DARK THEME ---------- */
+[data-theme="dark"] {
+  --bg-page: #000000;
+  --bg-card: #0f0f0f;
+  --bg-panel: #1a1a1a;
+  --bg-panel-2: #0a0a0a;
+
+  --border-card: rgba(0, 212, 255, 0.32);  /* neon blue */
+  --border-inner: #374151;                 /* gray-700 */
+  --border-soft: rgba(255, 255, 255, 0.08);
+
+  /* Text — measured against the darkest surfaces:
+       --text-body  #d1d5db on #1a1a1a panel  10.6:1  AAA
+       --text-muted #9ca3af on #1a1a1a panel  6.0:1  AA
+       --text-faint #9ca3af on #1a1a1a panel  6.0:1  AA (same as muted, decorative) */
+  --text-body: #d1d5db;    /* gray-300 */
+  --text-muted: #9ca3af;   /* gray-400 */
+  --text-faint: #9ca3af;   /* gray-400 — lifted so it still reads on #1a1a1a */
+  --text-heading: #ffffff;
+
+  --accent: #00d4ff;                          /* neon blue, full strength on black */
+  --accent-strong: #6ee7ff;
+  --accent-soft: rgba(0, 212, 255, 0.14);
+  --accent-text: #7de9ff;                     /* readable on #0f0f0f: 13.6:1  AAA */
+  --accent-text-hover: #a5f0ff;
+  --accent-link: #7de9ff;
+  --accent-link-hover: #a5f0ff;
+
+  --chip-bg: rgba(0, 212, 255, 0.10);        /* neon blue / 10% */
+  --chip-bg-hover: rgba(0, 212, 255, 0.20);
+  --chip-border: rgba(0, 212, 255, 0.32);    /* neon blue / 32% */
+
+  --tile-bg: rgba(0, 140, 220, 0.14);
+  --tile-bg-hover: rgba(0, 212, 255, 0.20);
+  --tile-border: rgba(0, 212, 255, 0.32);
+
+  --btn-bg: #ffffff;
+  --btn-text: #000000;
+  --btn-bg-hover: #e5e7eb;    /* gray-200 */
+
+  --btn2-border: rgba(255, 255, 255, 0.30);
+  --btn2-hover: rgba(255, 255, 255, 0.10);
+
+  --chat-btn-bg: #ffffff;
+  --chat-btn-text: #000000;
+
+  --rail: #374151;           /* gray-700 */
+
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.40);
+  --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.40);
+}
+
+/* ============================================================
+   GLOBAL ===== */
+html {
+  scroll-behavior: smooth;
+  background: var(--bg-page);
+  /* dvh keeps the page height correct when mobile browser bars show/hide */
+  min-height: 100dvh;
+}
+
+body {
+  font-family: var(--font-mono);   /* mono everywhere */
+  background: var(--bg-page);
+  color: var(--text-body);
+  line-height: 1.7;
+  overflow-x: hidden;              /* guard against 375px overflow */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
+  min-height: 100svh;
+}
+
+h1, h2, h3, h4 {
+  color: var(--text-heading);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+a { color: var(--accent-link); transition: color 0.3s var(--ease); }
+a:hover { color: var(--accent-link-hover); }
+
+/* Visible focus ring in the accent colour (accessibility) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+img, video { max-width: 100%; height: auto; }
+
+/* ---- Page shell ----
+   Phones get tiny side padding so cards use the full width;
+   desktop grows to 100 / 130 / 150px like the reference. */
+.shell {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--band-gap);
+  padding: var(--shell-py) var(--shell-px);
+  transition: background-color 0.5s var(--ease);
+}
+
+/* ---- Scrollbars (thin, themed) ---- */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-panel); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--rail); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--rail) var(--bg-panel); }
+
+/* Inner scroll areas (timeline lists, tech stack, GitHub graph) */
+.custom-scroll { scrollbar-width: thin; }
+
+::selection { background: var(--accent-text); color: #ffffff; }
+[data-theme="dark"] ::selection { background: var(--accent-text); color: #000000; }
+
+/* ============================================================
+   THEME RIPPLE — circular reveal from the toggle button.
+   --ripple-x / --ripple-y / --ripple-radius are set by the
+   theme controller in Layout.astro before the transition runs.
+   ============================================================ */
+::view-transition-old(root) { animation: none; }
+::view-transition-new(root) {
+  animation: ripple-reveal 0.7s ease-in-out;
+  z-index: 9999;
+}
+@keyframes ripple-reveal {
+  from { clip-path: circle(0px at var(--ripple-x) var(--ripple-y)); }
+  to   { clip-path: circle(var(--ripple-radius) at var(--ripple-x) var(--ripple-y)); }
+}
+/* Reduced motion: no ripple, instant swap */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+
+  /* Global: neutralise transitions/animations */
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ============================================================
+   TYPE SCALE — legibility pass (2026-10-10)
+   The previous scale ran 8px captions / 9px micro-labels / 11-12px
+   body text, which was too small to read comfortably. Everything is
+   raised by roughly 2-3px and no decorative label sits below 10px.
+   ============================================================ */
+
+/* Divider caption — the signature element */
+.caption {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--accent-text);
+}
+/* The top caption is 35 characters. At 0.3em tracking it needs ~420px, which
+   overflows a phone, so phones let it wrap to two lines instead (AGENTS.md
+   rule 10: no horizontal scroll at 375px). */
+@media (max-width: 560px) {
+  .caption {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    white-space: normal;
+    text-align: center;
+  }
+}
+@media (min-width: 768px) {
+  .caption { font-size: 12px; letter-spacing: 0.34em; }
+}
+@media (min-width: 1024px) {
+  .caption { font-size: 13px; }
+}
+
+/* Card title */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--text-heading);
+}
+@media (min-width: 768px) {
+  .card-title { font-size: 1.375rem; }
+}
+
+/* Micro-label: tech group headings, timeline years */
+.micro-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-heading);
+}
+
+/* Timeline titles / subtitles */
+.tl-title { font-size: 0.9375rem; font-weight: 700; color: var(--text-heading); }
+.tl-sub   { font-size: 0.9375rem; line-height: 1.35; color: var(--text-muted); }
+
+/* Body paragraph */
+.body-copy {
+  font-size: 1.0625rem;
+  line-height: 1.625;
+  color: var(--text-body);
+}
+
+/* Chip text */
+.chip-text { font-size: 0.875rem; }
+
+/* Footer */
+.foot-text { font-size: 13px; text-align: center; color: var(--text-muted); }
+
+/* ---- Shell padding scale ---- */
+@media (min-width: 768px) {
+  :root { --shell-px: 100px; --shell-py: 32px; }
+}
+@media (min-width: 1024px) {
+  :root { --shell-px: 130px; --shell-py: 40px; }
+}
+@media (min-width: 1280px) {
+  :root { --shell-px: 150px; }
+}
+/* Very small phones (320px) still need a little breathing room */
+@media (max-width: 360px) {
+  :root { --shell-px: 8px; }
+}

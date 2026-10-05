@@ -1,0 +1,183 @@
+/* ============================================================
+   TECH STACK - its own section (NOT a .card).
+   A static, balanced card grid: five category blocks, each a
+   label + a row of icon cards. No carousel, no animation.
+
+   Column width is derived from the TEXT, not the item count
+   (Phase 17). Each block emits --stack-label-ch, the character
+   length of its longest label; the site is monospace, so that
+   converts to an exact ch measurement and no name can break
+   mid-word at any width. `auto-fit` then picks as many columns
+   as fit, so the grid adapts instead of forcing a fixed count.
+   ============================================================ */
+
+.stack-section {
+  display: flex;
+  flex-direction: column;
+  /* Same rhythm as .projects / .gh-section / .recognition, so the band sits on the page grid. */
+  gap: var(--band-gap);
+  width: 100%;
+  min-width: 0;
+  scroll-margin-top: 1rem;
+}
+
+/* The visible band title is now the <Divider> caption rendered by TechStack.astro, which supplies
+   the neon-blue hairlines, the tracking and the centering. The old `.stack-heading` rules are
+   deliberately gone rather than left behind as dead CSS (AGENTS.md rule: no dead CSS). */
+
+/* The icon sprite: one hidden SVG holding every symbol, referenced by <use href="#id">.
+   Zero size keeps it out of layout; it is also aria-hidden in the markup. */
+.stack-icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.stack-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  min-width: 0;
+}
+
+.stack-group { min-width: 0; }
+
+/* ---------- Block heading: label + count + fading hairline ---------- */
+.stack-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stack-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-faint);
+  padding: 1px 6px;
+  border: 1px solid var(--border-inner);
+  flex-shrink: 0;
+}
+
+.stack-hairline {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  color: var(--text-heading);
+}
+
+/* ---------- Grid ----------
+   The minimum track is the card's whole chrome (icon + gap + padding) plus the widest label
+   in the block. Everything that changes the card's chrome is a variable here, so the maths
+   below can never disagree with the padding/icon rules further down. */
+.stack-grid {
+  --stack-icon: 26px;
+  --stack-gap: 10px;
+  --stack-pad-x: 14px;
+
+  /* The font-size that 1ch is measured against. It MUST stay equal to .stack-card-name, which
+     is sized in `em` and inherits this - otherwise the computed minimum is short of the real
+     text width and the longest name wraps. That bug is why this is stated explicitly. */
+  font-size: 0.875rem;
+
+  /* icon + gap + longest label + horizontal padding.
+     Deliberately two variables: --stack-col-raw is the text-derived minimum, and
+     --stack-col-min is that value clamped per breakpoint. A single variable that clamps
+     itself (`min(var(--stack-col-min), 46%)`) is a self-reference and is INVALID at
+     computed-value time, which silently drops `grid-template-columns` and collapses the
+     grid to one column. */
+  --stack-col-raw: calc(
+    var(--stack-icon) + var(--stack-gap) +
+    var(--stack-label-ch, 10) * 1ch +
+    var(--stack-pad-x) * 2
+  );
+  /* min(..., 100%) is the guard: an unusually long label shrinks to the container instead of
+     pushing a horizontal scrollbar onto the page (AGENTS.md rule 10). */
+  --stack-col-min: min(var(--stack-col-raw), 100%);
+
+  display: grid;
+  /* auto-fit collapses the empty tracks, so a 4-item block keeps 4 equal columns rather than
+     stretching to the row edges, and a ragged last row is the same width as the rest. */
+  grid-template-columns: repeat(auto-fit, minmax(var(--stack-col-min), 1fr));
+  gap: var(--stack-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .stack-grid {
+    --stack-icon: 30px;
+    --stack-gap: 12px;
+    --stack-pad-x: 18px;
+    font-size: 1.0625rem;
+  }
+}
+
+/* Phones stay 2-up. Two 14-character labels cannot fit across a 375px screen, so below 640px
+   the label is allowed to wrap - at the space, never mid-word. */
+@media (max-width: 639px) {
+  .stack-grid { --stack-col-min: min(var(--stack-col-raw), 46%); }
+}
+
+/* ---------- Card ---------- */
+.stack-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* icon + label centred in the card */
+  gap: var(--stack-gap);
+  min-width: 0;
+  padding: 14px var(--stack-pad-x);
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border);
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.stack-card:hover {
+  background: var(--tile-bg-hover);
+  border-color: var(--accent);
+}
+
+.stack-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+/* Sized from --stack-icon, the same variable the grid minimum is built from, so the icon can
+   never outgrow the space the layout reserved for it. */
+.stack-icon {
+  width: var(--stack-icon);
+  height: var(--stack-icon);
+  display: block;
+  /* Official brand colour, swapped per theme. The values are inline custom properties emitted
+     from stackIcons.js; `fill` is inherited down into the <use> shadow tree. */
+  fill: var(--brand-light);
+}
+[data-theme='dark'] .stack-icon {
+  fill: var(--brand-dark);
+}
+
+.stack-card-name {
+  /* 1em == .stack-grid's font-size == the size 1ch was measured against. */
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-heading);
+  text-align: center;
+  min-width: 0;
+  /* The track is already wide enough for the longest label in the block, so the name never
+     has to break. `anywhere` is deliberately NOT used - it is what split "Postman" into
+     "Postma n" in Phase 16. */
+  white-space: nowrap;
+}
+@media (max-width: 639px) {
+  /* Only here, where two labels genuinely cannot fit: wrap at the space, not mid-word. */
+  .stack-card-name {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}

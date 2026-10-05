@@ -1,0 +1,193 @@
+/* ============================================================
+   BENTO - Experience / Education | About
+   One column below lg; 35% / 65% columns from lg.
+   ============================================================ */
+.bento {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  scroll-margin-top: 1rem;
+}
+
+.bento-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Cards stretch to equal height within their column where sensible */
+.bento-col > * { min-width: 0; }
+
+@media (min-width: 1024px) {
+  .bento { grid-template-columns: 35% 65%; }
+}
+
+/* ---------- Timeline ---------- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 0 0;
+  max-height: 380px;         /* cap so one card cannot grow the column */
+  overflow-y: auto;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 12px 0 12px 24px;
+}
+
+/* Rail: a vertical line running through the dots */
+.timeline-rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  /* hollow ring for inactive items */
+  box-shadow: inset 0 0 0 2px var(--rail);
+  background: transparent;
+}
+/* Active item: filled neon-blue dot */
+.timeline-item.active .timeline-dot {
+  background: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+/* Connector line between dots (not after the last item) */
+.timeline-item:not(:last-child) .timeline-rail::after {
+  content: '';
+  flex: 1;
+  width: 2px;
+  margin-top: 6px;
+  margin-bottom: -12px;
+  background: var(--rail);
+}
+
+.timeline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.timeline-text { min-width: 0; flex: 1; }
+.tl-title { margin: 0 0 2px; }
+.tl-sub { margin: 0; }
+
+.timeline-badge {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  font-size: 13px;
+  background: var(--accent-soft);
+  color: var(--text-heading);
+  border: 1px solid var(--accent);
+  white-space: nowrap;
+}
+
+.timeline-year { flex-shrink: 0; white-space: nowrap; }
+
+/* ---------- Coding since header ---------- */
+.coding-since {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-inner);
+  margin-bottom: 4px;
+}
+.coding-year {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+/* The tech stack rows live in `tech-stack.css` (their own full-bleed section). */
+
+/* Balance: the bento grid stretches both columns to the same height, but `.bento-col` is a flex
+   column and the card inside it sized to its content - so About ended ~130px short of
+   Experience + Education. `flex: 1` makes the card take the full column height, and
+   `margin: auto 0 0` on the quick facts anchors them to the bottom, so the slack lands between
+   the prose and the facts instead of as a hole under the card. */
+.bento-col-right > .card { flex: 1; }
+
+/* ---------- About: formal paragraph formatting ----------
+   Book convention rather than loose blocks: the lead is flush, every paragraph after it is
+   indented on its first line, and the indent (not a big margin) is what marks a new paragraph.
+   Left-ragged on purpose - justifying monospace opens rivers. */
+.about-prose {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.about-prose p { margin: 0; }
+
+/* Every paragraph except the lead gets a first-line indent. */
+.about-prose p + p { text-indent: 1.5em; }
+
+.about-lead {
+  font-size: 1.1875rem;
+  line-height: 1.6;
+  color: var(--text-heading);
+  margin-bottom: 0.4em;
+}
+
+/* Classic editorial drop cap. Purely presentational and safe in a monospace stack. */
+.about-lead::first-letter {
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.82;
+  font-weight: 700;
+  padding-right: 0.09em;
+  margin-top: 0.04em;
+  color: var(--accent-text);
+}
+
+/* ---------- About: quick facts ----------
+   Fills the column so About balances against Experience + Education without inventing copy.
+   The 1px grid gap + background trick draws the dividers without extra borders per cell. */
+.about-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  /* Anchors the block to the bottom of the stretched card. */
+  margin: auto 0 0;
+  background: var(--border-inner);
+  border: 1px solid var(--border-inner);
+}
+
+.about-fact {
+  background: var(--bg-card);
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.about-fact-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+}
+
+.about-fact-value {
+  margin: 7px 0 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}

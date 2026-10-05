@@ -1,0 +1,340 @@
+/* ============================================================
+   PROJECTS � Featured mockup block + video-card grid
+   ============================================================ */
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: var(--band-gap);
+  width: 100%;
+  min-width: 0;
+  scroll-margin-top: 1rem;
+}
+
+/* ---------- Featured mockup ---------- */
+/**
+ * Overflow guard.
+ * `body { overflow-x: hidden }` alone can leave fixed elements misbehaving, so the
+ * shell and every band are constrained to the viewport width as well.
+ */
+.shell, .shell > * { max-width: 100%; }
+
+/* Wide content (GitHub graph, timelines, chip rows) scrolls inside its own box.
+   NOTE: `.stack-viewport` used to be listed here. Because projects.css is imported AFTER
+   tech-stack.css, `overflow-x: auto` won over that file's `overflow: hidden` and every tech
+   row showed a horizontal scrollbar. The rows are a marquee, not a scroll area, so they must
+   NOT be in this list - tech-stack.css hides their scrollbars explicitly.
+   NOTE: `.featured-list` was removed here in Phase 17. It was capped at 70svh / 800px with
+   `overflow-y: auto`, which trapped three rows behind an inner scrollbar (and a fifth rail
+   from this rule). Every featured project now renders in full and the page does the
+   scrolling, which is what a visitor expects from a portfolio. */
+.timeline, .gh-panel-wrap, .cert-list {
+  overflow-x: auto;
+}
+
+/* Visually hidden but available to screen readers (section heading) */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Every featured row renders at full height - no nested scroll (Phase 17). */
+.featured-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Slightly tighter than the shared .card padding: this card holds three tall rows, so 6px
+   off each edge is visible, and it still clears a 44px touch target. */
+.featured-card { padding: 18px; }
+
+.featured-row {
+  display: flex;
+  flex-direction: column;   /* one column at 900px and below */
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--border-inner);
+  background: var(--bg-panel);
+  min-width: 0;
+  transition: border-color 0.2s var(--ease);
+}
+.featured-row:hover { border-color: var(--accent); }
+
+/* Media panel: slightly darker so the devices stand out */
+.featured-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-inner);
+  padding: 10px 10px 18px;   /* extra bottom room for the phone overlap */
+  min-width: 0;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+@media (min-width: 901px) {
+  .featured-media { max-width: none; margin: 0; }
+}
+
+.featured-composite {
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+}
+
+/* ---------- CSS device mockup ---------- */
+.mockup {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;   /* laptop screen area */
+  display: flex;
+  align-items: flex-start;
+}
+
+.mockup-laptop {
+  width: 88%;              /* laptop ~88% of the media area, left aligned */
+  flex-shrink: 0;
+}
+
+/* Dark bezel, slightly rounded top corners */
+.mockup-laptop-screen {
+  border: 6px solid #1a1a1a;
+  border-radius: 6px 6px 0 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--bg-panel-2);
+}
+.mockup-laptop-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;     /* show the top of the app */
+  display: block;
+  transition: transform 0.5s var(--ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .featured-row:hover .mockup-laptop-screen img { transform: scale(1.03); }
+}
+
+/* Thin metallic base bar below the screen */
+.mockup-laptop-base {
+  height: 8px;
+  background: linear-gradient(to bottom, #9ca3af, #4b5563);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Phone: tall rounded rect overlapping the laptop's bottom-right */
+.mockup-phone {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 27%;              /* ~27% of the media area */
+  aspect-ratio: 9 / 19;
+  border: 4px solid #1a1a1a;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-panel-2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.mockup-phone-screen { width: 100%; height: 100%; }
+.mockup-phone-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+/* Placeholder phone when no mobile screenshot exists */
+.mockup-phone-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* striped dark navy at 135deg, two close shades */
+  background: repeating-linear-gradient(
+    135deg,
+    #0d1526 0px,
+    #0d1526 8px,
+    #111b30 8px,
+    #111b30 16px
+  );
+}
+.mockup-placeholder-text {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9db0d8;
+  text-align: center;
+  padding: 4px;
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .featured-row { padding: 12px; }
+  .mockup-phone { width: 30%; border-width: 3px; }
+  .mockup-placeholder-text { font-size: 8px; }
+}
+
+/* ---------- Featured text column ---------- */
+.featured-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+@media (min-width: 901px) {
+  .featured-row { flex-direction: row; gap: 18px; }
+  /* 45% -> 38%: the mockups were the loudest thing in the section and the rows read as
+     posters rather than previews. */
+  .featured-media { flex: 0 0 38%; }
+  .featured-text { flex: 1; }
+}
+
+.featured-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+/* Left-aligned on purpose, like the About prose: justifying monospace opens rivers. */
+.featured-desc {
+  font-size: 1rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.featured-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.featured-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+  flex-wrap: wrap;
+}
+.proj-link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent-link);
+  text-decoration: none;
+  /* 44px tap target without changing the visual size */
+  padding: 8px 0;
+}
+.proj-link:hover { color: var(--accent-link-hover); text-decoration: underline; }
+.proj-sep { color: var(--text-faint); }
+
+/* ---------- Video block ---------- */
+.video-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* `.video-subhead` was deleted in Phase 17: the "MORE PROJECTS" label is now the signature
+   <Divider> caption, so it inherits the same hairlines + tracking as every other band. */
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-inner);
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  min-height: 40px;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--text-heading); }
+/* The active fill is the bright neon accent, so the label is near-black in BOTH themes:
+   #000 on #0090e6 = 6.1:1 and #000 on #00d4ff = 11:1. White would only reach 2.7:1. */
+.filter-btn.active {
+  background: var(--accent);
+  color: #000000;
+  border-color: var(--accent);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-inner);
+  overflow: hidden;
+  min-width: 0;
+  transition: border-color 0.3s var(--ease);
+}
+.project-card:hover { border-color: var(--accent); }
+
+.project-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  /* The whole card is a real link, so a pointer is the honest affordance - and it also overrides
+     the text I-beam that Chrome and Firefox paint over a control-less <video>, which made each
+     demo card look like a text field the user could click into and type in. */
+  cursor: pointer;
+}
+
+/* The videos autoplay muted, so the hover zoom is a desktop-only nicety.
+   On touch there is nothing to hover, so it is simply not applied. */
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover .project-video { transform: scale(1.03); }
+}
+.project-video { transition: transform 0.5s var(--ease); }
+
+.project-video {
+  width: 100%;
+  height: 13rem;
+  object-fit: cover;
+  display: block;
+  background: var(--bg-panel);
+  /* The video is the actual hit target inside the card link, and it is the element that
+     inherits the I-beam cursor, so it is set explicitly here too. */
+  cursor: pointer;
+}
+
+.project-card h3 {
+  margin: 16px 16px 6px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+.project-card p {
+  margin: 0 16px 16px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-video { height: 11rem; }
+}

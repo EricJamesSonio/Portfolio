@@ -1,0 +1,15 @@
+---
+export interface Props {
+  /** Strong variant uses a solid line instead of the faded one. */
+  strong?: boolean;
+}
+const { strong = false } = Astro.props;
+---
+
+<!-- Signature divider: fading hairlines with an ultra-wide-tracked neon-blue caption.
+     The caption is passed as slot content: <Divider>CAPTION</Divider> -->
+<div class="divider" role="separator">
+  <span class:list={['divider-line', { strong }]} aria-hidden="true"></span>
+  <span class="divider-caption caption"><slot /></span>
+  <span class:list={['divider-line', 'flip', { strong }]} aria-hidden="true"></span>
+</div>

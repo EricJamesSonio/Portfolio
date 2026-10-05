@@ -1,0 +1,135 @@
+/* ============================================================
+   RECOGNITION � Certifications + Contact band
+   Stacked on phones, side by side from lg.
+   ============================================================ */
+.recognition {
+  display: flex;
+  flex-direction: column;
+  gap: var(--band-gap);
+  width: 100%;
+  min-width: 0;
+}
+
+.recognition-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.recognition-col { flex: 1; min-width: 0; min-height: 0; }
+
+@media (min-width: 1024px) {
+  .recognition-grid { flex-direction: row; }
+}
+
+/* ---------- Certifications ---------- */
+.cert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.cert-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 16px;
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border);
+  color: var(--text-body);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease);
+  min-height: 44px;
+}
+.cert-item:hover { background: var(--tile-bg-hover); }
+.cert-item.is-static { cursor: default; }
+.cert-item.is-static:hover { background: var(--tile-bg); }
+
+.cert-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.cert-name { font-size: 1rem; font-weight: 700; color: var(--text-heading); }
+/* Readable text: uses --text-muted (AA), not the decorative --text-faint */
+.cert-issuer { font-size: 13.5px; color: var(--text-muted); }
+.cert-expand { color: var(--text-faint); flex-shrink: 0; }
+
+.cert-empty {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+.cert-todo { display: block; margin-top: 6px; font-size: 13.5px; color: var(--text-muted); }
+.cert-todo code { font-size: 13.5px; color: var(--accent-text); }
+
+/* ---------- Lightbox ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+.lightbox[hidden] { display: none; }
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border: 1px solid var(--border-card);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  color: var(--text-heading);
+  cursor: pointer;
+}
+.lightbox-close:hover { background: var(--bg-panel); }
+
+/* ---------- Contact ---------- */
+.contact-cols {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+@media (min-width: 768px) {
+  .contact-cols { flex-direction: row; gap: 20px; }
+}
+
+.contact-col { flex: 1; min-width: 0; }
+.contact-col-label { margin: 0 0 8px; }
+
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-location {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
