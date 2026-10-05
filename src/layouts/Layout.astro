@@ -10,7 +10,23 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Eric James Sonio — Fullstack Developer & Backend Specialist. CS student at College of Mary Immaculate.">
+  <meta name="color-scheme" content="light dark">
   <title>{title}</title>
+
+  <!-- Apply the saved / OS theme BEFORE first paint so there is no flash. -->
+  <script is:inline>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var dark = saved
+          ? saved === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +36,23 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
   <slot />
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="/Portfolio/scripts/main.js" is:inline></script>
+
+  <!-- Shared theme toggle API. Phase 8 upgrades this to a View-Transitions ripple. -->
+  <script is:inline>
+    window.__theme = {
+      get: function () {
+        return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      },
+      set: function (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('theme', theme); } catch (e) {}
+        window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: theme } }));
+      },
+      toggle: function () {
+        this.set(this.get() === 'dark' ? 'light' : 'dark');
+      }
+    };
+  </script>
 </body>
 </html>
 

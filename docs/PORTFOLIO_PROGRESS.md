@@ -4,7 +4,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | # | Phase | Status | Notes |
 |---|-------|--------|-------|
 | 0 | Recon, plan, setup | DONE | Host=GitHub Pages; base=/Portfolio; media collision fixed |
-| 1 | Foundation (tokens, theme, base) | TODO | |
+| 1 | Foundation (tokens, theme, base) | DONE | Light+dark tokens, pre-paint theme, shell, type scale |
 | 2 | UI primitives | TODO | |
 | 3 | Hero | TODO | |
 | 4 | Bento (Experience, Education, About, Tech Stack) | TODO | |

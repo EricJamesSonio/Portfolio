@@ -4,13 +4,11 @@
 
 - **Build result before changes:** pending (run at end of Phase 0)
 - **Framework:** Astro `^4.0.0`, static output, `base: '/Portfolio'`, `build.assets: 'assets'` (removed in Phase 0)
-- **⚠️ Base-path finding:** the repo folder is `Porttfolio` (double "t") but `astro.config.mjs` has
-  `base: '/Portfolio'` (single "t"). Source files hardcode `/Porttfolio/assets/...`, and Astro
-  **rewrites those root-relative URLs at build time to `/Portfolio/assets/...`**. Verified in the built
-  `dist/index.html`: every image/video/bundle reference resolves under `/Portfolio/`. This is the
-  existing, working behaviour, so source code keeps writing `/Porttfolio/...` and the build output is
-  correct. **Do not "fix" the base without confirming the live GitHub Pages URL**, because the live site
-  is served from `/Portfolio` and changing it would 404 every asset. Flagged in the report.
+- **⚠️ Base-path finding:** the repo folder is named `Porttfolio` (double "t") but `astro.config.mjs` sets
+  `base: '/Portfolio'` (single "t"). **Source files consistently use `/Portfolio/...`** (verified with
+  `git show HEAD` and a repo-wide grep), so source and config agree and every asset resolves correctly
+  in `dist/index.html`. Do not "fix" the base without confirming the live GitHub Pages URL, because the
+  live site is served from `/Portfolio` and changing it would 404 every asset. Flagged in the report.
 - **Host detection:** no `vercel.json`, no `.vercel`, no `netlify.toml`. Hosting is **GitHub Pages** via
   `.github/workflows/deploy.yml`. Per the Default decisions table ("unknown -> write the Vercel version
   and flag it"), the chatbot backend is written as `api/chat.js` (Vercel style) and flagged in the report.
@@ -110,6 +108,38 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
 - [Phase 0] `public/scripts/main.js` will crash once the Navbar is removed because it reads
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
+
+## Phase 1: Foundation (tokens, theme, base)
+
+- Plan:
+  - Rewrite the token block in `base.css` with light + dark CSS variables taken from `design-system.md`
+    (page/card/panel backgrounds, borders, body/muted/faint/heading text, orange accent family, chip,
+    tile, button, chat-button, rail, shadows).
+  - Keep a small "legacy aliases" block mapping the old `--gold` / `--ink` / `--text-primary` names onto
+    the new tokens so `hero.css`, `navbar.css` and `footer.css` keep rendering until their own phases.
+  - Replace the global block: monospace everywhere, remove the all-caps body rule and the noise overlay,
+    add heading defaults, visible `:focus-visible` ring in the accent colour, `img, video` max-width.
+  - Add the page shell `.shell` (12px phones -> 100/130/150px at md/lg/xl) and the `--band-gap` vertical gap.
+  - Themed scrollbars for both themes + `.custom-scroll` utility + global reduced-motion rule.
+  - Add the type-scale utility classes (`.caption`, `.card-title`, `.micro-label`, `.tl-title`,
+    `.tl-sub`, `.body-copy`, `.chip-text`, `.foot-text`) straight from the design system.
+  - Theme mechanism: pre-paint inline script + `data-theme` on `<html>`, `<meta name="color-scheme">`,
+    and a shared `window.__theme` API (get/set/toggle + localStorage + `themechange` event) that Phase 8
+    upgrades to the ripple.
+- Files created: none
+- Files edited: `src/styles/base.css`, `src/layouts/Layout.astro`, `src/pages/index.astro`
+- Gate results: **build ok** (1 page, no errors). Verified in `dist/index.html`:
+  `color-scheme` meta present, pre-paint theme script present, `data-theme` present, `window.__theme` present,
+  `class="shell"` present. Verified in the emitted CSS: all tokens present, **2** `[data-theme=dark]`
+  selectors with `#000000` page bg and `#0f0f0f` card bg, `prefers-reduced-motion` block, ripple vars.
+- Decisions:
+  - Default theme follows the OS preference and is remembered; falls back to light if storage is blocked.
+  - No web font is downloaded for body text (system monospace per the Default decisions table). The
+    existing Google Fonts `<link>` is left in place for now and removed once no component uses Playfair /
+    DM Sans (Phase 13 cleanup).
+  - No old section CSS was deleted (Default decision: dead code is cleaned only in Phase 13).
+- Issues: none. Both themes are handled for everything built so far; nothing overflows at 375px because
+  only global rules changed (the old sections keep their own padding for now).
 
 ## Phase 0: Recon, plan, and setup
 
