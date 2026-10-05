@@ -908,5 +908,63 @@ tracked, because gitignore only affects untracked files and it was already in th
   both `data-dir` animation rules present, `fill: var(--brand-light)` / `[data-theme=dark]
   fill: var(--brand-dark)` present, `scrollbar-width: none` x2 and the webkit scrollbar reset
   x2 emitted, and `stack-viewport,` (the old override) returns 0 matches.
+## Phase 16: AI-Engineer rebrand, balanced About card, formal paragraphs, tech stack as a grid
+
+- Goal (owner request): make the About container balanced and longer; give the About prose a
+  formal paragraph format with indents; change "Backend Specialist" to "AI-Engineer"; retitle
+  the Focus fact to agentic programming / automation; and replace the tech-stack carousel with a
+  static, balanced grid of icon cards.
+
+- **AI-Engineer rebrand** (`src/data/profile.js`): `role` is now `'Fullstack Developer ·
+  AI-Engineer'`. Because `role` is defined exactly once and read by the hero, the About ROLE
+  fact, the chatbot system prompt and the `<meta description>`, that ONE edit updated all four.
+  Verified in the built HTML: hero reads `Fullstack Developer · AI-Engineer`, the meta
+  description carries it, and `Backend Specialist` returns **0** matches anywhere.
+
+- **Focus fact** (`src/data/about.js`): `'Robust APIs & maintainable backends'` ->
+  `'Agentic programming & automation'`.
+
+- **About lead reworded** to match the new positioning. The wording was proposed to the owner
+  for approval before implementing, and is derived only from what the owner supplied
+  (AI-Engineer, agentic programming, automation) - no new biography was invented:
+  "...a full-stack developer focused on maintainable, scalable backends — robust APIs, agentic
+  programming, and automation that hold up over time."
+
+- **About container balance** (`src/styles/bento.css`): the bento grid stretched both columns,
+  but `.bento-col` is a flex column and the card inside it sized to its own content, so About
+  ended ~130px short of Experience + Education. Fix is two rules:
+  - `.bento-col-right > .card { flex: 1 }` — the card now fills the column height.
+  - `.about-facts { margin: auto 0 0 }` — the quick facts anchor to the BOTTOM, so the slack
+    lands between prose and facts instead of as a hole under the card.
+
+- **Formal paragraph formatting**: book convention, not loose blocks. The lead stays flush
+  (19px + drop cap); every paragraph after it gets `text-indent: 1.5em`; the paragraph gap
+  tightened from 16px to `0.5em` because the indent, not a large margin, is what signals a new
+  paragraph. Left-ragged on purpose — justifying monospace opens rivers.
+
+- **Tech stack: carousel -> static grid.** The marquee needed four identical runs to loop
+  seamlessly, which meant every technology rendered **four times** (React, MySQL and the rest
+  appeared four times in the screenshot). With no animation each tech renders exactly once:
+  **124 cards -> 31**, and the page shrank from 174,129 to 146,678 bytes.
+  - Five category blocks, each a `micro-label` + count badge + fading hairline + card grid.
+  - Column count comes from `--stack-cols`, computed inline from the item count and capped at
+    8 (6 / 6 / 4 / 8 / 4). A plain `auto-fit` was rejected because it stretched Database's and
+    Deployment's four cards across the full width, which looked sparse.
+  - Mobile-first: 2 columns on phones, 4 from 640px, per-block count from 1024px.
+  - Dropped the full bleed — it only existed for the ticker effect and would just push cards off
+    screen in a grid. Cards now align with the page content.
+  - **Deleted as dead code:** both `@keyframes`, every `animation-*` declaration, `data-dir`,
+    `.stack-viewport` / `.stack-track` / `.stack-run`, the `prefers-reduced-motion` marquee
+    block, and the "Hover or focus to pause" hint. Deleting the animation also retires the
+    whole WCAG 2.2.2 "auto-moving content must be pausable" requirement for this section.
+  - The icon sprite and the per-theme brand colours are unchanged.
+
+- Verification: `npm run build` clean, 0 errors/warnings. Output audit: 31 `.stack-card`,
+  31 `.stack-icon`, 5 `.stack-grid`, 5 `--stack-cols` values (6/6/4/8/4), 30 `<symbol>`,
+  **0** `stack-carousel|stack-track|stack-run`, `Backend Specialist` 0 matches, `Robust APIs`
+  0 matches. CSS audit: `.stack-grid` present at all three breakpoints including
+  `repeat(var(--stack-cols, 4),minmax(0,1fr))`; `.bento-col-right>.card{flex:1}`,
+  `.about-prose p+p{text-indent:1.5em}`, `.about-facts{margin:auto 0 0}` and the drop-cap
+  rule all emitted. Facts verified rendering with correct values.
 - Privacy: no phone number, address or private email written to any file, doc or log here.
 - Not pushed or deployed. Commit is local on `portfolio-upgrade` only.

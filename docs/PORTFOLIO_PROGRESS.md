@@ -19,6 +19,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 13 | Cleanup and release readiness | DONE | Dead CSS/aliases removed, README rewritten, final build clean |
 | 14 | Neon-blue retheme, larger type, stack carousels, education history | DONE | Accent orange -> neon blue (--accent-text added for AA), full type-scale bump, 5 scrolling tech carousels with brand icons, 5 education entries |
 | 15 | Brand-coloured icons, standalone tech band, alternating carousels, About reformat | DONE | Official brand hexes per tech (contrast-corrected per theme), tech stack moved out of the bento into a full-bleed section, rows alternate direction, scrollbars removed, About lead + drop cap + Quick Facts |
+| 16 | AI-Engineer rebrand, balanced About, formal paragraphs, tech grid | DONE | role -> Fullstack Developer . AI-Engineer (propagates to hero/facts/chatbot/meta), Focus -> agentic programming & automation, About card stretches + facts anchored to bottom, first-line paragraph indents, carousel replaced by a 31-card static grid |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 

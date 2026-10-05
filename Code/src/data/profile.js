@@ -4,9 +4,10 @@
  * never from memory and never from references/content-seed.md (that describes a different person).
  */
 
-/** TODO: confirm the exact role wording. Taken from the existing Hero ("Fullstack Developer ·
- *  Backend Specialist"). Add a short 3-word tagline here if you want the reference's tighter hero. */
-export const role = 'Fullstack Developer · Backend Specialist';
+/** Role shown under the hero name, in the About quick facts, the chatbot prompt and the page
+ *  meta description - so it is defined exactly once and can never drift between them.
+ *  Owner update (2026-10-10): "Backend Specialist" -> "AI-Engineer". */
+export const role = 'Fullstack Developer · AI-Engineer';
 
 /** Location from the existing Contact section. */
 export const location = 'Pandi, Bulacan';

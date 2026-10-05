@@ -116,19 +116,33 @@
 
 /* The tech stack rows live in `tech-stack.css` (their own full-bleed section). */
 
-/* ---------- About: editorial paragraph formatting ----------
-   Without a lead, three paragraphs of the same size read as a wall of typed text. The first
-   paragraph is set apart (larger, heading colour, drop cap) so there is a clear entry point. */
+/* Balance: the bento grid stretches both columns to the same height, but `.bento-col` is a flex
+   column and the card inside it sized to its content - so About ended ~130px short of
+   Experience + Education. `flex: 1` makes the card take the full column height, and
+   `margin: auto 0 0` on the quick facts anchors them to the bottom, so the slack lands between
+   the prose and the facts instead of as a hole under the card. */
+.bento-col-right > .card { flex: 1; }
+
+/* ---------- About: formal paragraph formatting ----------
+   Book convention rather than loose blocks: the lead is flush, every paragraph after it is
+   indented on its first line, and the indent (not a big margin) is what marks a new paragraph.
+   Left-ragged on purpose - justifying monospace opens rivers. */
 .about-prose {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0.5em;
 }
+
+.about-prose p { margin: 0; }
+
+/* Every paragraph except the lead gets a first-line indent. */
+.about-prose p + p { text-indent: 1.5em; }
 
 .about-lead {
   font-size: 1.1875rem;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-heading);
+  margin-bottom: 0.4em;
 }
 
 /* Classic editorial drop cap. Purely presentational and safe in a monospace stack. */
@@ -147,9 +161,10 @@
    The 1px grid gap + background trick draws the dividers without extra borders per cell. */
 .about-facts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1px;
-  margin: 24px 0 0;
+  /* Anchors the block to the bottom of the stretched card. */
+  margin: auto 0 0;
   background: var(--border-inner);
   border: 1px solid var(--border-inner);
 }
