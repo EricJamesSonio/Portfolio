@@ -1281,3 +1281,89 @@ is the `calc(...)`, `.chat-avatar` / `.chat-mini-avatar` are square with `border
 
 No phone number or private email was written to any file, doc or log here (rule 9); the chatbot
 prompt was re-checked and still contains no phone number. Not pushed or deployed.
+
+---
+
+# Phase 20 — About: drop cap removed, emphasis, client work, full-width Focus
+
+Owner request (2026-10-10), three parts: remove the oversized "I" on the About lead, add that he
+has built systems for clients, and highlight phrases such as *AI engineering* and *automation*.
+The screenshot also showed the FOCUS fact sitting alone in the last row of the quick-facts grid
+with three empty tracks beside it, which read as a hole in the card.
+
+## 1. Drop cap removed
+
+`.about-lead::first-letter` is deleted from `bento.css`. The lead is still distinguished, but only
+by size (`1.1875rem`) and `--text-heading`; the first-line indents (`.about-prose p + p {
+text-indent: 1.5em }`) remain the thing that marks a new paragraph, exactly as the owner asked.
+Compiled CSS now contains **0** `first-letter` rules.
+
+## 2. Emphasis without HTML in the data
+
+The About strings are consumed twice: `About.astro` renders them, and `chatbot.js` pastes them
+into the system prompt as **plain text**. Putting `<span>` or `<mark>` in `data/about.js` would
+have leaked raw tags into the AI prompt, so the copy carries lightweight `**like this**` markers
+instead.
+
+- `About.astro` splits each paragraph into segments with a small `segments()` helper and renders
+  each one as a real Astro text node. Nothing is passed to `set:html`, so Astro escapes every
+  value — no HTML injection surface, and the data file stays free of markup.
+- `about.js` exports `aboutPlain` (markers stripped via `.replace(HL, '$1')`), and `chatbot.js`
+  imports that instead of the raw array.
+
+`.about-hl` styles the result: `--accent-text` (AA in both themes), `font-weight: 700` and an
+`inset 0 -0.35em` underline band in `--accent-soft`. The weight and the band mean the emphasis
+never depends on colour alone.
+
+Marked phrases: *maintainable, scalable backends*, *agentic programming*, *automation*,
+*AI engineering*.
+
+## 3. Client work added to the copy
+
+Paragraph 2 now opens with the systems-for-clients claim the owner supplied. It is a
+restatement of work already described in the Experience timeline and Projects section — no new
+client names, industries or numbers were invented. The wording is flagged in
+`docs/PORTFOLIO_PROGRESS.md` for the owner to confirm.
+
+## 4. FOCUS fact fills the empty row
+
+`aboutFacts` gained an optional `wide` flag and a `chips` array:
+
+```js
+{ label: 'Focus', wide: true,
+  chips: ['Agentic programming', 'Automation integration', 'Maintainable, scalable systems'] }
+```
+
+`About.astro` renders `chips` as `Chip` elements inside a `<dd>` (a `dd` may hold flow content, so
+the `dl`/`dt`/`dd` semantics are intact). Two new rules do the layout work:
+
+```css
+.about-fact-wide { grid-column: 1 / -1; }
+.about-fact-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+```
+
+`1 / -1` spans the full row at every column count the `repeat(auto-fit, minmax(150px, 1fr))`
+grid produces (1, 2 or 4), so there is no leftover gap at any viewport width — the four facts
+above fill row 1 and FOCUS fills row 2 edge to edge. Because this adds a row of content to a card
+that was already balanced by `.bento-col-right > .card { flex: 1 }`, the empty space between the
+prose and the facts shrinks rather than moving.
+
+### Verification
+
+`npx astro build` from `Code/` -> **clean, 1 page in 35.67s, 0 errors, 0 warnings**.
+
+Compiled-HTML audit (`dist/index.html`):
+- `about-hl` appears **5** times (4 marked phrases across paragraphs 1-2, plus the 1 CSS class ref).
+- literal `**` markers: **0** — every marker was consumed by the parser.
+- `about-fact-wide`: **1**; `.about-fact-chips` `<dd>` holds exactly the 3 expected `Chip` spans.
+- `about-lead`: **1**; `about-facts`: **1**; prose reads continuously with no double spaces.
+
+Compiled-CSS audit: `.about-hl{color:var(--accent-text);font-weight:700;box-shadow:inset 0 -.35em 0 var(--accent-soft)}`,
+`.about-fact-wide{grid-column:1 / -1}`, `.about-prose p+p{text-indent:1.5em}` all emitted;
+`first-letter` rules: **0**.
+
+Prompt audit: ran `buildSystemPrompt()` directly in Node — **0** asterisk characters in the About
+section, and the client-work sentence is present, so the assistant can answer questions about it.
+
+No phone number, address or private email was written to any file, doc or log here (rule 9). Not
+pushed or deployed.

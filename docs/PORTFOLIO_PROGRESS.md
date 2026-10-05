@@ -23,6 +23,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 17 | Featured de-scroll, adaptive tech grid, divider, smaller cards | DONE | `.featured-list` nested scroll removed (3 rows render in full, page scrolls instead), tech columns sized from the LONGEST LABEL per group instead of the item count (no mid-word breaks), icon+label centred in every card, "MORE PROJECTS" is now a `<Divider>`, featured rows compacted (media 45%->38%, padding 20->14px, name 1.375->1.25rem, copy left-aligned) |
 | 18 | Education newest-first, Tech Stack divider, video cursor | DONE | Education reordered newest-first so "Current" (BS Computer Science) is the TOP entry instead of last; Tech Stack promoted from a bare left-aligned h2 to a real `<Divider>TECH STACK</Divider>` (closes the Phase 15 TODO); `cursor: pointer` on the project card link + video kills the text I-beam that made demo cards look typeable |
 | 19 | Email shown, live Facebook/Messenger, bigger graph, resume, theme switch + chat head | DONE | Email tile now prints the real address; Facebook + Messenger URLs supplied by the owner (both were dead non-clickable tiles); GitHub cells 11/14 -> 11/14/18 responsive with the year select kept; `resume.docx` wired up so GET RESUME is live; theme switch rebuilt (the 44px `min-height` was overriding its own 28px height and the knob was propped up by a `-8px` hack); chat head is now a square `>_` prompt block |
+| 20 | About: drop cap removed, emphasis, client work, full-width Focus | DONE | Drop cap on the lead deleted at the owner's request (the big "I"); `.about-hl` highlights marked phrases (AI engineering, automation, agentic programming, maintainable scalable backends) via `**...**` markers parsed into escaped text nodes — never `set:html`; About copy now mentions client systems work; FOCUS fact spans the full grid row (`grid-column: 1 / -1`) as 3 chips, closing the empty-space gap; `aboutPlain` export strips the markers so the chatbot prompt stays clean |
 
 Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 
@@ -51,6 +52,13 @@ Statuses: TODO, IN PROGRESS, DONE, BLOCKED, SKIPPED
 - Phase 15: the About **Quick Facts** grid fills the card height using facts already on the page
   (role, degree, school, location, focus). If the owner wants real prose instead, replace it
   with 1-2 more paragraphs and delete `aboutFacts` from `src/data/about.js`.
+- Phase 20: the client-work sentence in paragraph 2 and the three FOCUS chips were written from
+  the owner's own instructions in the Phase 20 request ("focuses in agent programming and
+  integrating automations in the systems and maintainable and scalable systems"). They are a
+  restatement of claims already made elsewhere on the site — confirm the wording is accurate
+  (especially "shipped systems for clients") or replace the sentence in `src/data/about.js`.
+  The paragraph is marked up with `**...**` for emphasis; the markers are stripped for the
+  chatbot prompt via the `aboutPlain` export, so never paste raw HTML into these strings.
 - Phase 15: the tech-stack band had no divider caption above it while every other band did. **RESOLVED
   in Phase 18** — `TechStack.astro` now renders `<Divider>TECH STACK</Divider>`, and the visible
   "TECH STACK" h2 was replaced by a `visually-hidden` h2 so `aria-labelledby` stays valid.
