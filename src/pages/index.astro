@@ -6,6 +6,7 @@ import Projects from '../components/Projects.astro';
 import GithubContributions from '../components/GithubContributions.astro';
 import Recognition from '../components/Recognition.astro';
 import Footer from '../components/Footer.astro';
+import ChatbotIsland from '../components/ChatbotIsland.astro';
 ---
 
 <Layout title="Eric James Sonio — Portfolio">
@@ -20,4 +21,7 @@ import Footer from '../components/Footer.astro';
     <Recognition />
     <Footer />
   </div>
+
+  <!-- Floating AI assistant (lazily hydrated island) -->
+  <ChatbotIsland />
 </Layout>

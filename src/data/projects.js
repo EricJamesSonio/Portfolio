@@ -21,7 +21,15 @@
  *     live URL per project. Fill them in and the chips/buttons appear with no markup change.
  */
 
-const IMG_DIR = new URL('../assets/images/', import.meta.url);
+/**
+ * Absolute path to the user's image folder.
+ *
+ * This module lives in `src/data/`, but the images live in `public/assets/images/`, so a
+ * relative `../assets/images/` would resolve to `src/assets/images/` (which does not exist)
+ * when the module is loaded directly by Node. Resolve through `process.cwd()` instead, which
+ * is the project root under both `astro build` and `node`.
+ */
+const IMG_DIR = new URL('public/assets/images/', `file:///${process.cwd().replace(/\\/g, '/')}/`);
 const VIDEO_DIR = '/Portfolio/assets/videos/';
 
 /** Featured rows. `tech` and `link` are intentionally empty until the owner supplies them. */

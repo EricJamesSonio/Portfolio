@@ -1,0 +1,202 @@
+/* ============================================================
+   AI CHATBOT — floating button, teaser banner, panel
+   All colours come from Phase 1 tokens, so both themes work.
+   ============================================================ */
+
+/* ---------- Floating button ---------- */
+.chat-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--chat-btn-bg);
+  color: var(--chat-btn-text);
+  border: none;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+/* Respect the iPhone home indicator */
+@supports (padding: max(0px)) {
+  .chat-fab { bottom: max(24px, env(safe-area-inset-bottom)); }
+}
+.chat-fab:hover { transform: scale(1.05); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .chat-fab:not([aria-expanded="true"]) { animation: chat-bounce 2.4s ease-in-out infinite; }
+}
+@keyframes chat-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ---------- Teaser banner ---------- */
+.chat-banner {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  padding: 8px 16px;
+  background: var(--chat-btn-bg);
+  color: var(--chat-btn-text);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 70vw;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .chat-banner { animation: chat-bounce 2.4s ease-in-out infinite; }
+}
+
+/* ---------- Panel ---------- */
+.chat-panel {
+  position: fixed;
+  bottom: 84px;
+  right: 16px;
+  width: 90%;
+  max-width: 384px;
+  height: 60vh;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-deep);
+  z-index: 50;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .chat-panel { right: 24px; width: 384px; }
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-inner);
+  flex-shrink: 0;
+}
+.chat-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .chat-avatar { color: #000000; }
+.chat-id-text { display: flex; flex-direction: column; min-width: 0; }
+.chat-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+/* Green is the only allowed functional colour (per design-system) */
+.chat-dot {
+  width: 7px; height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+  flex-shrink: 0;
+}
+.chat-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid var(--border-inner);
+  color: var(--text-heading);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.chat-close:hover { background: var(--bg-panel); }
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.chat-msg { display: flex; gap: 6px; align-items: flex-end; max-width: 100%; }
+.chat-msg.user { justify-content: flex-end; }
+.chat-mini-avatar {
+  width: 20px; height: 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .chat-mini-avatar { color: #000000; }
+
+/* whitespace-pre-wrap preserves the model's line breaks and bullets */
+.chat-bubble {
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 82%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--bg-panel);
+  color: var(--text-body);
+  border: 1px solid var(--border-inner);
+}
+.chat-msg.user .chat-bubble {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: transparent;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border-inner);
+  flex-shrink: 0;
+}
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-inner);
+  color: var(--text-heading);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.chat-input::placeholder { color: var(--text-faint); }
+.chat-send {
+  width: 42px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .chat-send { color: #000000; }
+.chat-send:disabled { opacity: 0.5; cursor: not-allowed; }

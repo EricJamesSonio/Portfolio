@@ -109,6 +109,61 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 9: AI chatbot
+
+- Plan:
+  - Installed `groq-sdk` (server-side only) for the backend function.
+  - `src/data/chatbot.js` — `buildSystemPrompt()` generates the system prompt **from the same data
+    files the page renders from** (profile, about, experience, education, stack, projects, links), so the
+    assistant cannot drift from the visible content. Includes role/identity guardrails with 5 varied
+    refusal lines, a "don't invent facts" rule, and an explicit boundary against sharing private data.
+  - `api/chat.js` — Vercel-style serverless function. Validates the body, keeps only the last 10
+    messages, truncates each to 1000 chars, caps `max_tokens` at 500, forces roles to user/assistant,
+    reads `GROQ_API_KEY` / `GROQ_MODEL` **from server env only**, and returns generic errors.
+  - `src/components/react/Chatbot.jsx` — the island: bouncing FAB, teaser banner after 2s that hides
+    permanently after the first open, panel with header/avatar/Online dot/close, `aria-live="polite"`
+    message list with auto-scroll and a "Typing..." indicator, plain-text bubbles (`white-space: pre-wrap`,
+    never `dangerouslySetInnerHTML`), Enter-to-send plus a real `<button>` send control, Escape to close,
+    and a friendly fallback message pointing at the real contact links when the API is unreachable.
+  - `src/styles/chatbot.css` — panel `w-90%` on phones / fixed 384px from `md`, `60vh` tall with a
+    500px cap, `env(safe-area-inset-bottom)` respected, bounce only under `prefers-reduced-motion: no-preference`.
+  - `.env.example` — variable **names only**, no values.
+- Files created: `src/data/chatbot.js`, `api/chat.js`, `src/components/react/Chatbot.jsx`,
+  `src/components/ChatbotIsland.astro`, `src/styles/chatbot.css`, `.env.example`
+- Files edited: `src/pages/index.astro`, `src/layouts/Layout.astro`, `src/data/projects.js`,
+  `src/data/certs.js`, `package.json`
+- **Two bugs found and fixed during the gate:**
+  1. **Build hang.** `chatbot.js` used a dynamic `await import('./projects.js')`, which the Vite client
+     build could not resolve; `npm run build` stalled indefinitely at "transforming...". Replaced with a
+     static import. Build now completes in ~16-35s.
+  2. **Fragile image path.** `projects.js` / `certs.js` resolved images with
+     `new URL('../assets/images/', import.meta.url)`, which from `src/data/` points at
+     `src/assets/images/` (nonexistent). It happened to work under Vite but returned **0 featured
+     projects** when the module was loaded directly by Node. Now resolved through `process.cwd()` to
+     `public/assets/images/`, which is correct under both `astro build` and `node`.
+- Gate results: **build ok** (1 page, 34.7s). Verified in `dist/index.html`: the featured block still
+  renders 3 rows with 2 placeholder phones, and the chatbot island ships with `client="idle"`.
+  Verified the teaser and greeting strings are present in the JS chunk (correct for a client-rendered
+  island), along with `aria-live`.
+  **Secret scan: `gsk_*`, `GROQ_API_KEY` and `dangerouslyAllowBrowser` appear in NEITHER the built
+  output NOR the source tree.** No `PUBLIC_`/`VITE_` variable exists anywhere.
+  Verified `api/chat.js` exists with method validation, the 10/1000/500 caps and the
+  `llama-3.3-70b-versatile` default.
+- Verified the generated prompt by running it: 5,902 chars, contains the real name, tech stack, all
+  14 projects, the public email, and the refusal examples — and **does not contain the phone number**
+  (privacy rule enforced and tested).
+- Decisions:
+  - **Hosting:** no `vercel.json` / `.vercel` / `netlify.toml` was found, so per the Default decisions
+    table the **Vercel** version was written and is flagged. **GitHub Pages cannot run serverless
+    functions**, so until the site moves to Vercel (or Netlify) the assistant will show its friendly
+    "unavailable" message. This is the single biggest thing the owner must act on. The file header
+    documents how to relocate it to `netlify/functions/chat.js`.
+  - **Greeting/teaser text** uses the owner's real first name, built from `profile.js`, not a copy of
+    the reference persona.
+  - The FAB uses an inline SVG rather than `react-icons`/`bootstrap-icons`, which are not in the
+    allowed dependency list.
+- Issues: see the hosting note above.
+
 ## Phase 8: Theme polish (ripple + audit)
 
 - Plan:

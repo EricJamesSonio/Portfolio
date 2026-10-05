@@ -14,8 +14,8 @@
  */
 export const certs = [];
 
-/** Resolve which certificates actually have an image file on disk. */
-const IMG_DIR = new URL('../assets/images/', import.meta.url);
+/** Absolute path to the image folder (see the note in projects.js for why not a relative URL). */
+const IMG_DIR = new URL('public/assets/images/', `file:///${process.cwd().replace(/\\/g, '/')}/`);
 const fs = await import('node:fs/promises');
 
 export async function getCerts() {
