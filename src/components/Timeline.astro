@@ -1,0 +1,31 @@
+---
+export interface Props {
+  /** Timeline items: { title, sub, year, active }. */
+  items: { title: string; sub?: string; year?: string; active?: boolean }[];
+  /** Accessible name for the list. */
+  label: string;
+}
+const { items, label } = Astro.props;
+---
+
+<!-- Vertical rail with a filled orange dot for the active item and hollow rings for the rest. -->
+<ol class="timeline custom-scroll" aria-label={label}>
+  {items.map((it) => (
+    <li class:list={['timeline-item', { active: !!it.active }]}>
+      <span class="timeline-rail" aria-hidden="true">
+        <span class="timeline-dot"></span>
+      </span>
+      <div class="timeline-row">
+        <div class="timeline-text">
+          <h4 class="tl-title">{it.title}</h4>
+          {it.sub && <p class="tl-sub">{it.sub}</p>}
+        </div>
+        {it.active ? (
+          <span class="timeline-badge">Current</span>
+        ) : (
+          it.year && <span class="tl-sub timeline-year">{it.year}</span>
+        )}
+      </div>
+    </li>
+  ))}
+</ol>

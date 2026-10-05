@@ -7,7 +7,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 1 | Foundation (tokens, theme, base) | DONE | Light+dark tokens, pre-paint theme, shell, type scale |
 | 2 | UI primitives | DONE | Divider, Card, Chip, LinkTile + ui.css; demo block removed |
 | 3 | Hero | DONE | Navbar removed, portrait+text hero, theme pill, ripple; fixed empty-divider bug |
-| 4 | Bento (Experience, Education, About, Tech Stack) | TODO | |
+| 4 | Bento (Experience, Education, About, Tech Stack) | DONE | 4 data files, Timeline primitive, 35/65 grid, 26 chips, shields.io removed |
 | 5 | Projects (Featured + video grid) | TODO | |
 | 6 | GitHub contributions | TODO | |
 | 7 | Certifications and Contact | TODO | |

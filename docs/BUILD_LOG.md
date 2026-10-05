@@ -109,6 +109,45 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 4: Bento (Experience, Education, About, Tech Stack)
+
+- Plan:
+  - New data files, all filled from the EXISTING site (no invention):
+    `src/data/experience.js` (4th-year CS student, backend focus, project work),
+    `src/data/education.js` (College of Mary Immaculate, earlier stages left as TODO),
+    `src/data/stack.js` (the 26 technologies from the old badge labels, grouped as they were),
+    `src/data/about.js` (the old four sections condensed into three paragraphs).
+  - `Timeline.astro` — one shared timeline primitive used by both Experience and Education:
+    vertical rail, filled orange dot + `Current` badge for the active item, hollow rings otherwise,
+    connector line only between items, `max-height: 280px` inner scroll.
+  - `Experience.astro`, `Education.astro`, `About.astro`, `TechStack.astro` — now thin wrappers around
+    the shared `Card` primitive reading from the data files. The shields.io badge images are gone,
+    replaced by the reference's `Chip` primitive.
+  - `Bento.astro` + `src/styles/bento.css` — the grid: one column below `lg`, `35% 65%` from `lg`,
+    left column Experience + Education, right column About + Tech Stack. Stack groups use a tiny
+    micro-label followed by a hairline that fills the row.
+  - Old anchors preserved: `id="about"` on the bento and `id="tech"` on the right column.
+  - `about.css` / `tech.css` unimported; `bento.css` imported instead.
+- Files created: `src/data/experience.js`, `education.js`, `stack.js`, `about.js`,
+  `src/components/Timeline.astro`, `Experience.astro`, `Education.astro`, `Bento.astro`,
+  `src/styles/bento.css`
+- Files edited: `About.astro`, `TechStack.astro`, `index.astro`, `Layout.astro`
+- Gate results: **build ok** (1 page). Verified in `dist/index.html`: bento grid present, `#about` and
+  `#tech` anchors preserved, all four card titles render, timeline `<ol>` present, `Current` badge
+  present, "4th Year" present, **26 chips** emitted (matching the 26 technologies in the original
+  badges), **no `img.shields.io` requests left** (removes 26 third-party image requests), no
+  `undefined` leakage.
+- Decisions:
+  - **CODING SINCE year:** the existing site never states when coding started, so `codingSince` is
+    `null` and the Experience card omits the year instead of guessing one. Filling it in switches the
+    header on with no markup change.
+  - **Education timeline:** only the current degree is listed, because that is all the existing site
+    states. Earlier stages are a marked TODO rather than invented schools and years.
+  - **Timeline rows without a year:** inactive rows in Experience have no dates because none were
+    supplied; the row renders the title and subtitle only, so no empty "undefined" cell appears.
+  - Chips kept as `<li>` inside a `<ul>` for correct list semantics (Phase 5 reuses the same pattern).
+- Issues: none. Both themes handled (only tokens used); no fixed widths, so no 375px overflow.
+
 ## Phase 3: Hero
 
 - Plan:

@@ -1,0 +1,9 @@
+---
+import Card from './Card.astro';
+import Timeline from './Timeline.astro';
+import { education } from '../data/education.js';
+---
+
+<Card title="EDUCATION" id="education-card" labelled>
+  <Timeline items={education} label="Education timeline" />
+</Card>

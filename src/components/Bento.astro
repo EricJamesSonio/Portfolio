@@ -1,0 +1,20 @@
+---
+import Experience from '../components/Experience.astro';
+import Education from '../components/Education.astro';
+import About from '../components/About.astro';
+import TechStack from '../components/TechStack.astro';
+---
+
+<!-- Bento grid: one column below lg, 35% / 65% columns from lg.
+     Left column: Experience + Education. Right column: About + Tech Stack.
+     The old anchors #about and #tech are preserved so existing links keep working. -->
+<section class="bento" id="about" aria-label="About, experience, education and tech stack">
+  <div class="bento-col bento-col-left">
+    <Experience />
+    <Education />
+  </div>
+  <div class="bento-col bento-col-right" id="tech">
+    <About />
+    <TechStack />
+  </div>
+</section>

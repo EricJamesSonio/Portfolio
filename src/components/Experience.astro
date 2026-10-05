@@ -1,0 +1,15 @@
+---
+import Card from './Card.astro';
+import Timeline from './Timeline.astro';
+import { experience, codingSince } from '../data/experience.js';
+---
+
+<Card title="EXPERIENCE" id="experience-card" labelled>
+  {codingSince && (
+    <p class="coding-since">
+      <span class="micro-label">Coding since</span>
+      <span class="coding-year">{codingSince}</span>
+    </p>
+  )}
+  <Timeline items={experience} label="Experience timeline" />
+</Card>
