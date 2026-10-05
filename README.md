@@ -151,8 +151,9 @@ If you move to a custom domain, update `base` and `site` in `astro.config.mjs`, 
 - Videos use `preload="none"`, lazy-load when scrolled near the viewport, play when mostly in view
   and pause when off screen. **No poster images exist yet**, so a frame is only shown once the
   video has loaded.
-- The GitHub island is hydrated with `client:visible` and the chatbot with `client:idle`, so the
-  React runtime is never needed for first paint.
+- Both React islands are hydrated with `client:idle`, so they mount right after first paint (the
+  contribution graph is therefore already rendered when a visitor scrolls to it) without the React
+  runtime being needed for the critical first paint.
 - Several demo videos are very large (up to ~35 MB). Compressing them would be the single biggest
   speed win. Originals are never modified by the build.
 
