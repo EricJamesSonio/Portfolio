@@ -23,9 +23,15 @@ import { githubUsername, githubProfileUrl, calendarTheme } from '../data/github.
       </p>
     </noscript>
 
+    <p class="gh-scroll-hint" aria-hidden="true">Swipe the grid to see the full year →</p>
+
     <div class="gh-panel-wrap">
+      {/* `client:idle` (was `client:visible`) so the graph mounts as soon as the browser goes idle
+          after first paint — by the time anyone scrolls down it is already rendered, instead of
+          popping in at the section. `client:idle` rather than `client:load` so it never competes
+          with the hero for first paint. */}
       <GithubGraph
-        client:visible
+        client:idle
         username={githubUsername}
         profileUrl={githubProfileUrl}
         theme={calendarTheme}

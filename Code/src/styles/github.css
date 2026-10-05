@@ -36,13 +36,17 @@
   margin: 0;
 }
 
+/* A 53-week grid is wider than a phone, so the panel scrolls horizontally INSIDE itself. The
+   wrap is `display: block` on purpose: as a flex container with `justify-content: center`, the
+   overflowing part on the LEFT becomes unreachable (the classic centred-overflow trap), so the
+   start of the year could not be scrolled to. Centring is done with auto margins instead, which
+   resolve to 0 once the child is wider than the box and therefore leave the start edge scrollable. */
 .gh-panel-wrap {
-  display: flex;
-  justify-content: center;
+  display: block;
   padding: 20px;
   background: var(--bg-panel);
   border: 1px solid var(--border-inner);
-  /* The graph scrolls HERE, never on the page. The cells are now 18px on desktop, so this is
+  /* The graph scrolls HERE, never on the page. The cells are now up to 18px, so this is
      load-bearing rather than decorative - without it the 53-week grid would widen the page. */
   overflow-x: auto;
   max-width: 100%;
@@ -50,13 +54,38 @@
 
 .gh-panel {
   max-width: 100%;
+  /* Centres the graph when it fits; resolves to 0 when it overflows, keeping the start reachable. */
+  margin-inline: auto;
+}
+
+/* Mobile hint that the grid scrolls. Hidden on desktop, where the whole year is visible. */
+.gh-scroll-hint {
+  display: none;
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--text-faint);
 }
 
 /* react-github-calendar renders inline styles; align its text to the site */
 .gh-panel a { text-decoration: none; }
 .gh-panel svg { max-width: 100%; }
 
-/* On very small screens the year select and legend can wrap awkwardly */
+/* Screen-reader-only version of the swipe hint above. The visible hint is `aria-hidden`
+   decoration; this carries the same information to assistive tech, which cannot swipe. */
+.gh-scroll-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* On very small screens the year select and legend can wrap awkwardly, and the panel padding is
+   trimmed so more of the graph is visible at once. */
 @media (max-width: 480px) {
   .gh-panel-wrap { padding: 8px; }
+}
+
+/* Phones: show the swipe hint and let the graph use the full card width. */
+@media (max-width: 900px) {
+  .gh-scroll-hint { display: block; }
+  .gh-panel-wrap { padding: 12px; }
 }

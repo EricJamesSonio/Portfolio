@@ -1367,3 +1367,82 @@ section, and the client-work sentence is present, so the assistant can answer qu
 
 No phone number, address or private email was written to any file, doc or log here (rule 9). Not
 pushed or deployed.
+
+---
+
+# Phase 21 — GitHub graph: eager load + responsive cells
+
+Owner request (2026-10-10): the contribution graph only appeared when scrolled to, and on mobile
+the cells were too small to read. Both fixed.
+
+## 1. `client:visible` -> `client:idle`
+
+`GithubContributions.astro` now uses `client:idle` instead of `client:visible`.
+
+- `client:visible` waits for the element to enter the viewport, which is exactly the "it pops in
+  when I get there" behaviour the owner reported.
+- `client:idle` hydrates once the browser is idle after first paint, so the graph (and its one
+  API fetch) is already resolved long before a visitor scrolls down to it.
+- `client:idle` rather than `client:load` deliberately: `client:load` would fetch and parse the
+  React runtime during the critical window and compete with the hero for first paint. `client:idle`
+  gives the same "already there when you arrive" result without that cost.
+
+Verified in `dist/index.html`: the island now renders `client="idle"` and **0** `client="visible"`
+attributes remain anywhere in the page.
+
+## 2. Responsive cell sizing
+
+The old logic was three tiers with a phone fallback of **11px**, which squeezed the 53-week grid
+into something sparse and hard to read. A single `metrics` state object now drives both cell size
+and gutter:
+
+| Viewport | blockSize | blockMargin |
+|---|---|---|
+| <= 479px (phones) | 13 | 3 |
+| <= 767px (large phone / small tablet) | 14 | 3 |
+| <= 1023px (tablet) | 16 | 4 |
+| >= 1024px (desktop) | 18 | 5 |
+
+The tighter mobile gutters (3px instead of 5px) matter as much as the larger cells: they put more
+weeks within reach per swipe while still keeping the grid scrollable rather than squashed. The
+breakpoints are evaluated through `matchMedia`, so the listeners only fire when a threshold is
+actually crossed rather than on every resize frame.
+
+The `themechange` effect that repaints the calendar in sync with the site theme toggle is
+unchanged and still verified present in the bundle.
+
+## 3. Latent bug: the start of the year was unreachable
+
+`.gh-panel-wrap` was `display: flex` with `justify-content: center` **and** `overflow-x: auto`.
+That is the classic centred-overflow trap: when a flex item overflows its centred container, the
+overflow spills equally in both directions, and the part on the leading side cannot be scrolled
+into view. On a phone that meant the first weeks of the year were effectively unreachable.
+
+Fixed by making the wrapper `display: block` and centring with `margin-inline: auto` on the child
+instead. Auto margins resolve to 0 once the child is wider than the box, so the grid stays
+left-aligned and the start of the year scrolls normally. Desktop centring is unaffected because
+the graph fits there.
+
+## 4. Discoverability + a11y
+
+- `.gh-scroll-hint` ("Swipe the grid to see the full year ->") is `aria-hidden` decoration and only
+  becomes visible below 900px, where the grid actually scrolls.
+- `.gh-scroll-note` carries the same information to screen-reader users, who cannot swipe. It
+  lives inside the React island so it renders with the graph.
+- Panel padding tightened on small screens (20px -> 12px, -> 8px under 480px) so more of the
+  graph is visible at once.
+
+### Verification
+
+`npx astro build` from `Code/` -> **clean, 1 page in 36.77s, 0 errors, 0 warnings**.
+
+Compiled-output audit:
+- Island hydration: `GithubGraph...js => client=idle`; `Chatbot...js => client=idle`;
+  `client="visible"` occurrences: **0**.
+- Bundle contains all three mobile breakpoints (479/767/1023) and all four size pairs
+  (13/14/16/18 with margins 3/3/4/5), plus the `themechange` listener and the scroll note.
+- Compiled CSS: `.gh-panel-wrap{display:block;...;overflow-x:auto}`, `.gh-panel{margin-inline:auto}`,
+  `.gh-scroll-note{...}` and both padding media queries emitted.
+
+No phone number, address or private email was written to any file, doc or log here (rule 9). Not
+pushed or deployed.
