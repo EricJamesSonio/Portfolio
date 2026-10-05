@@ -1,20 +1,46 @@
 /**
- * Education timeline.
+ * Education timeline, ordered from elementary school to the current degree.
  *
- * Content source: the existing site names College of Mary Immaculate (4th-year Computer Science
- * student). Earlier stages were not listed on the existing site, so they are TODO placeholders
- * for the owner to fill in. Nothing is invented here.
+ * Content source: supplied by the owner on 2026-10-10 (school names and grade ranges are
+ * verbatim). The current entry reuses `degree` and `school` from `profile.js`, so the wording
+ * can never drift from the hero, the About copy or the chatbot prompt.
+ *
+ * `year` is the grade range shown on the right. The active entry renders a "Current" badge
+ * instead (see `Timeline.astro`), so its grade range lives in `sub`.
  */
 import { degree, school } from './profile.js';
 
 export const education = [
   {
-    title: degree,
+    title: 'Elementary',
+    sub: 'Matias V. Salvador Memorial Elementary School',
+    year: 'Grades 1-6',
+    active: false,
+  },
+  {
+    title: 'Junior High',
+    sub: 'Holy Angels Academy',
+    year: 'Grades 7-8',
+    active: false,
+  },
+  {
+    title: 'Senior High',
+    sub: 'Virginia Ramirez National High School',
+    year: 'Grades 9-10',
+    active: false,
+  },
+  {
+    title: 'Senior High',
     sub: school,
-    year: 'Current',
+    year: 'Grades 11-12',
+    active: false,
+  },
+  {
+    title: degree,
+    sub: `${school} - Years 1-4`,
+    year: '',
     active: true,
   },
-  // TODO (owner): add earlier stages (Senior High, Junior High, Elementary) with school + year.
 ];
 
 export default education;

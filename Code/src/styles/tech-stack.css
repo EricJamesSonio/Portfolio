@@ -1,0 +1,138 @@
+/* ============================================================
+   TECH STACK - one continuously scrolling carousel per group
+   (Frontend / Backend / Database / Tools & Testing / Deployment)
+
+   Structure, per row:  label  ->  viewport (masked, clipped)  ->  track (4x run)
+   The track holds four identical runs and translates by exactly one run width (-25%),
+   which wraps seamlessly at any viewport width.
+   ============================================================ */
+
+/* The icon sprite: one hidden SVG holding every symbol, referenced by <use href="#id">.
+   Zero size + hidden keeps it out of layout and out of the accessibility tree. */
+.stack-icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.stack-carousels {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.stack-carousel {
+  min-width: 0;
+}
+
+/* ---------- Row heading: label + fading hairline ---------- */
+.stack-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.stack-hairline {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  color: var(--text-heading);
+}
+
+/* ---------- Viewport: clips the row and softens both edges ---------- */
+.stack-viewport {
+  overflow: hidden;              /* the page never scrolls sideways at 375px */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+.stack-track {
+  display: flex;
+  width: max-content;
+  /* --stack-duration is set inline per row so every row moves at a similar speed */
+  animation: stack-scroll var(--stack-duration, 24s) linear infinite;
+}
+
+/* WCAG 2.2.2 - auto-moving content must be pausable. Hover and keyboard focus both stop it,
+   and the hint below the rows tells the reader that this is possible. */
+.stack-carousel:hover .stack-track,
+.stack-carousel:focus-within .stack-track {
+  animation-play-state: paused;
+}
+
+/* Each run carries the trailing gap itself, so the runs are pixel-identical and a -25%
+   translate lands exactly on the wrap point (no visible seam). */
+.stack-run {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0 12px 0 0;
+  list-style: none;
+}
+
+/* Direction: the cards travel LEFT -> RIGHT (the owner asked for "left to right movement"),
+   so new cards enter from the left edge. Swap the two transform values below for the classic
+   right-to-left marquee.
+   -25% is exactly one of the four identical runs, so the wrap has no seam and no gap even
+   when a row is narrower than the viewport. */
+@keyframes stack-scroll {
+  from { transform: translateX(-25%); }
+  to   { transform: translateX(0); }
+}
+
+/* ---------- Card ---------- */
+.stack-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 10px 16px;
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border);
+  white-space: nowrap;
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.stack-card:hover {
+  background: var(--tile-bg-hover);
+  border-color: var(--accent);
+}
+
+.stack-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.stack-card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-heading);
+}
+
+/* ---------- Hint ---------- */
+.stack-hint {
+  margin: 16px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ---------- Reduced motion: no auto-scroll, swipeable instead ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .stack-track {
+    animation: none;
+    transform: none;
+  }
+  .stack-viewport {
+    overflow-x: auto;           /* keyboard- and touch-scrollable list */
+    scrollbar-width: thin;
+    -webkit-mask-image: none;    /* no fading needed once the row is scrollable */
+    mask-image: none;
+  }
+}

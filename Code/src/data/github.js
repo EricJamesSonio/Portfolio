@@ -5,10 +5,10 @@
 export const githubUsername = 'EricJamesSonio';
 export const githubProfileUrl = `https://github.com/${githubUsername}`;
 
-/** Orange 5-step palettes for the calendar (light / dark). */
+/** Neon-blue 5-step palettes for the calendar (light / dark). */
 export const calendarTheme = {
-  light: ['#ebedf0', '#ffedd5', '#fed7aa', '#fb923c', '#ea580c'],
-  dark: ['#161616', '#431407', '#7c2d12', '#c2410c', '#f97316'],
+  light: ['#ebedf0', '#dbeafe', '#93c5fd', '#3b82f6', '#1d4ed8'],
+  dark: ['#161616', '#0b3b5c', '#0e6a9e', '#00a3e0', '#00d4ff'],
 };
 
 export default { githubUsername, githubProfileUrl, calendarTheme };

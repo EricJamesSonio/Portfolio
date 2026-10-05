@@ -10,7 +10,7 @@ export interface Props {
 const { items, label, heading: Heading = 'h3' } = Astro.props;
 ---
 
-<!-- Vertical rail with a filled orange dot for the active item and hollow rings for the rest. -->
+<!-- Vertical rail with a filled neon-blue dot for the active item and hollow rings for the rest. -->
 <ol class="timeline custom-scroll" aria-label={label}>
   {items.map((it) => (
     <li class:list={['timeline-item', { active: !!it.active }]}>

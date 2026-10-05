@@ -56,19 +56,19 @@
 .cert-item.is-static:hover { background: var(--tile-bg); }
 
 .cert-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.cert-name { font-size: 0.875rem; font-weight: 700; color: var(--text-heading); }
+.cert-name { font-size: 1rem; font-weight: 700; color: var(--text-heading); }
 /* Readable text: uses --text-muted (AA), not the decorative --text-faint */
-.cert-issuer { font-size: 12px; color: var(--text-muted); }
+.cert-issuer { font-size: 13.5px; color: var(--text-muted); }
 .cert-expand { color: var(--text-faint); flex-shrink: 0; }
 
 .cert-empty {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--text-muted);
   margin: 0;
   line-height: 1.6;
 }
-.cert-todo { display: block; margin-top: 6px; font-size: 12px; color: var(--text-muted); }
-.cert-todo code { font-size: 12px; color: var(--accent); }
+.cert-todo { display: block; margin-top: 6px; font-size: 13.5px; color: var(--text-muted); }
+.cert-todo code { font-size: 13.5px; color: var(--accent-text); }
 
 /* ---------- Lightbox ---------- */
 .lightbox {
@@ -130,6 +130,6 @@
 
 .contact-location {
   margin: 12px 0 0;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
 }

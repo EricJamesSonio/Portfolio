@@ -14,7 +14,7 @@
 .gh-card { width: 100%; }
 
 .gh-profile-link {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--accent-link);
   text-decoration: none;
@@ -31,7 +31,7 @@
 }
 
 .gh-noscript {
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   color: var(--text-muted);
   margin: 0;
 }
