@@ -1,0 +1,35 @@
+---
+import Divider from './Divider.astro';
+import GithubGraph from './react/GithubGraph.jsx';
+import { githubUsername, githubProfileUrl, calendarTheme } from '../data/github.js';
+---
+
+<section class="gh-section" id="github" aria-labelledby="gh-heading">
+  <Divider>CONSISTENCY</Divider>
+
+  <div class="gh-card card">
+    <header class="card-head">
+      <h2 class="card-title" id="gh-heading">GITHUB CONTRIBUTIONS</h2>
+      <a class="gh-profile-link" href={githubProfileUrl} target="_blank" rel="noreferrer">
+        View GitHub Profile <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <!-- Fallback if JS is unavailable: a plain link to the profile. -->
+    <noscript>
+      <p class="gh-noscript">
+        The contribution graph needs JavaScript.
+        <a href={githubProfileUrl} target="_blank" rel="noreferrer">View the GitHub profile</a> instead.
+      </p>
+    </noscript>
+
+    <div class="gh-panel-wrap">
+      <GithubGraph
+        client:visible
+        username={githubUsername}
+        profileUrl={githubProfileUrl}
+        theme={calendarTheme}
+      />
+    </div>
+  </div>
+</section>

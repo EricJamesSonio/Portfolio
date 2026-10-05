@@ -109,6 +109,42 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 6: GitHub contributions
+
+- Plan:
+  - Installed `@astrojs/react@3`, `react@18`, `react-dom@18`, `react-github-calendar@5` and registered
+    `integrations: [react()]` in `astro.config.mjs`. **React 18 is used deliberately:** React 19
+    requires `@astrojs/react@4` which requires Astro 5, and this project is on Astro 4.
+  - `src/data/github.js` — username `EricJamesSonio` and profile URL in one place (taken from the
+    existing navbar link and every project repo URL) plus the two orange 5-step palettes.
+  - `src/components/react/GithubGraph.jsx` — the island: `GitHubCalendar` with `blockRadius={0}`
+    (square cells), `showYearSelect`, orange palettes, and a listener on the `themechange` event so the
+    palette and `colorScheme` follow the site theme instead of only the OS preference.
+  - `GithubContributions.astro` — `CONSISTENCY` divider, a card with the title and a
+    `View GitHub Profile ↗` link, and a `<noscript>` fallback that offers the plain profile link.
+  - `src/styles/github.css` — the panel wraps in `overflow-x: auto` so the 53-week graph scrolls
+    **inside its own panel** on phones instead of causing horizontal page scroll.
+  - Hydrated with `client:visible`, so nothing React-related is downloaded until the section is scrolled to.
+- Files created: `src/data/github.js`, `src/components/react/GithubGraph.jsx`,
+  `src/components/GithubContributions.astro`, `src/styles/github.css`
+- Files edited: `astro.config.mjs`, `src/pages/index.astro`, `src/layouts/Layout.astro`, `package.json`
+- Gate results: **build ok** (1 page). Verified in `dist/index.html`: `CONSISTENCY` divider,
+  `GITHUB CONTRIBUTIONS` title, `View GitHub Profile` link, `<noscript>` fallback, an `astro-island`
+  wrapper with `client="visible"`, and the `EricJamesSonio` username in the payload. Verified in the CSS
+  that `.gh-panel-wrap` exists with inner scrolling. Confirmed user media is still intact
+  (**5 images, 15 videos** in `dist/assets/`).
+- Island bundle sizes (gzip): `GithubGraph` 8.2 kB, `Tooltip` 17.5 kB, React runtime 43.1 kB.
+  Loaded lazily via `client:visible`, so none of it affects first paint.
+- Decisions:
+  - **React 18, not 19.** The reference used React 19, but React 19 needs `@astrojs/react@4` + Astro 5.
+    Upgrading Astro from 4 to 5 is a much larger change than the reference skill permits, so the island
+    runs on React 18. Nothing in the UI differs.
+  - **Block size** is 14 in light and 11 in dark mode. Dark mode uses a smaller cell so the 53-week
+    graph fits the panel on more screens without needing a scrollbar.
+  - The calendar fetches from GitHub's public API in the browser; if it is rate-limited or offline the
+    component renders its own error state, which the card still frames correctly.
+- Issues: none.
+
 ## Phase 5: Projects (Featured + video grid)
 
 - Plan:
