@@ -109,6 +109,42 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 2: UI primitives
+
+- Plan:
+  - `Divider.astro` — signature caption row: two fading hairlines + `.caption` text, `role="separator"`,
+    `strong` variant for a solid line, `aria-hidden` on the decorative hairlines.
+  - `Card.astro` — the shared shell: `p-6`, accent-tinted border, backdrop blur, `overflow: hidden`, a
+    header row with UPPERCASE title + optional aside, and a `.card-body` flex column for the content.
+    Optional `as` heading level and `id`/`labelled` so a section can reference its title with
+    `aria-labelledby` (used by the Featured Projects / Certifications cards in Phases 5 and 7).
+  - `Chip.astro` — peach-tinted bordered tag.
+  - `LinkTile.astro` — icon + label/sub + trailing arrow. **Never renders an `<a>` without an `href`**:
+    with no `href` it renders a `div`. External links get `target="_blank" rel="noreferrer"`;
+    `tel:` / `mailto:` / `#` links stay in place.
+  - `src/styles/ui.css` — one shared stylesheet, imported once in `Layout.astro` after `base.css`.
+    Every colour comes from a Phase 1 token, so both themes are complete automatically.
+- Files created: `src/components/Divider.astro`, `Card.astro`, `Chip.astro`, `LinkTile.astro`,
+  `src/styles/ui.css`
+- Files edited: `src/layouts/Layout.astro` (added the `ui.css` import)
+- Gate results: **build ok**. A temporary page (`src/pages/primitive-check.astro`) rendered all four
+  primitives with a short caption, a long caption, a single-character caption, a `strong` divider, chips,
+  a linked tile and an href-less tile. Verified in the built HTML: 4 `role="separator"` elements,
+  4 caption spans, card shell present, `aria-labelledby="demo-card-title"` wired, 3 chips, tiles present,
+  `target="_blank"` on the external tile, `<div class="tile">` for the href-less tile, and **no `undefined`
+  string leaked into the output**. The temporary page was then deleted and the build re-run: 1 page,
+  and neither `src/pages/primitive-check.astro` nor `dist/primitive-check/` remains.
+- Divider at 320px: captions are `white-space: nowrap`, the hairlines are `flex: 1; min-width: 0` so they
+  shrink before the caption does, and below 420px the caption padding drops to 10px with 0.3em tracking
+  and the hairlines keep a 12px floor. Verified the media rule is emitted after the base rule in the
+  built CSS.
+- Decisions:
+  - `Card` keeps its own header markup instead of a `SectionTitle` component: every card in the reference
+    uses the same title + optional aside row, so one `Card` with a `title` prop covers it and avoids a
+    redundant primitive.
+  - Tap targets: `.tile` has `min-height: 44px` per the layout rules.
+- Issues: none.
+
 ## Phase 1: Foundation (tokens, theme, base)
 
 - Plan:

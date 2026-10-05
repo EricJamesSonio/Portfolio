@@ -1,0 +1,10 @@
+---
+export interface Props {
+  /** Tech / tag label. */
+  children: string;
+}
+const { children } = Astro.props;
+---
+
+<!-- Peach-tinted chip: small bordered tag -->
+<span class="chip chip-text"><slot>{children}</slot></span>

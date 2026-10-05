@@ -1,0 +1,41 @@
+---
+export interface Props {
+  /** UPPERCASE card title (rendered in an h2 by default). */
+  title?: string;
+  /** Optional content rendered on the right of the title row. */
+  aside?: string;
+  /** Heading level for a11y correctness inside the page flow. */
+  as?: 'h2' | 'h3';
+  /** Extra classes on the shell. */
+  class?: string;
+  id?: string;
+  /** Renders the card as the labelled region for its section. */
+  labelled?: boolean;
+}
+const {
+  title,
+  aside,
+  as: Heading = 'h2',
+  class: className = '',
+  id,
+  labelled = false,
+} = Astro.props;
+---
+
+<section
+  class:list={['card', className]}
+  id={id}
+  aria-labelledby={labelled && title && id ? `${id}-title` : undefined}
+>
+  {title && (
+    <header class="card-head">
+      <Heading class="card-title" id={labelled && id ? `${id}-title` : undefined}>
+        {title}
+      </Heading>
+      {aside && <span class="card-aside">{aside}</span>}
+    </header>
+  )}
+  <div class="card-body">
+    <slot />
+  </div>
+</section>

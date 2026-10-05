@@ -1,0 +1,47 @@
+---
+export interface Props {
+  /** Primary label, e.g. "GitHub". */
+  label: string;
+  /** Small mono sub-line, e.g. a username or address. */
+  sub?: string;
+  /** Target URL. When empty the tile renders as a non-interactive div (never an <a> without href). */
+  href?: string;
+  /** Accessible label when the visible text is not descriptive enough. */
+  ariaLabel?: string;
+  /** Arrow glyph; pass an empty string to hide it. */
+  arrow?: string;
+  /** Small inline SVG path (24x24 viewBox) used as the leading icon. */
+  icon?: string;
+}
+const {
+  label,
+  sub,
+  href,
+  ariaLabel,
+  arrow = '↗',
+  icon,
+} = Astro.props;
+
+// Internal anchors (tel:, mailto:) open in place; everything else is external.
+const isExternal = !!href && !href.startsWith('#') && !href.startsWith('tel:') && !href.startsWith('mailto:');
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag
+  class="tile"
+  href={href}
+  aria-label={ariaLabel ?? (sub ? `${label} - ${sub}` : label)}
+  target={isExternal ? '_blank' : undefined}
+  rel={isExternal ? 'noreferrer' : undefined}
+>
+  {icon && (
+    <span class="tile-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d={icon} /></svg>
+    </span>
+  )}
+  <span class="tile-text">
+    <span class="tile-label">{label}</span>
+    {sub && <span class="tile-sub">{sub}</span>}
+  </span>
+  {arrow && <span class="tile-arrow" aria-hidden="true">{arrow}</span>}
+</Tag>

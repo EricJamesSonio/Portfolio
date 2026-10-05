@@ -1,0 +1,16 @@
+---
+export interface Props {
+  /** Caption text. Keep it short (1-3 words) so it never wraps at 320px. */
+  children: string;
+  /** Strong variant uses a solid line instead of the faded one. */
+  strong?: boolean;
+}
+const { children, strong = false } = Astro.props;
+---
+
+<!-- Signature divider: fading hairlines with an ultra-wide-tracked orange caption -->
+<div class="divider" role="separator">
+  <span class:list={['divider-line', { strong }]} aria-hidden="true"></span>
+  <span class="divider-caption caption">{children}</span>
+  <span class:list={['divider-line', 'flip', { strong }]} aria-hidden="true"></span>
+</div>
