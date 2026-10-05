@@ -109,6 +109,50 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 3: Hero
+
+- Plan:
+  - `src/data/profile.js` — new single source of truth: name, role, location, email, `resume` (null),
+    `portfolioYear`, portrait path, `portraitHoverVideo` (null). All values copied from the existing
+    `Hero.astro` / `Contact.astro`.
+  - `Hero.astro` rewritten to the reference: top caption `<NAME> || PORTFOLIO <YEAR>` from `profile`,
+    portrait + text row, name, uppercase tracked role, location with pin icon, `GET RESUME` +
+    `EMAIL ME` buttons, theme pill, and the `SOLVING THROUGH CODE` footer caption.
+  - `hero.css` rewritten: `min-height: 95svh` (svh, not vh), stacked/centred on phones, side-by-side and
+    left-aligned from `md`, portrait sizes 224px -> 220x320 -> 300x400, square buttons with press effect,
+    pill theme switch with a sliding 20px knob that moves 28px in dark mode, tap targets >= 44px.
+  - Theme controller in `Layout.astro`: reads `data-theme`, updates the label and `aria-pressed`, and
+    uses `document.startViewTransition` with the ripple variables set **before** the transition.
+    Falls back to an instant switch when the API is missing or reduced motion is on.
+  - Ripple CSS added to `base.css` (`::view-transition-*`, `@keyframes ripple-reveal`).
+  - Navbar removed from the page flow and `navbar.css` unimported. Files kept in the repo.
+  - `public/scripts/main.js`: null-guarded the `.navbar` lookup (it would have thrown a TypeError once
+    the navbar was removed) and made a bare `#` href a no-op.
+- Files created: `src/data/profile.js`
+- Files edited: `Hero.astro`, `src/styles/hero.css`, `Layout.astro`, `src/pages/index.astro`,
+  `src/styles/base.css`, `public/scripts/main.js`, `src/components/Divider.astro` (bug fix, see below)
+- **Bug found and fixed during the gate:** the first build rendered every divider caption as an **empty
+  span**. `Divider` read a `children` prop, but Astro passes `<Divider>TEXT</Divider>` as **slot content**.
+  The caption rendered as `<span class="divider-caption caption"></span>`. Fixed by rendering `<slot />`
+  instead of `{children}`. Re-verified: both captions now emit the real text
+  (`ERIC JAMES SONIO || PORTFOLIO 2026` and `SOLVING THROUGH CODE`). This is why the gate checks the
+  built HTML text and not only element counts.
+- Gate results: **build ok** (1 page). Verified in `dist/index.html`: no `<nav>` rendered, theme toggle
+  present, `EMAIL ME` + working `mailto:` link, `GET RESUME` rendered disabled with a `TODO` marker,
+  portrait `<img>` with alt text, location text, `aria-labelledby="hero-name"`, no `undefined` leakage.
+  Verified in the CSS: `95svh` hero height, `.theme-switch`, `::view-transition-new(root)`,
+  `@keyframes ripple-reveal`. Both themes handled (all hero colours are Phase 1 tokens).
+- Decisions:
+  - **Resume:** no `Resume.pdf` exists in the repo, so `GET RESUME` renders as a non-interactive
+    `<span aria-disabled="true">` marked `TODO` rather than a link to a 404. Setting `resume` in
+    `src/data/profile.js` and adding the file switches it to a real `<a download>` automatically.
+  - **Portrait video:** no hover video exists, so the `<video>` element is not rendered at all
+    (`portraitHoverVideo` is null). The markup, CSS and touch-toggle class are already in place, so
+    dropping a file in and setting the field enables it with no other change.
+  - **Ripple:** implemented now rather than in Phase 8 because the theme switch (Phase 3 task) needs it;
+    Phase 8 verifies it across all sections.
+- Issues: none.
+
 ## Phase 2: UI primitives
 
 - Plan:

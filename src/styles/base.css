@@ -205,8 +205,26 @@ img, video { max-width: 100%; height: auto; }
 ::selection { background: var(--accent); color: #ffffff; }
 [data-theme="dark"] ::selection { background: var(--accent); color: #000000; }
 
-/* ---- Reduced motion: disable transitions/animations globally ---- */
+/* ============================================================
+   THEME RIPPLE — circular reveal from the toggle button.
+   --ripple-x / --ripple-y / --ripple-radius are set by the
+   theme controller in Layout.astro before the transition runs.
+   ============================================================ */
+::view-transition-old(root) { animation: none; }
+::view-transition-new(root) {
+  animation: ripple-reveal 0.7s ease-in-out;
+  z-index: 9999;
+}
+@keyframes ripple-reveal {
+  from { clip-path: circle(0px at var(--ripple-x) var(--ripple-y)); }
+  to   { clip-path: circle(var(--ripple-radius) at var(--ripple-x) var(--ripple-y)); }
+}
+/* Reduced motion: no ripple, instant swap */
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+
+  /* Global: neutralise transitions/animations */
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
@@ -214,6 +232,7 @@ img, video { max-width: 100%; height: auto; }
     scroll-behavior: auto !important;
   }
 }
+
 
 /* ============================================================
    TYPE SCALE — from design-system.md "Typography"

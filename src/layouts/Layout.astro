@@ -34,6 +34,64 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
 </head>
 <body>
   <slot />
+
+  <!-- Theme controller. Phase 8 adds the View-Transitions ripple; the instant
+       path here is the fallback used when the API is unavailable or motion is reduced. -->
+  <script is:inline>
+    (function () {
+      function applyLabel(theme) {
+        var label = document.getElementById('theme-label');
+        var btn = document.getElementById('theme-toggle');
+        if (label) label.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        if (btn) btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+      }
+
+      function commit(theme) {
+        window.__theme.set(theme);
+        applyLabel(theme);
+      }
+
+      function toggleTheme(event) {
+        var btn = event && event.currentTarget ? event.currentTarget : null;
+        var next = window.__theme.get() === 'dark' ? 'light' : 'dark';
+
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!document.startViewTransition || reduce) { commit(next); return; }
+
+        // Set the ripple origin and radius BEFORE starting the transition,
+        // otherwise the first frame can race the CSS variable read.
+        var root = document.documentElement.style;
+        var x = window.innerWidth / 2, y = window.innerHeight / 2;
+        if (btn) {
+          var r = btn.getBoundingClientRect();
+          x = r.left + r.width / 2;
+          y = r.top + r.height / 2;
+        }
+        root.setProperty('--ripple-x', x + 'px');
+        root.setProperty('--ripple-y', y + 'px');
+        root.setProperty(
+          '--ripple-radius',
+          Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)) + 'px'
+        );
+
+        document.startViewTransition(function () { commit(next); });
+      }
+
+      window.__themeToggle = toggleTheme;
+
+      document.addEventListener('DOMContentLoaded', function () {
+        applyLabel(window.__theme.get());
+        var btn = document.getElementById('theme-toggle');
+        if (btn) btn.addEventListener('click', toggleTheme);
+      });
+
+      // Keep the label in sync if the theme is changed from anywhere else.
+      window.addEventListener('themechange', function (e) {
+        applyLabel(e.detail && e.detail.theme ? e.detail.theme : window.__theme.get());
+      });
+    })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="/Portfolio/scripts/main.js" is:inline></script>
 
@@ -59,7 +117,6 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
 <style is:global>
   @import '../styles/base.css';
   @import '../styles/ui.css';
-  @import '../styles/navbar.css';
   @import '../styles/hero.css';
   @import '../styles/about.css';
   @import '../styles/tech.css';

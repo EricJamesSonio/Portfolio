@@ -1,147 +1,215 @@
 /* ============================================================
-   HERO
+   HERO — portrait + text, top/bottom divider captions.
+   Phones: stacked and centred. md+: side by side, text left.
    ============================================================ */
 .hero {
-  min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  min-height: 95svh;          /* svh, not vh: mobile browser bars must not clip it */
+  width: 100%;
+  scroll-margin-top: 1rem;
+}
+
+.hero-top { flex-shrink: 0; padding-top: 4px; margin-top: -4px; }
+
+.hero-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;    /* phones: portrait on top */
   align-items: center;
   justify-content: center;
-  background: var(--ink-soft);
-  padding: calc(var(--nav-h) + 5rem) 2.5rem 5rem;
+  gap: 2rem;
+  padding: 2.5rem 0;
+  text-align: center;
+}
+
+.hero-portrait {
   position: relative;
+  flex-shrink: 0;
+  width: 224px;              /* h-56 w-56 on phones */
+  height: 224px;
   overflow: hidden;
-  scroll-margin-top: var(--nav-h);
+  border: 1px solid var(--accent);  /* thin orange border */
+  border-radius: 6px;        /* rounded-md only on the portrait */
+  background: var(--bg-panel);
 }
-
-.hero::before {
-  content: '';
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
-  top: -100px;
-  right: -150px;
-  pointer-events: none;
-  animation: breathe 12s ease-in-out infinite;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(123,108,250,0.06) 0%, transparent 70%);
-  bottom: -100px;
-  left: -100px;
-  pointer-events: none;
-  animation: breathe 16s ease-in-out infinite reverse;
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  50%       { transform: scale(1.15) translate(30px, -20px); }
-}
-
-.hero-content {
-  max-width: 1280px;
+.hero-portrait img,
+.hero-portrait-video {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-portrait-video {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+/* Hover plays the looping video; touch taps toggle it (Phase 3 gate). */
+@media (hover: hover) and (pointer: fine) {
+  .hero-portrait:hover .hero-portrait-video { opacity: 1; }
+}
+.hero-portrait.is-playing .hero-portrait-video { opacity: 1; }
+.hero-portrait.is-playing img { opacity: 0; }
+
+.hero-text {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4rem;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-text {
-  text-align: center;
+  gap: 0.75rem;
   max-width: 780px;
 }
 
-.hero-text::before {
-  content: '— Portfolio';
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-bottom: 1.25rem;
-  font-weight: 500;
-  opacity: 0.9;
+.hero-name {
+  font-size: 2.25rem;        /* text-4xl */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text-heading);
 }
 
-.hero-text h1 {
-  font-family: var(--font-mono);
-  font-size: clamp(2.6rem, 6vw, 4.5rem);
-  font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: 0.05em;
+.hero-role {
+  font-size: 12px;           /* text-[12px] */
   text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 1.5rem;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  font-weight: 600;
 }
 
-.hero-text h1 em { font-style: normal; color: var(--gold); opacity: 0.7; }
+.hero-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero-location svg { color: var(--accent); flex-shrink: 0; }
 
-.hero-text p {
-  font-family: var(--font-mono);
-  font-size: 1.05rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  line-height: 1.85;
-  margin-bottom: 2.75rem;
-  text-transform: uppercase;
+.hero-actions {
+  display: flex;
+  flex-direction: column;    /* stack on phones */
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
 }
 
-.hero-cta {
+/* ---- Buttons (square, bold, uppercase, widely tracked) ---- */
+.btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  background: transparent;
-  color: var(--gold);
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 40px;        /* px-10 py-4 */
+  font-size: 12px;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.2em;
   text-decoration: none;
-  padding: 0.9rem 2.25rem;
-  border: 1px solid var(--gold-dim);
-  border-radius: 2px;
-  transition: all 0.35s var(--ease);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), background-color 0.3s var(--ease),
+    color 0.3s var(--ease), border-color 0.3s var(--ease);
+  white-space: nowrap;
+}
+.btn-primary { background: var(--btn-bg); color: var(--btn-text); }
+.btn-primary:hover { background: var(--btn-bg-hover); transform: scale(1.05); }
+.btn-secondary {
+  border-color: var(--btn2-border);
+  color: var(--text-heading);
+  background: transparent;
+}
+.btn-secondary:hover { background: var(--btn2-hover); transform: scale(1.05); }
+.btn:active { transform: scale(0.95); }
+
+.btn.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.btn-todo {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  opacity: 0.8;
+}
+
+/* ---- Theme switch: pill + sliding knob ---- */
+.hero-theme {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.theme-switch {
   position: relative;
-  overflow: hidden;
+  width: 56px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-inner);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 1px;
+  /* pad the hit area to 44px on touch */
+  min-height: 44px;
+  min-width: 56px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.3s var(--ease);
+}
+.theme-knob {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s var(--ease);
+  margin-top: -8px;          /* optically centre the knob in the pill */
+}
+[data-theme="dark"] .theme-knob { transform: translateX(28px); }
+
+.theme-icon { grid-area: 1 / 1; }
+.theme-icon-moon { display: none; }
+[data-theme="dark"] .theme-icon-sun { display: none; }
+[data-theme="dark"] .theme-icon-moon { display: block; }
+
+.theme-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
 }
 
-.hero-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gold);
-  transform: translateX(-101%);
-  transition: transform 0.35s var(--ease);
-  z-index: 0;
+.hero-foot { flex-shrink: 0; padding-bottom: 4px; }
+
+/* ---- md+: portrait left, text right ---- */
+@media (min-width: 768px) {
+  .hero-main {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 3rem;
+    padding: 3rem 0;
+  }
+  .hero-portrait { width: 220px; height: 320px; }
+  .hero-text { align-items: flex-start; text-align: left; }
+  .hero-name { font-size: 3rem; }      /* text-5xl */
+  .hero-role { font-size: 14px; letter-spacing: 0.3em; }
+  .hero-location { font-size: 14px; }
+  .hero-actions { flex-direction: row; width: auto; }
 }
 
-.hero-cta span, .hero-cta { position: relative; z-index: 1; }
-.hero-cta:hover { color: var(--ink); border-color: var(--gold); }
-.hero-cta:hover::before { transform: translateX(0); }
-
-.hero-image { display: flex; justify-content: center; }
-
-.hero-image img {
-  width: 17rem;
-  height: 17rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--gold-dim);
-  box-shadow: 0 0 0 8px rgba(201,169,110,0.06), 0 30px 80px rgba(0,0,0,0.6);
-  transition: transform 0.5s var(--ease-spring), box-shadow 0.4s var(--ease);
+@media (min-width: 640px) {
+  .hero-role { font-size: 13px; letter-spacing: 0.3em; }
 }
 
-.hero-image img:hover {
-  transform: scale(1.04);
-  box-shadow: 0 0 0 12px rgba(201,169,110,0.08), 0 40px 100px rgba(0,0,0,0.7);
+@media (min-width: 1024px) {
+  .hero-main { gap: 4rem; }
+  .hero-portrait { width: 300px; height: 400px; }
+  .hero-name { font-size: 3.75rem; }   /* text-6xl */
+  .hero-role { font-size: 15px; }
+  .hero-location { font-size: 14px; }
 }
