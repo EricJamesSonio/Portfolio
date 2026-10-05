@@ -1,0 +1,47 @@
+---
+import Divider from './Divider.astro';
+import FeaturedProjects from './FeaturedProjects.astro';
+import { videoProjects } from '../data/projects.js';
+
+const filters = [
+  { value: 'all', label: 'All' },
+  { value: 'fullstack', label: 'Fullstack' },
+  { value: 'web', label: 'Web' },
+  { value: 'tool', label: 'Tool' },
+  { value: 'offline', label: 'Offline App' },
+];
+---
+
+<section class="projects" id="projects" aria-labelledby="projects-heading">
+  <h2 id="projects-heading" class="visually-hidden">Projects</h2>
+
+  <Divider>ITERATE. BUILD. DEPLOY.</Divider>
+
+  <FeaturedProjects />
+
+  <div class="video-block">
+    <p class="video-subhead">MORE PROJECTS</p>
+
+    <div class="filters" role="group" aria-label="Filter projects by category">
+      {filters.map((f) => (
+        <button class:list={['filter-btn', { active: f.value === 'all' }]} data-filter={f.value} type="button">
+          {f.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="projects-grid">
+      {videoProjects.map((project) => (
+        <div class="project-card" data-category={project.category}>
+          <a href={project.href} target="_blank" rel="noreferrer">
+            <video class="project-video" muted loop playsinline preload="none" aria-label={`${project.title} demo`}>
+              <source data-src={project.video} type="video/mp4" />
+            </video>
+            <h3>{project.title}</h3>
+            <p>{project.desc}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

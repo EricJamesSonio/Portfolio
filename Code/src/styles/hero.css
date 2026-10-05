@@ -1,0 +1,219 @@
+/* ============================================================
+   HERO — portrait + text, top/bottom divider captions.
+   Phones: stacked and centred. md+: side by side, text left.
+   ============================================================ */
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: 95svh;          /* svh, not vh: mobile browser bars must not clip it */
+  width: 100%;
+  scroll-margin-top: 1rem;
+}
+
+.hero-top { flex-shrink: 0; padding-top: 4px; margin-top: -4px; }
+
+.hero-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;    /* phones: portrait on top */
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2.5rem 0;
+  text-align: center;
+}
+
+.hero-portrait {
+  position: relative;
+  flex-shrink: 0;
+  width: 224px;              /* h-56 w-56 on phones */
+  height: 224px;
+  overflow: hidden;
+  border: 1px solid var(--accent);  /* thin orange border */
+  border-radius: 6px;        /* rounded-md only on the portrait */
+  background: var(--bg-panel);
+}
+.hero-portrait img,
+.hero-portrait-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-portrait-video {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+/* Hover plays the looping video; touch taps toggle it (Phase 3 gate). */
+@media (hover: hover) and (pointer: fine) {
+  .hero-portrait:hover .hero-portrait-video { opacity: 1; }
+}
+.hero-portrait.is-playing .hero-portrait-video { opacity: 1; }
+.hero-portrait.is-playing img { opacity: 0; }
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 780px;
+}
+
+.hero-name {
+  font-size: 2.25rem;        /* text-4xl */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text-heading);
+}
+
+.hero-role {
+  font-size: 12px;           /* text-[12px] */
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.hero-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero-location svg { color: var(--accent); flex-shrink: 0; }
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;    /* stack on phones */
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* ---- Buttons (square, bold, uppercase, widely tracked) ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 40px;        /* px-10 py-4 */
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), background-color 0.3s var(--ease),
+    color 0.3s var(--ease), border-color 0.3s var(--ease);
+  white-space: nowrap;
+}
+/* Narrow phones: reduce the side padding so two stacked buttons still fit at 320px */
+@media (max-width: 420px) {
+  .btn { padding: 14px 20px; letter-spacing: 0.12em; }
+}
+.btn-primary { background: var(--btn-bg); color: var(--btn-text); }
+.btn-primary:hover { background: var(--btn-bg-hover); transform: scale(1.05); }
+.btn-secondary {
+  border-color: var(--btn2-border);
+  color: var(--text-heading);
+  background: transparent;
+}
+.btn-secondary:hover { background: var(--btn2-hover); transform: scale(1.05); }
+.btn:active { transform: scale(0.95); }
+
+.btn.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.btn-todo {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  opacity: 0.8;
+}
+
+/* ---- Theme switch: pill + sliding knob ---- */
+.hero-theme {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.theme-switch {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-inner);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 1px;
+  /* pad the hit area to 44px on touch */
+  min-height: 44px;
+  min-width: 56px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.3s var(--ease);
+}
+.theme-knob {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s var(--ease);
+  margin-top: -8px;          /* optically centre the knob in the pill */
+}
+[data-theme="dark"] .theme-knob { transform: translateX(28px); }
+
+.theme-icon { grid-area: 1 / 1; }
+.theme-icon-moon { display: none; }
+[data-theme="dark"] .theme-icon-sun { display: none; }
+[data-theme="dark"] .theme-icon-moon { display: block; }
+
+.theme-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+.hero-foot { flex-shrink: 0; padding-bottom: 4px; }
+
+/* ---- md+: portrait left, text right ---- */
+@media (min-width: 768px) {
+  .hero-main {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 3rem;
+    padding: 3rem 0;
+  }
+  .hero-portrait { width: 220px; height: 320px; }
+  .hero-text { align-items: flex-start; text-align: left; }
+  .hero-name { font-size: 3rem; }      /* text-5xl */
+  .hero-role { font-size: 14px; letter-spacing: 0.3em; }
+  .hero-location { font-size: 14px; }
+  .hero-actions { flex-direction: row; width: auto; }
+}
+
+@media (min-width: 640px) {
+  .hero-role { font-size: 13px; letter-spacing: 0.3em; }
+}
+
+@media (min-width: 1024px) {
+  .hero-main { gap: 4rem; }
+  .hero-portrait { width: 300px; height: 400px; }
+  .hero-name { font-size: 3.75rem; }   /* text-6xl */
+  .hero-role { font-size: 15px; }
+  .hero-location { font-size: 14px; }
+}

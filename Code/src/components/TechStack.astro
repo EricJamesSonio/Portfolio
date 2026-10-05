@@ -1,0 +1,23 @@
+---
+import Card from './Card.astro';
+import Chip from './Chip.astro';
+import stack from '../data/stack.js';
+---
+
+<Card title="TECH STACK" id="tech-card" labelled>
+  <div class="stack-groups custom-scroll">
+    {stack.map((group) => (
+      <div class="stack-group">
+        <div class="stack-label">
+          <span class="micro-label">{group.label}</span>
+          <span class="stack-hairline" aria-hidden="true"></span>
+        </div>
+        <ul class="stack-chips">
+          {group.techs.map((tech) => (
+            <li><Chip>{tech}</Chip></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</Card>

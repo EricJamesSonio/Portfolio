@@ -1,0 +1,11 @@
+---
+import Card from './Card.astro';
+import about from '../data/about.js';
+---
+
+<Card title="ABOUT" id="about-card" labelled>
+  {about.map((paragraph) => (
+    <p class="body-copy">{paragraph}</p>
+  ))}
+</Card>
+

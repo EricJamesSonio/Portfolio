@@ -1,0 +1,69 @@
+---
+import Divider from './Divider.astro';
+import profile from '../data/profile.js';
+
+const { name, role, location, email, resume, portfolioYear, portrait, portraitHoverVideo } = profile;
+
+// The reference shows "<NAME> || PORTFOLIO <YEAR>" at the very top.
+const topCaption = `${name.toUpperCase()} || PORTFOLIO ${portfolioYear}`;
+
+const hasResume = !!resume;            // no resume file supplied yet -> disabled button + TODO
+const hasHoverVideo = !!portraitHoverVideo;  // no hover video in the repo -> still image only
+---
+
+<section class="hero" id="home" aria-labelledby="hero-name">
+  <div class="hero-top">
+    <Divider>{topCaption}</Divider>
+  </div>
+
+  <div class="hero-main">
+    <!-- Portrait. Single image: the repo has one photo and no hover video. -->
+    <div class="hero-portrait">
+      <img src={portrait} alt={`Portrait of ${name}`} width="400" height="500" loading="eager" decoding="async" />
+      {hasHoverVideo && (
+        <video class="hero-portrait-video" src={portraitHoverVideo} muted loop playsinline preload="none" aria-hidden="true"></video>
+      )}
+    </div>
+
+    <div class="hero-text">
+      <h1 class="hero-name" id="hero-name">{name}</h1>
+      <p class="hero-role">{role}</p>
+      <p class="hero-location">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7m0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5" />
+        </svg>
+        <span>{location}</span>
+      </p>
+
+      <div class="hero-actions">
+        {hasResume ? (
+          <a class="btn btn-primary" href={resume} download>Get Resume</a>
+        ) : (
+          <span class="btn btn-primary is-disabled" aria-disabled="true" title="TODO: add public/Resume.pdf">
+            Get Resume <span class="btn-todo">TODO</span>
+          </span>
+        )}
+        <a class="btn btn-secondary" href={`mailto:${email}`}>Email Me</a>
+      </div>
+
+      <!-- Theme switch: pill with a sliding sun/moon knob -->
+      <div class="hero-theme">
+        <button id="theme-toggle" class="theme-switch" type="button" aria-label="Toggle colour theme" aria-pressed="false">
+          <span class="theme-knob" aria-hidden="true">
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+              <path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10m0 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1m0-16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1m8 11h-1a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2M6 13H5a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2m11.66-6.66a1 1 0 0 1 0 1.41l-.7.71a1 1 0 1 1-1.42-1.42l.71-.7a1 1 0 0 1 1.41 0m-14.14 1.41a1 1 0 0 1 0-1.41l.7-.7a1 1 0 1 1 1.42 1.41l-.71.71a1 1 0 0 1-1.41 0M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0" />
+            </svg>
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+              <path d="M12.3 2a9 9 0 0 0 9.7 13.4A9 9 0 1 1 12.3 2" />
+            </svg>
+          </span>
+        </button>
+        <span class="theme-label" id="theme-label">Light</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-foot">
+    <Divider>SOLVING THROUGH CODE</Divider>
+  </div>
+</section>
