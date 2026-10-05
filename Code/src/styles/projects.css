@@ -22,8 +22,12 @@
    NOTE: `.stack-viewport` used to be listed here. Because projects.css is imported AFTER
    tech-stack.css, `overflow-x: auto` won over that file's `overflow: hidden` and every tech
    row showed a horizontal scrollbar. The rows are a marquee, not a scroll area, so they must
-   NOT be in this list - tech-stack.css hides their scrollbars explicitly. */
-.timeline, .featured-list, .gh-panel-wrap, .cert-list {
+   NOT be in this list - tech-stack.css hides their scrollbars explicitly.
+   NOTE: `.featured-list` was removed here in Phase 17. It was capped at 70svh / 800px with
+   `overflow-y: auto`, which trapped three rows behind an inner scrollbar (and a fifth rail
+   from this rule). Every featured project now renders in full and the page does the
+   scrolling, which is what a visitor expects from a portfolio. */
+.timeline, .gh-panel-wrap, .cert-list {
   overflow-x: auto;
 }
 
@@ -38,23 +42,22 @@
   border: 0;
 }
 
+/* Every featured row renders at full height - no nested scroll (Phase 17). */
 .featured-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-height: 70svh;      /* cap on phones to avoid a nested-scroll trap */
-  overflow-y: auto;
-  padding-right: 4px;
+  gap: 12px;
 }
-@media (min-width: 768px) {
-  .featured-list { max-height: 800px; }
-}
+
+/* Slightly tighter than the shared .card padding: this card holds three tall rows, so 6px
+   off each edge is visible, and it still clears a 44px touch target. */
+.featured-card { padding: 18px; }
 
 .featured-row {
   display: flex;
   flex-direction: column;   /* one column at 900px and below */
   gap: 16px;
-  padding: 20px;
+  padding: 14px;
   border: 1px solid var(--border-inner);
   background: var(--bg-panel);
   min-width: 0;
@@ -69,10 +72,10 @@
   justify-content: center;
   background: var(--bg-panel-2);
   border: 1px solid var(--border-inner);
-  padding: 12px 12px 24px;   /* extra bottom room for the phone overlap */
+  padding: 10px 10px 18px;   /* extra bottom room for the phone overlap */
   min-width: 0;
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   margin: 0 auto;
 }
 @media (min-width: 901px) {
@@ -81,7 +84,7 @@
 
 .featured-composite {
   max-width: 100%;
-  max-height: 320px;
+  max-height: 260px;
   object-fit: contain;
 }
 
@@ -182,23 +185,30 @@
 .featured-text {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
 }
 @media (min-width: 901px) {
-  .featured-row { flex-direction: row; }
-  .featured-media { flex: 0 0 45%; }
+  .featured-row { flex-direction: row; gap: 18px; }
+  /* 45% -> 38%: the mockups were the loudest thing in the section and the rows read as
+     posters rather than previews. */
+  .featured-media { flex: 0 0 38%; }
   .featured-text { flex: 1; }
 }
 
 .featured-name {
   margin: 0;
-  font-size: 1.375rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--accent-text);
 }
-.featured-desc { text-align: justify; }
+/* Left-aligned on purpose, like the About prose: justifying monospace opens rivers. */
+.featured-desc {
+  font-size: 1rem;
+  line-height: 1.55;
+  text-align: left;
+}
 
 .featured-chips {
   list-style: none;
@@ -217,12 +227,12 @@
   flex-wrap: wrap;
 }
 .proj-link {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--accent-link);
   text-decoration: none;
   /* 44px tap target without changing the visual size */
-  padding: 10px 0;
+  padding: 8px 0;
 }
 .proj-link:hover { color: var(--accent-link-hover); text-decoration: underline; }
 .proj-sep { color: var(--text-faint); }
@@ -235,15 +245,8 @@
   min-width: 0;
 }
 
-.video-subhead {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text-muted);
-  text-align: center;
-  margin: 8px 0 0;
-}
+/* `.video-subhead` was deleted in Phase 17: the "MORE PROJECTS" label is now the signature
+   <Divider> caption, so it inherits the same hairlines + tracking as every other band. */
 
 .filters {
   display: flex;

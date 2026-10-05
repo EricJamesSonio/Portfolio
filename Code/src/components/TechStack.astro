@@ -4,16 +4,25 @@ import { getIcon } from '../data/stackIcons.js';
 
 // Static grid, not a carousel. Each tech renders exactly ONCE - the previous marquee needed
 // four identical runs to loop seamlessly, which meant every card appeared four times.
-const rows = stack.map((group) => ({
-  label: group.label,
-  // Column count per group so a 4-item row never stretches four cards across the full width
-  // (auto-fit would do exactly that and it looks sparse). Capped at 8; Tools wraps to 2 rows.
-  cols: Math.min(group.techs.length, 8),
-  cards: group.techs.map((tech) => {
+const rows = stack.map((group) => {
+  const cards = group.techs.map((tech) => {
     const icon = getIcon(tech.icon);
     return { name: tech.name, icon, symbolId: null };
-  }),
-}));
+  });
+
+  // Widest label in THIS group, counted in characters. The whole site is monospace, so one
+  // character is exactly 1ch and CSS can turn this number straight into the minimum column
+  // width - the "longest text wins" rule.
+  //
+  // Phase 16 derived the column count from the ITEM count (`Math.min(techs.length, 8)`),
+  // which handed Tools & Testing 8 narrow columns: after the 30px icon, the 12px gap and the
+  // 32px padding there was ~101px of text, about 10 monospace characters. Every longer name
+  // then hit `overflow-wrap: anywhere` and split mid-word ("Postma n", "OpenRo uter",
+  // "Copilo t"). Sizing from the text instead means no name can break at any breakpoint.
+  const longest = cards.reduce((n, c) => Math.max(n, c.name.length), 0);
+
+  return { label: group.label, longest, cards };
+});
 
 // Icons live in ONE hidden sprite and each card just does <use href="#id">.
 const symbols = [];
@@ -54,18 +63,20 @@ for (const row of rows) {
           <span class="stack-hairline" aria-hidden="true"></span>
         </div>
 
-        <ul class="stack-grid" style={`--stack-cols: ${row.cols}`}>
+        {/* --stack-label-ch is the longest label in this group, in characters. CSS turns it
+            into the minimum column width (see tech-stack.css). */}
+        <ul class="stack-grid" style={`--stack-label-ch: ${row.longest}`}>
           {row.cards.map((card) => (
             <li class="stack-card">
               {card.symbolId && (
                 /* Official brand colour, per theme. --brand-light / --brand-dark come from
-                   stackIcons.js, already corrected to clear 3:1 on the card background. */
+                   stackIcons.js, already corrected to clear 3:1 on the card background.
+                   No width/height attributes: .stack-icon is sized in CSS from --stack-icon,
+                   so the grid maths and the rendered icon can never drift apart. */
                 <span class="stack-card-icon" aria-hidden="true">
                   <svg
                     class="stack-icon"
                     viewBox="0 0 24 24"
-                    width="30"
-                    height="30"
                     style={`--brand-light:${card.icon.light};--brand-dark:${card.icon.dark}`}
                   >
                     <use href={`#${card.symbolId}`} />
