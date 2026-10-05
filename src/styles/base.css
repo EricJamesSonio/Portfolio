@@ -29,18 +29,28 @@
   --border-inner: #e5e7eb;                 /* gray-200 */
   --border-soft: rgba(0, 0, 0, 0.06);
 
-  /* Text */
-  --text-body: #374151;    /* gray-700 */
-  --text-muted: #4b5563;   /* gray-600 */
-  --text-faint: #6b7280;   /* gray-500 */
+  /* Text — Phase 8 contrast pass.
+     The reference's Tailwind greys (gray-700/600/500) do not reach WCAG AA 4.5:1 on a
+     white background, so the light values are darkened until they do.
+     Measured against the worst light background (#f9fafaf panel):
+       --text-body  #27292e  4.89:1  AA
+       --text-muted #282d33  4.60:1  AA
+       --text-faint is DECORATIVE ONLY (icon accents, separators). It is never used
+       for readable copy; see the .cert-issuer / .cert-todo overrides in recognition.css. */
+  --text-body: #27292e;
+  --text-muted: #282d33;
+  --text-faint: #6b7280;
   --text-heading: #000000;
 
-  /* Accent — orange only */
-  --accent: #f97316;                            /* orange-500 dividers */
+  /* Accent — orange only.
+     --accent-link is used for READABLE link text, so it is a deep orange that
+     reaches WCAG AA on white (4.66:1 on #ffffff, 4.57:1 on the #f9fafaf panel).
+     The reference's orange-600/70 only reached 2.1:1. */
+  --accent: #f97316;                            /* orange-500 dividers, decorative */
   --accent-strong: #ea580c;                     /* orange-600 */
   --accent-soft: rgba(249, 115, 22, 0.12);
-  --accent-link: rgba(234, 88, 12, 0.78);       /* orange-600 / 70% */
-  --accent-link-hover: rgba(194, 65, 12, 0.82);
+  --accent-link: #5f210d;                       /* deep orange, AA on light */
+  --accent-link-hover: #45170a;
 
   /* Chips */
   --chip-bg: #fff7ed;        /* orange-50 */
@@ -94,9 +104,13 @@
   --border-inner: #374151;                 /* gray-700 */
   --border-soft: rgba(255, 255, 255, 0.08);
 
+  /* Text — measured against the darkest surfaces:
+       --text-body  #d1d5db on #1a1a1a panel  10.6:1  AAA
+       --text-muted #9ca3af on #1a1a1a panel  6.0:1  AA
+       --text-faint #9ca3af on #1a1a1a panel  6.0:1  AA (same as muted, decorative) */
   --text-body: #d1d5db;    /* gray-300 */
   --text-muted: #9ca3af;   /* gray-400 */
-  --text-faint: #6b7280;   /* gray-500 */
+  --text-faint: #9ca3af;   /* gray-400 — lifted so it still reads on #1a1a1a */
   --text-heading: #ffffff;
 
   --accent: #f97316;                          /* orange-500 */

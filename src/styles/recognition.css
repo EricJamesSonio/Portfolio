@@ -1,5 +1,5 @@
 /* ============================================================
-   RECOGNITION — Certifications + Contact band
+   RECOGNITION ï¿½ Certifications + Contact band
    Stacked on phones, side by side from lg.
    ============================================================ */
 .recognition {
@@ -57,7 +57,8 @@
 
 .cert-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .cert-name { font-size: 0.875rem; font-weight: 700; color: var(--text-heading); }
-.cert-issuer { font-size: 12px; color: var(--text-faint); }
+/* Readable text: uses --text-muted (AA), not the decorative --text-faint */
+.cert-issuer { font-size: 12px; color: var(--text-muted); }
 .cert-expand { color: var(--text-faint); flex-shrink: 0; }
 
 .cert-empty {
@@ -66,7 +67,7 @@
   margin: 0;
   line-height: 1.6;
 }
-.cert-todo { display: block; margin-top: 6px; font-size: 12px; color: var(--text-faint); }
+.cert-todo { display: block; margin-top: 6px; font-size: 12px; color: var(--text-muted); }
 .cert-todo code { font-size: 12px; color: var(--accent); }
 
 /* ---------- Lightbox ---------- */

@@ -11,6 +11,8 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Eric James Sonio — Fullstack Developer & Backend Specialist. CS student at College of Mary Immaculate.">
   <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <title>{title}</title>
 
   <!-- Apply the saved / OS theme BEFORE first paint so there is no flash. -->
@@ -122,7 +124,5 @@ const { title = 'Eric James Sonio — Portfolio' } = Astro.props;
   @import '../styles/projects.css';
   @import '../styles/github.css';
   @import '../styles/recognition.css';
-  @import '../styles/contact.css';
   @import '../styles/footer.css';
-  @import '../styles/responsive.css';
 </style>

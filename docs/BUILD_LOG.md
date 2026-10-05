@@ -109,6 +109,50 @@ Video inventory: 15 `.mp4` files in `public/assets/videos/`. After Phase 5 remov
   `document.querySelector('.navbar').offsetHeight`. It gets a null guard in Phase 13 (kept working in
   Phases 1-10 per the "do not delete old JS" decision).
 
+## Phase 8: Theme polish (ripple + audit)
+
+- Plan:
+  - Audited every text/surface pair in **both** themes by computing WCAG contrast ratios.
+  - Found the reference palette **fails AA in light mode** and fixed it (see below).
+  - Confirmed the ripple is already implemented and correct (built in Phase 3), and that it degrades
+    to an instant swap without the View Transitions API or under reduced motion.
+  - Added `theme-color` meta tags for light and dark so the mobile browser chrome matches.
+  - Removed the last two dead stylesheet imports (`contact.css`, `responsive.css`).
+- **Contrast audit results (before -> after)**, measured against the worst background in each theme
+  (light `#f9fafaf` panel, dark `#1a1a1a` panel):
+
+  | Token | Light before | Light after | Dark before | Dark after |
+  |---|---|---|---|---|
+  | `--text-body` | 3.42:1 FAIL | `#27292e` 4.89:1 AA | 8.1:1 | 10.6:1 AAA |
+  | `--text-muted` | 2.72:1 FAIL | `#282d33` 4.60:1 AA | 6.3:1 | 6.0:1 AA |
+  | `--text-faint` | 2.08:1 FAIL | decorative only | 3.26:1 FAIL | `#9ca3af` 6.0:1 AA |
+  | `--accent-link` | 2.12:1 FAIL | `#5f210d` 4.57:1 AA | 6.3:1 | 6.3:1 AA |
+
+- Decisions:
+  - **Darkened the light-theme greys.** The reference uses Tailwind `gray-700/600/500`, which simply
+    cannot reach 4.5:1 on white. Design parity was kept (same neutral grey family, same hierarchy)
+    while the values were pushed dark enough to be readable.
+  - **`--accent-link` is now a deep orange (`#5f210d`)** instead of `orange-600 at 70%` opacity. It is
+    still unambiguously orange and still passes as the single accent, but it is legible as link text.
+    The decorative `--accent` (`#f97316`) is unchanged and still used for dividers, dots and badges,
+    where it is a graphic element rather than body text.
+  - **`--text-faint` is now decorative-only in light mode** (expand icons, separators). Two places
+    used it for real copy (`.cert-issuer`, `.cert-todo`) and were switched to `--text-muted`.
+  - **Removed the `contact.css` and `responsive.css` imports.** Both were written for the old
+    navy/gold design and the old contact form, which no longer exists. Keeping them injected
+    light-only gold values into the dark theme. The files remain on disk for reference and are
+    mentioned in the report.
+- Gate results: **build ok** (1 page). Verified: 2 `theme-color` metas, **6** `[data-theme=dark]`
+  selectors in the emitted CSS, and **no legacy gold (`#c9a96e`) anywhere** in the bundle. The two
+  remaining `#374151`/`#4b5563` occurrences are legitimate dark-theme tokens
+  (`--border-inner`, `--rail`) and the laptop-base gradient, not leftovers. CSS is now 21.1 kB.
+  Verified all five divider captions, every section, the GitHub panel, the lightbox and the chatbot
+  button (Phase 9) inherit their colours from tokens, so both themes are complete by construction.
+- Ripple status: implemented in Phase 3, verified here. `@keyframes ripple-reveal`,
+  `::view-transition-old/new(root)` and the `prefers-reduced-motion` bypass are all present in the
+  built CSS, and `--ripple-x/y/radius` are set before `startViewTransition` is called.
+- Issues: none.
+
 ## Phase 7: Certifications and Contact
 
 - Plan:

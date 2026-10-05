@@ -11,7 +11,7 @@ Branch: portfolio-upgrade   Started: 2026-10-05   Last update: 2026-10-05
 | 5 | Projects (Featured + video grid) | DONE | 3 featured rows (laptop+phone mockups), 5 rows hidden, 4 dup cards removed |
 | 6 | GitHub contributions | DONE | React island (React 18 for Astro 4), orange palettes, inner scroll |
 | 7 | Certifications and Contact | DONE | Empty cert state + lightbox, contact tiles, footer; fixed empty href bug |
-| 8 | Theme polish (ripple + audit) | TODO | |
+| 8 | Theme polish (ripple + audit) | DONE | WCAG AA contrast pass (light theme was failing), dead CSS unimported |
 | 9 | AI chatbot | TODO | |
 | 10 | Content and data consolidation | TODO | |
 | 11 | Responsive pass | TODO | |
